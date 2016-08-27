@@ -109,10 +109,39 @@ public class Hand {
     }
 
     /**
-     * 
+     * Gets the card at the given position number. The Card stays in the hand.
+     *
+     * @param positionNumber
+     *            The position of the Card in the hand
+     * @return the Card
      */
-    public void returnCards() {
-        // TODO Auto-generated method stub
-
+    Card getCard(int positionNumber) {
+        if (positionNumber < 0 || positionNumber >= cards.size()) {
+            throw new IndexOutOfBoundsException();
+        }
+        return cards.get(positionNumber);
     }
+
+    /**
+     * Removes the Cards in the Hand. Used to return cards to a Deck.
+     */
+    public List<Card> returnCards() {
+        List<Card> temp = new ArrayList<Card>(cards);
+        cards = new ArrayList<>();
+        return temp;
+    } // end method
+
+    /**
+     * Removes a Card from the Hand and returns it to the caller.
+     * 
+     * @param position
+     *            the position of the card in the Hand
+     * @return the Card removed from the Hand
+     */
+    Card removeCard(int position) {
+        if (position < 0 || position >= cards.size()) {
+            throw new IndexOutOfBoundsException();
+        } // end if
+        return cards.remove(position);
+    } // end method
 } // end class
