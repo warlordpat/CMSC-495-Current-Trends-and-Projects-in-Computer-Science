@@ -1,3 +1,4 @@
+package highLow;
 
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -23,7 +24,8 @@ public class HighLow extends JFrame implements ActionListener {
     JLabel scoreCtLabel = new JLabel("", JLabel.LEFT);    
     
     public HighLow() {
-
+        System.out.println(System.getProperty("java.class.path"));
+        createGUI();
     }
     
     public void begin() {
@@ -193,7 +195,7 @@ public class HighLow extends JFrame implements ActionListener {
     
     private void createGUI() {
         
-        for (int j = 1; j <= 52; j++) {
+        for (int j = 1; j <= 13; j++) {
 
             int position = 0;
             do {
