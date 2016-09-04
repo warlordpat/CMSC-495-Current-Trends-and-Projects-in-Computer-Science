@@ -97,7 +97,23 @@ public class Hand {
      * 
      */
     public void returnCards() {
-        // TODO Auto-generated method stub
-
+        while (cards.size() > 0)
+        {
+            cards.remove(0);
+        }
+    }
+    public int handSize() {
+        return cards.size();
+    }
+    public int total() {
+        int iTotal = 0;
+        for (Card card : cards)
+        {
+            iTotal += values.get(card.getRank());
+        }
+        return iTotal;
+    }
+    public Card removeCard() {
+        return cards.remove(0);
     }
 } // end class

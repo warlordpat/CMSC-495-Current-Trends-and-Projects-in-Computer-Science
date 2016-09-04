@@ -23,7 +23,6 @@ public class Deck {
                 cards.add(new Card(rank, suit));
             } // end for
         } // end for
-        System.out.println("Deck size: " + cards.size());
     } // end method
 
     /**

@@ -135,6 +135,6 @@ public class Blackjack {
         frame.setSize(600, 600);
     }
     public static void main(String[] args) {
-        new BlackJack();
+        new Blackjack();
     } // end method
 } // end class
