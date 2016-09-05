@@ -1,9 +1,11 @@
-bin/group3/
-bin/highLow/
-bin/concentration/
-bin/war/
 bin/blackjack/
+bin/concentration/
 bin/gameTest/
+bin/group3/
+bin/group3a/
+bin/group3old/
+bin/highLow/
+bin/war/
 .classpath
 .project
 .settings/
