@@ -8,22 +8,41 @@ import java.awt.GridLayout;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.plaf.synth.SynthSeparatorUI;
 
-public class Blackjack extends JPanel{
+public class Blackjack extends JPanel {
     private Deck deck;
     private Hand dealer, player;
     boolean handInPlay;
 
     public Blackjack() {
+        setLayout(null);
+        setBackground(new Color(7, 99, 36)); // Card Table Green
+        
+    }
+
+    public void begin() {
+        System.out.println("beginning");
+        patrickGUI();
+        newGame();
+        deal();
+    }
+
+    void newGame() {
         deck = new Deck();
         deck.shuffle();
+        deck.setBounds(60, 35, 79, 123); // set the deck size
+        System.out.println("Adding Deck");
+        add(deck); // add the deck to the play surface
+        
+        System.out.println("Adding Dealer");
         dealer = new Hand();
+        dealer.setBounds(400, 100, (2 * 79), 123);
+        add(dealer);
         player = new Hand();
+        
         handInPlay = false;
-    }
-    public void begin() {
-        gui();
-        deal();
+        repaint();
     }
     public String display() {
         String output = "";
@@ -58,13 +77,33 @@ public class Blackjack extends JPanel{
             JOptionPane.showMessageDialog(null, "Reshuffling...");
         }
         if (!handInPlay) {
+            System.out.println("Dealing new hand");
+            remove(dealer);
             dealer = new Hand();
+            dealer.setBounds(400, 100, (2* 79), 123); // adds a new dealer hand to the GUI
+            add(dealer);
+            
             player = new Hand();
+            player.setBounds(400, 400, (2* 79), 123); // adds a new dealer hand to the GUI
+            add(player);
+            
+            Card temp = deck.deal();
+            temp.flip();
+            player.addCard(temp);
             player.addCard(deck.deal());
-            player.addCard(deck.deal());
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            
             dealer.addCard(deck.deal());
             dealer.addCard(deck.deal());
+            System.out.println(dealer);
+            temp.flip();
             handInPlay = true;
+            repaint();
         }
     }
 
@@ -95,36 +134,47 @@ public class Blackjack extends JPanel{
     public boolean isHandInPlay() {
         return handInPlay;
     }
+
     public void patrickGUI() {
-        
+        JFrame frame = new JFrame("Black Jack");
+        frame.setDefaultCloseOperation(3);
+        frame.setTitle("CGS BlackJack");
+        frame.setLayout(new BorderLayout());
+        frame.setPreferredSize(new Dimension(800, 600));
+        frame.setResizable(false);
+        frame.setContentPane(this);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+
     }
+
     public void gui() {
         JFrame frame = new JFrame("Black Jack");
         frame.setVisible(true);
         JSplitPane splitPaneHorizontal = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         JPanel TopPanel = new JPanel();
         TopPanel.setSize(600, 400);
-        JTextArea jtaDisplay = new JTextArea(30,20);
+        JTextArea jtaDisplay = new JTextArea(30, 20);
         jtaDisplay.append(display());
         TopPanel.add(jtaDisplay);
         JPanel BottomPanel = new JPanel(new BorderLayout());
         BottomPanel.setSize(600, 100);
-        JButton jbHit = new JButton ("Hit");
+        JButton jbHit = new JButton("Hit");
         jbHit.addActionListener(ae -> {
             hit();
             jtaDisplay.append(display());
-            if (player.isBusted())
-            {
+            if (player.isBusted()) {
                 jtaDisplay.append("\nPress 'Deal' to play again");
             }
         });
-        JButton jbStand = new JButton ("Stand");
+        JButton jbStand = new JButton("Stand");
         jbStand.addActionListener(ae -> {
             stand();
             jtaDisplay.append(display());
             jtaDisplay.append("\nPress 'Deal' to play again");
         });
-        JButton jbDeal = new JButton ("Deal");
+        JButton jbDeal = new JButton("Deal");
         jbDeal.addActionListener(ae -> {
             deal();
             jtaDisplay.append(display());
@@ -137,6 +187,7 @@ public class Blackjack extends JPanel{
         frame.add(splitPaneHorizontal);
         frame.setSize(600, 600);
     }
+
     public static void main(String[] args) {
         Blackjack blackjack = new Blackjack();
         blackjack.begin();
