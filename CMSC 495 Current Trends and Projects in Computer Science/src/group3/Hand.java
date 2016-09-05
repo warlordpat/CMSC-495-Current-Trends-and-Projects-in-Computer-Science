@@ -1,8 +1,19 @@
 package group3;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 
-public class Hand {
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
+public class Hand extends JLabel {
 
     private static Map<Rank, Integer> values = new HashMap<>();
     static {
@@ -21,12 +32,25 @@ public class Hand {
         values.put(Rank.KING, 10);
     }
     private List<Card> cards;
+    private BufferedImage biCardBacks;
+    URL imageURL;
+    ImageIcon cardBacks;
 
     /**
      * 
      */
     public Hand() {
         cards = new ArrayList<>();
+        setBackground(null);
+        setLayout(null);
+        imageURL = getClass().getClassLoader().getResource("cardBack.png");
+        cardBacks = new ImageIcon(imageURL);
+        try {
+            biCardBacks = ImageIO.read(imageURL);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -36,7 +60,17 @@ public class Hand {
      *            The card to add
      */
     void addCard(Card card) {
+        card.setBounds(cards.size() * 79, 0, 71, 96);
         cards.add(card);
+        
+        add(card, 0); // add the card to the hand Label
+        System.out.println("card added to hand and label");
+        if (cards.size() != 0) {
+            setSize(79 + (cards.size()- 1) * 79, 96); // resize the dealer box to the size of the hand
+          } else {
+            setSize(79, 123);
+          }
+        repaint();
     } // end method
 
     /**
@@ -97,23 +131,32 @@ public class Hand {
      * 
      */
     public void returnCards() {
-        while (cards.size() > 0)
-        {
+        while (cards.size() > 0) {
             cards.remove(0);
         }
     }
+
     public int handSize() {
         return cards.size();
     }
+
     public int total() {
         int iTotal = 0;
-        for (Card card : cards)
-        {
+        for (Card card : cards) {
             iTotal += values.get(card.getRank());
         }
         return iTotal;
     }
+
     public Card removeCard() {
         return cards.remove(0);
+    }
+
+    protected void paintComponent(Graphics graphics) {
+        Graphics2D g = (Graphics2D) graphics.create();
+        g.setColor(Color.WHITE);
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.05F));
+        g.fillRect(0, 0, 2 * 79, 123);
+        g.dispose();
     }
 } // end class
