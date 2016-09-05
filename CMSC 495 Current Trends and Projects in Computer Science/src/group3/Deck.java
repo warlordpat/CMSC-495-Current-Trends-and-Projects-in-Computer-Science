@@ -6,13 +6,14 @@ import java.util.List;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 /**
  * @author Patrick Smith
  * @version 1.0
  * @since Aug 26, 2016
  */
-public class Deck {
+public class Deck extends JLabel {
 
     private List<Card> cards;
     Random rand;
@@ -214,7 +215,8 @@ public class Deck {
      * 
      * @return the current size of the deck
      */
-    public int size() {
+    public int deckSize() {
         return cards.size();
     } // end method
+    
 } // end class
