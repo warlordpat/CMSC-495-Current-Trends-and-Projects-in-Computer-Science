@@ -183,6 +183,15 @@ public class Deck {
         return refArray[index];
     } // end method
 
+    /**
+     * Deals a card from the deck.
+     * 
+     * @return a Card from the top of the deck
+     */
+    Card deal() {
+        return cards.remove(0);
+    } // end method
+    
     ImageIcon returnCard(int index) {
         return cardIcon[index];
     }
