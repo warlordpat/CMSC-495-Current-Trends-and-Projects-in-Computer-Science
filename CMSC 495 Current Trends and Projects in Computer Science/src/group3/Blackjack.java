@@ -137,7 +137,7 @@ public class Blackjack extends JPanel {
 
     public void patrickGUI() {
         JFrame frame = new JFrame("Black Jack");
-        frame.setDefaultCloseOperation(3);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.setTitle("CGS BlackJack");
         frame.setLayout(new BorderLayout());
         frame.setPreferredSize(new Dimension(800, 600));
