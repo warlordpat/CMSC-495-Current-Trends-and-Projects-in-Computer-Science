@@ -1,13 +1,17 @@
 package group3;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.*;
 
 public class group3 {
 
-    Blackjack bj = new Blackjack();
-    ThirtyOne thirtyone = new ThirtyOne();
+    // Blackjack bj = new Blackjack();
+    // ThirtyOne thirtyone = new ThirtyOne();
     War war = new War();
     Concentration concentration = new Concentration();
     HighLow highLow = new HighLow();
@@ -17,7 +21,15 @@ public class group3 {
     }
 
     public static void main(String[] args) {
-        new group3();
+        // System.out.println(System.getProperty("user.dir"));
+        // System.out.println(System.getProperty("java.class.path"));
+
+        Splash splash = new Splash();
+        Thread splashThread = new Thread(splash);
+        splashThread.start();
+//        splash.setVisible(true);
+         new group3();
+         
     }
 
     public void gui() {
@@ -89,5 +101,79 @@ public class group3 {
         frame.add(topSplit, BorderLayout.CENTER);
         frame.setSize(500, 300);
 
+    }
+}
+
+class Splash extends JFrame implements Runnable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4976891352425837661L;
+
+    /**
+     * 
+     */
+    public Splash() {
+        setDefaultCloseOperation(2);
+
+        setUndecorated(true);
+        setFocusable(true);
+        setLayout(null);
+        setBackground(null);
+        setSize(300, 300);
+        SplashScreenPanel splashPanel = new SplashScreenPanel();
+        add(splashPanel);
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Runnable#run()
+     */
+    @Override
+    public void run() {
+        // TODO Auto-generated method stub
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        dispose();
+    } // end method
+}
+
+class SplashScreenPanel extends JPanel {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8798177549631000111L;
+    BufferedImage splashImage;
+
+    /**
+     * 
+     */
+    public SplashScreenPanel() {
+        setSize(300, 300);
+        // System.out.println(System.getProperty("java.class.path"));
+        // System.out.println(" Path:
+        // \""+getClass().getClassLoader().getResource(".")+"\"");
+        try {
+            splashImage = ImageIO.read(getClass().getClassLoader().getResource("images/card_matched.png"));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    protected void paintComponent(Graphics graphics) {
+        Graphics2D g = (Graphics2D) graphics;
+        // if (splashImage != null) {
+        g.drawImage(splashImage, null, 0, 0);
+        // }
+        g.dispose();
     }
 }
