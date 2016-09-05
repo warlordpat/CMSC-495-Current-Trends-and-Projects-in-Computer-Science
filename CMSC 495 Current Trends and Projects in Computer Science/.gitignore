@@ -6,6 +6,12 @@ bin/group3a/
 bin/group3old/
 bin/highLow/
 bin/war/
+src/blackjack/
+src/concentration/
+src/gameTest/
+src/group3old/
+src/highLow/
+src/war/
 .classpath
 .project
 .settings/
