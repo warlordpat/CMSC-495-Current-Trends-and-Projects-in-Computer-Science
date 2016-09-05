@@ -17,8 +17,8 @@ public class Deck {
     private List<Card> cards;
     Random rand;
 
-    URL imageURL = this.getClass().getClassLoader().getResource("cardBack.png");
-    ImageIcon cardBacks = new ImageIcon(imageURL);
+    URL imageURL;
+    ImageIcon cardBacks;
     static ImageIcon[] cardIcon = new ImageIcon[52];
     static int[] refArray = new int[52];
     private ArrayList<Integer> playerHand = new ArrayList<>();
@@ -37,6 +37,10 @@ public class Deck {
                 cards.add(new Card(rank, suit));
             } // end for
         } // end for
+//        System.out.println(System.getProperty("user.dir"));
+//        System.out.println(System.getProperty("java.class.path"));
+        imageURL = getClass().getClassLoader().getResource("cardBack.png");
+        cardBacks = new ImageIcon(imageURL);
     } // end method
 
     /**
@@ -106,7 +110,7 @@ public class Deck {
                 position = (int) (Math.random() * 52);
             } while (cardIcon[position] != null);
 
-            URL cardURL = this.getClass().getClassLoader().getResource(j + ".png");
+            URL cardURL = this.getClass().getClassLoader().getResource("images/" + j + ".png");
             cardIcon[position] = new ImageIcon(cardURL);
         }
         String refPath = cardIcon[0].toString();
@@ -191,7 +195,7 @@ public class Deck {
     Card deal() {
         return cards.remove(0);
     } // end method
-    
+
     ImageIcon returnCard(int index) {
         return cardIcon[index];
     }
