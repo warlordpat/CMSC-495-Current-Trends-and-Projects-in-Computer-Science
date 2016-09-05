@@ -34,10 +34,12 @@ public class Card extends JComponent {
      * @return the BufferedImage of the picture
      */
     static BufferedImage readImage(String location) {
+        System.out.println("Loading in image from Card Class!");
         try {
             return ImageIO.read(Card.class.getClassLoader().getResource(location));
         } catch (IOException e) {
             // TODO Auto-generated catch block
+            System.out.println("Error in image load from Card Class!");
             e.printStackTrace();
             throw new Error(e);
         } // end catch
