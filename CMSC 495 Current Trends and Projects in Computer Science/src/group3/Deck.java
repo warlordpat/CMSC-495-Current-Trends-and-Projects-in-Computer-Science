@@ -1,10 +1,18 @@
 package group3;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
@@ -16,6 +24,7 @@ import javax.swing.JLabel;
 public class Deck extends JLabel {
 
     private List<Card> cards;
+    private boolean isEmpty;
     Random rand;
 
     URL imageURL;
@@ -26,11 +35,15 @@ public class Deck extends JLabel {
     private ArrayList<Integer> aiHand = new ArrayList<>();
     private ArrayList<ImageIcon> playerCards = new ArrayList<>();
     private ArrayList<ImageIcon> AICards = new ArrayList<>();
+    private BufferedImage biCardBacks;
 
     /**
      * Generate a new full, un-shuffled deck.
      */
     public Deck() {
+        setBackground(null);
+        setLayout(null);
+
         rand = new Random();
         cards = new ArrayList<>();
         for (Suit suit : Suit.values()) {
@@ -38,10 +51,16 @@ public class Deck extends JLabel {
                 cards.add(new Card(rank, suit));
             } // end for
         } // end for
-//        System.out.println(System.getProperty("user.dir"));
-//        System.out.println(System.getProperty("java.class.path"));
+        // System.out.println(System.getProperty("user.dir"));
+        // System.out.println(System.getProperty("java.class.path"));
         imageURL = getClass().getClassLoader().getResource("cardBack.png");
         cardBacks = new ImageIcon(imageURL);
+        try {
+            biCardBacks = ImageIO.read(imageURL);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
     } // end method
 
     /**
@@ -218,5 +237,16 @@ public class Deck extends JLabel {
     public int deckSize() {
         return cards.size();
     } // end method
-    
+
+    protected void paintComponent(Graphics graphics) {
+        Graphics2D g = (Graphics2D) graphics.create();
+        if (!isEmpty) {
+            g.drawImage(biCardBacks, 0, 0, null);
+        } else {
+            g.setColor(Color.WHITE);
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.05F));
+            g.fillRect(0, 0, 79, 123);
+        }
+        g.dispose();
+    }
 } // end class
