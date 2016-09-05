@@ -10,7 +10,7 @@ import javax.swing.border.*;
 
 public class group3 {
 
-    // Blackjack bj = new Blackjack();
+    Blackjack bj;
     // ThirtyOne thirtyone = new ThirtyOne();
     War war = new War();
     Concentration concentration = new Concentration();
@@ -64,8 +64,8 @@ public class group3 {
             war.begin();
         });
         jbBlackJack.addActionListener(ae -> {
-            // bj = new Blackjack();
-            // bj.begin();
+             bj = new Blackjack();
+             bj.begin();
         });
         jbConcentration.addActionListener(ae -> {
             concentration = new Concentration();
