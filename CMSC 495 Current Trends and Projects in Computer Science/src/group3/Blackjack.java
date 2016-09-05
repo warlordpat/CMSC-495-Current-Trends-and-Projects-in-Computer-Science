@@ -9,7 +9,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
-public class Blackjack {
+public class Blackjack extends JPanel{
     private Deck deck;
     private Hand dealer, player;
     boolean handInPlay;
@@ -52,7 +52,7 @@ public class Blackjack {
     }
 
     public void deal() {
-        if (deck.size() < 8) {
+        if (deck.deckSize() < 8) {
             deck = new Deck();
             deck.shuffle();
             JOptionPane.showMessageDialog(null, "Reshuffling...");
@@ -95,6 +95,9 @@ public class Blackjack {
     public boolean isHandInPlay() {
         return handInPlay;
     }
+    public void patrickGUI() {
+        
+    }
     public void gui() {
         JFrame frame = new JFrame("Black Jack");
         frame.setVisible(true);
@@ -135,6 +138,7 @@ public class Blackjack {
         frame.setSize(600, 600);
     }
     public static void main(String[] args) {
-        new Blackjack();
+        Blackjack blackjack = new Blackjack();
+        blackjack.begin();
     } // end method
 } // end class
