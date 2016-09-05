@@ -202,7 +202,7 @@ public class HighLow extends JFrame implements ActionListener {
             }
             while (cards[position] != null);
             
-            URL cardURL = this.getClass().getClassLoader().getResource(j + ".png");
+            URL cardURL = this.getClass().getClassLoader().getResource("images/" + j + ".png");
             cards[position] = new ImageIcon(cardURL);
 
         }  
