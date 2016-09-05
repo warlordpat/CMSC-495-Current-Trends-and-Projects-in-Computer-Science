@@ -46,7 +46,7 @@ public class ThirtyOne {
         deal();
     }
     public void deal() {
-        if (deck.size() < 8) {
+        if (deck.deckSize() < 8) {
             deck = new Deck();
             deck.shuffle();
             JOptionPane.showMessageDialog(null, "Reshuffling...");
