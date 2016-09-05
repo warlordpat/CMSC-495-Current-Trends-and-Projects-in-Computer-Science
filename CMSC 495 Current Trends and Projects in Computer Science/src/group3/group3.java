@@ -5,30 +5,28 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 public class group3 {
-    
-////    Blackjack bj = new Blackjack();
-////    ThirtyOne thirtyone = new ThirtyOne();
+
+    Blackjack bj = new Blackjack();
+    ThirtyOne thirtyone = new ThirtyOne();
     War war = new War();
     Concentration concentration = new Concentration();
     HighLow highLow = new HighLow();
-    
+
     public group3() {
-        
         gui();
-        
     }
+
     public static void main(String[] args) {
-        
         new group3();
-        
     }
+
     public void gui() {
-        
+
         JFrame frame = new JFrame("Card Games");
         frame.setVisible(true);
         frame.setSize(900, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+
         JSplitPane topSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         JPanel TitlePanel = new JPanel(new BorderLayout());
         JLabel jlTitle = new JLabel("The P.A.C.E. Card Game Suite", JLabel.CENTER);
@@ -38,8 +36,8 @@ public class group3 {
         topSplit.setTopComponent(TitlePanel);
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         JPanel TopPanel = new JPanel(new GridLayout());
-        TopPanel.setBorder(new EmptyBorder(5,5,5,5));
-        
+        TopPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+
         JButton jbWar = new JButton("War!");
         jbWar.setFont(new Font("Courier Bold", Font.BOLD, 17));
         JButton jbConcentration = new JButton("Concentration");
@@ -54,8 +52,8 @@ public class group3 {
             war.begin();
         });
         jbBlackJack.addActionListener(ae -> {
-//            bj = new Blackjack();
-//            bj.begin();
+            // bj = new Blackjack();
+            // bj.begin();
         });
         jbConcentration.addActionListener(ae -> {
             concentration = new Concentration();
@@ -65,14 +63,14 @@ public class group3 {
         TopPanel.add(jbConcentration, BorderLayout.CENTER);
         TopPanel.add(jbBlackJack, BorderLayout.LINE_END);
         TopPanel.setPreferredSize(new Dimension(500, 95));
-        
+
         JPanel BottomPanel = new JPanel(new GridLayout());
-        BottomPanel.setBorder(new EmptyBorder(5,5,5,5));
+        BottomPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         JButton jbThirtyOne = new JButton("Thirty-One");
         jbThirtyOne.setFont(new Font("Courier Bold", Font.BOLD, 17));
         jbThirtyOne.addActionListener(ae -> {
-//            thirtyone = new ThirtyOne();
-//            thirtyone.begin();
+            // thirtyone = new ThirtyOne();
+            // thirtyone.begin();
         });
         JButton jbHighLow = new JButton("High or Low");
         jbHighLow.setFont(new Font("Courier Bold", Font.BOLD, 17));
@@ -84,12 +82,12 @@ public class group3 {
         jbHighLow.setBackground(new Color(42, 148, 70));
         BottomPanel.add(jbThirtyOne, BorderLayout.LINE_START);
         BottomPanel.add(jbHighLow, BorderLayout.LINE_END);
-        
+
         splitPane.setTopComponent(TopPanel);
         splitPane.setBottomComponent(BottomPanel);
         topSplit.setBottomComponent(splitPane);
         frame.add(topSplit, BorderLayout.CENTER);
         frame.setSize(500, 300);
-        
+
     }
 }
