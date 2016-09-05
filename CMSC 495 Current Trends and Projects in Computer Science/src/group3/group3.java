@@ -121,7 +121,7 @@ class Splash extends JFrame implements Runnable {
         setFocusable(true);
         setLayout(null);
         setBackground(null);
-        setSize(300, 300);
+        setSize(500, 300);
         SplashScreenPanel splashPanel = new SplashScreenPanel();
         add(splashPanel);
         setLocationRelativeTo(null);
@@ -157,12 +157,12 @@ class SplashScreenPanel extends JPanel {
      * 
      */
     public SplashScreenPanel() {
-        setSize(300, 300);
+        setSize(500, 300);
         // System.out.println(System.getProperty("java.class.path"));
         // System.out.println(" Path:
         // \""+getClass().getClassLoader().getResource(".")+"\"");
         try {
-            splashImage = ImageIO.read(getClass().getClassLoader().getResource("images/card_matched.png"));
+            splashImage = ImageIO.read(getClass().getClassLoader().getResource("images/splash.png"));
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
