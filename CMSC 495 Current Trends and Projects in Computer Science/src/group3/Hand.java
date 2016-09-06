@@ -5,17 +5,31 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 import java.util.*;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+/**
+ * The Hand class represents a player's hand in a card game, has the ability to
+ * hold Cards, and resizes itself to allow all cards to be placed on the GUI by
+ * default.
+ * 
+ * @author Patrick Smith
+ * @version 1.0
+ * @since Sep 5, 2016
+ */
 public class Hand extends JLabel {
 
+    /**
+     * Generated serial ID.
+     */
+    private static final long serialVersionUID = -732699907221858844L;
+    /**
+     * Map that links Card Rank to values for this Hand. Probably should be
+     * overridden in a sub-class for each game that has different value
+     * assignments.
+     */
     private static Map<Rank, Integer> values = new HashMap<>();
+    // Statically assigns the default Rank values.
     static {
         values.put(Rank.ACE, 1);
         values.put(Rank.TWO, 2);
@@ -31,30 +45,31 @@ public class Hand extends JLabel {
         values.put(Rank.QUEEN, 10);
         values.put(Rank.KING, 10);
     }
+    /**
+     * A List of the Cards in the Hand.
+     */
     private List<Card> cards;
-    private BufferedImage biCardBacks;
-    URL imageURL;
-    ImageIcon cardBacks;
+    /**
+     * The image of the back of the card
+     */
+    @SuppressWarnings("unused")
+    private BufferedImage cardBack;
 
     /**
-     * 
+     * Creates a new, empty Hand. The Hand has the ability to hold Cards, and
+     * resizes itself to allow all cards to be placed on the GUI by default.
      */
     public Hand() {
         cards = new ArrayList<>();
         setBackground(null);
         setLayout(null);
-        imageURL = getClass().getClassLoader().getResource("cardBack.png");
-        cardBacks = new ImageIcon(imageURL);
-        try {
-            biCardBacks = ImageIO.read(imageURL);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+        // load card backs from Cards class to reduce image loading error
+        // surface.
+        cardBack = Card.getBacks().getSubimage(72, 0, 72, 96);
+    } // end constructor
 
     /**
-     * Adds a card to the hand (hit).
+     * Adds a card to the hand (i.e a hit in BlackJack or jsut dealing a Card).
      * 
      * @param card
      *            The card to add
@@ -62,19 +77,25 @@ public class Hand extends JLabel {
     void addCard(Card card) {
         card.setBounds(cards.size() * 79, 0, 71, 96);
         cards.add(card);
-        
+
         add(card, 0); // add the card to the hand Label
         System.out.println("card added to hand and label");
         if (cards.size() != 0) {
-            setSize(79 + (cards.size()- 1) * 79, 96); // resize the dealer box to the size of the hand
-          } else {
-            setSize(79, 123);
-          }
-        repaint();
+            setSize(72 + (cards.size() - 1) * 72, 96); // resize the hand box
+                                                       // to the size of the
+                                                       // hand
+        } else {
+            setSize(72, 96); // default size of a single card.
+        }
+        repaint(); // force the GUI to update when a card is added
     } // end method
 
     /**
-     * @return
+     * Scores the Hand based on the value Map. Should be overridden in a
+     * sub-class for each game. Right now calculates score based on BlackJack
+     * rules.
+     * 
+     * @return the score of the Hand.
      */
     int scoreHand() {
         int sum = 0;
@@ -97,7 +118,7 @@ public class Hand extends JLabel {
     } // end method
 
     /**
-     * Checks if the hand is busted.
+     * Checks if the hand is busted. Will move to a BlackJackHand sub-class
      * 
      * @return true, if busted
      */
@@ -128,35 +149,56 @@ public class Hand extends JLabel {
     }
 
     /**
-     * 
+     * Removes (discards) a card. Does not do anything with the card.
      */
     public void returnCards() {
         while (cards.size() > 0) {
             cards.remove(0);
         }
-    }
+    } // end method
 
+    /**
+     * Gets the number of Cards in a Hand.
+     * 
+     * @return the number of Cards in the Hand
+     */
     public int handSize() {
         return cards.size();
-    }
+    } // end method
 
+    /**
+     * Totals the value of the cards in the Hand. More generic than current
+     * scoreHand method.
+     * 
+     * @return the total value of the Cards in the Hand
+     */
     public int total() {
         int iTotal = 0;
         for (Card card : cards) {
             iTotal += values.get(card.getRank());
         }
         return iTotal;
-    }
+    } // end method
 
+    /**
+     * Removes a Card from the Hand and returns it to the caller.
+     * 
+     * @return the Card removed from the Hand
+     */
     public Card removeCard() {
         return cards.remove(0);
-    }
+    } // end method
 
+    /*
+     * (non-Javadoc) Draws the hand based on the size of the Hand.
+     * 
+     * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
+     */
     protected void paintComponent(Graphics graphics) {
         Graphics2D g = (Graphics2D) graphics.create();
         g.setColor(Color.WHITE);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.05F));
-        g.fillRect(0, 0, 2 * 79, 123);
+        g.fillRect(0, 0, handSize() * 72, 96);
         g.dispose();
-    }
+    } // end method
 } // end class
