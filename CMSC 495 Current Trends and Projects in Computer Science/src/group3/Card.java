@@ -98,7 +98,8 @@ public class Card extends JComponent {
     public Card(Rank rank, Suit suit) {
         this.rank = rank;
         this.suit = suit;
-        System.out.println("loading " + rank.ordinal() * 72 + ", " + suit.ordinal() * 96 + "");
+        // System.out.println("loading " + rank.ordinal() * 72 + ", " +
+        // suit.ordinal() * 96 + "");
         back = cardBacks.getSubimage(72, 0, 72, 96);
         front = cards.getSubimage(rank.ordinal() * 72, suit.ordinal() * 96, 72, 96);
         currentImage = back;
