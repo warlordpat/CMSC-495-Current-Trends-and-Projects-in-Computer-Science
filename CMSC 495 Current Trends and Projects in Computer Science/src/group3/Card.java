@@ -51,6 +51,15 @@ public class Card extends JComponent {
     } // end static method
 
     /**
+     * Gets a reference to the card Back sprite map.
+     * 
+     * @return the image of card backs.
+     */
+    public static BufferedImage getBacks() {
+        return cardBacks;
+    } // end method
+
+    /**
      * The rank of the card.
      */
     private Rank rank;
