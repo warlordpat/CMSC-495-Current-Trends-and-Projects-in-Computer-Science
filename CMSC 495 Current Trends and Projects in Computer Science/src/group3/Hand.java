@@ -69,21 +69,20 @@ public class Hand extends JLabel {
     } // end constructor
 
     /**
-     * Adds a card to the hand (i.e a hit in BlackJack or jsut dealing a Card).
+     * Adds a card to the hand (i.e a hit in BlackJack or just dealing a Card).
      * 
      * @param card
      *            The card to add
      */
     void addCard(Card card) {
-        card.setBounds(cards.size() * 79, 0, 71, 96);
-        cards.add(card);
-
-        add(card, 0); // add the card to the hand Label
+        // moves the card to the proper offset in the hand
+        card.setBounds(cards.size() * 75, 0, 72, 96);
+        cards.add(card); // add the card to the Hand's List
+        add(card, 0); // add the card to the hand JLabel
         System.out.println("card added to hand and label");
         if (cards.size() != 0) {
-            setSize(72 + (cards.size() - 1) * 72, 96); // resize the hand box
-                                                       // to the size of the
-                                                       // hand
+            // resize the hand JComponent to the size of the hand
+            setSize(3 * cards.size() + cards.size() * 72, 96);
         } else {
             setSize(72, 96); // default size of a single card.
         }
