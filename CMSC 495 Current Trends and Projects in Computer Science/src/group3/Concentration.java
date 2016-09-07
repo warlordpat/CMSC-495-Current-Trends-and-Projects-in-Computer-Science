@@ -1,4 +1,4 @@
-package group3;
+
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -13,10 +13,10 @@ import javax.swing.*;
  */
 public class Concentration extends JFrame implements ActionListener {
 
-    URL imageURL = this.getClass().getClassLoader().getResource("cardBack.png");
-    URL cardURL = this.getClass().getClassLoader().getResource("card_matched.png");
+    URL imageURL = this.getClass().getClassLoader().getResource("images/cardBack.png");
+    URL cardURL = this.getClass().getClassLoader().getResource("images/card_matched.png");
     ImageIcon cardBacks = new ImageIcon(imageURL);
-    ImageIcon[] cards = new ImageIcon[26];
+    ImageIcon[] cards = new ImageIcon[30];
     int test = 0;
     int selectedCard = 0;
     int secondSelectedCard = 0;
@@ -48,8 +48,13 @@ public class Concentration extends JFrame implements ActionListener {
     JButton btn24 = new JButton(cardBacks);
     JButton btn25 = new JButton(cardBacks);
     JButton btn26 = new JButton(cardBacks);
+     JButton btn27 = new JButton(cardBacks);
+    JButton btn28 = new JButton(cardBacks);
+    JButton btn29 = new JButton(cardBacks);
+     JButton btn30 = new JButton(cardBacks);
+    
     JButton[] buttons = { btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn10, btn11, btn12, btn13, btn14,
-            btn15, btn16, btn17, btn18, btn19, btn20, btn21, btn22, btn23, btn24, btn25, btn26 };
+            btn15, btn16, btn17, btn18, btn19, btn20, btn21, btn22, btn23, btn24, btn25, btn26, btn27, btn28, btn29, btn30 };
 
     public Concentration() {
 
@@ -140,14 +145,14 @@ public class Concentration extends JFrame implements ActionListener {
     public void createGUI() {
 
         for (int i = 1; i <= 2; i++) {
-            for (int j = 1; j < 14; j++) {
+            for (int j = 20; j < 35; j++) {
 
                 int position = 0;
                 do {
-                    position = (int) (Math.random() * 26);
+                    position = (int) (Math.random() * 30);
                 } while (cards[position] != null);
                 /// look at cardURL
-                URL cardURL = this.getClass().getClassLoader().getResource(j + ".png");
+                URL cardURL = this.getClass().getClassLoader().getResource("images/" + j + ".png");
                 cards[position] = new ImageIcon(cardURL);
 
             }
@@ -159,7 +164,7 @@ public class Concentration extends JFrame implements ActionListener {
         frame.setResizable(false);
         JPanel panel = new JPanel(new GridLayout(5, 6));
 
-        for (int i = 0; i < 26; i++) {
+        for (int i = 0; i < 30; i++) {
 
             buttons[i].addActionListener(this);
 

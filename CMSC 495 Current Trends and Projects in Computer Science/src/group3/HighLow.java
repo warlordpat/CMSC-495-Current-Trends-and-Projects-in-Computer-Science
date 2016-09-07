@@ -1,4 +1,4 @@
-package group3;
+
 
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -13,7 +13,7 @@ import javax.swing.*;
  */
 public class HighLow extends JFrame implements ActionListener {
 
-    URL imageURL = this.getClass().getClassLoader().getResource("cardBack.png");
+    URL imageURL = this.getClass().getClassLoader().getResource("images/cardBack.png");
     ImageIcon cardBacks = new ImageIcon(imageURL);
     static ImageIcon[] cards = new ImageIcon[52];
     static int[] refArray = new int [52];

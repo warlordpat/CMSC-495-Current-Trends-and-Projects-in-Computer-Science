@@ -1,4 +1,4 @@
-package group3;
+
 
 import java.awt.*;
 import java.net.URL;
@@ -10,7 +10,7 @@ import javax.swing.border.EmptyBorder;
 
 public class War {
     
-    URL imageURL = this.getClass().getClassLoader().getResource("cardBack.png");
+    URL imageURL = this.getClass().getClassLoader().getResource("images/cardBack.png");
     ImageIcon cardBacks = new ImageIcon(imageURL);
     static ImageIcon[] cards = new ImageIcon[52];
     static int[] refArray = new int [52];
