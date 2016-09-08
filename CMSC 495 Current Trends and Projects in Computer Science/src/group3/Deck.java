@@ -74,6 +74,7 @@ public class Deck extends JLabel {
      * Shuffles the deck randomly.
      */
     void shuffle() {
+        System.out.println("Starting shuffle");
         List<Card> temp = cards;
         cards = new ArrayList<>();
         // Randomly draws a card out of the deck until the temp deck is empty
@@ -83,83 +84,87 @@ public class Deck extends JLabel {
             Card randomCard = temp.remove(random);
             cards.add(randomCard);
         } // end while
-
+        System.out.println("end of good shuffle");
         // Deprecated shuffle and image load code. Left in for now to not break
         // anything.
-        {
-            for (int j = 1; j <= 52; j++) {
-
-                int position = 0;
-                do {
-                    position = (int) (Math.random() * 52);
-                } while (cardIcon[position] != null);
-
-                URL cardURL = this.getClass().getClassLoader().getResource("images/" + j + ".png");
-                cardIcon[position] = new ImageIcon(cardURL);
-            }
-            String refPath = cardIcon[0].toString();
-            String filePath = refPath.substring(0, refPath.lastIndexOf("/"));
-
-            for (int ref2 = 0; ref2 < 52; ref2++) {
-
-                for (int ref = 1; ref <= 52; ref++) {
-
-                    if (cardIcon[ref2].toString().equals(filePath + "/" + ref + ".png")) {
-
-                        if (ref == 1 || ref == 14 || ref == 27 || ref == 40) {
-                            refArray[ref2] = 14;
-                        }
-                        if (ref == 2 || ref == 15 || ref == 28 || ref == 41) {
-                            refArray[ref2] = 2;
-                        }
-                        if (ref == 3 || ref == 16 || ref == 29 || ref == 42) {
-                            refArray[ref2] = 3;
-                        }
-                        if (ref == 4 || ref == 17 || ref == 30 || ref == 43) {
-                            refArray[ref2] = 4;
-                        }
-                        if (ref == 5 || ref == 18 || ref == 31 || ref == 44) {
-                            refArray[ref2] = 5;
-                        }
-                        if (ref == 6 || ref == 19 || ref == 32 || ref == 45) {
-                            refArray[ref2] = 6;
-                        }
-                        if (ref == 7 || ref == 20 || ref == 33 || ref == 46) {
-                            refArray[ref2] = 7;
-                        }
-                        if (ref == 8 || ref == 21 || ref == 34 || ref == 47) {
-                            refArray[ref2] = 8;
-                        }
-                        if (ref == 9 || ref == 22 || ref == 35 || ref == 48) {
-                            refArray[ref2] = 9;
-                        }
-                        if (ref == 10 || ref == 23 || ref == 36 || ref == 49) {
-                            refArray[ref2] = 10;
-                        }
-                        if (ref == 11 || ref == 24 || ref == 37 || ref == 50) {
-                            refArray[ref2] = 11;
-                        }
-                        if (ref == 12 || ref == 25 || ref == 38 || ref == 51) {
-                            refArray[ref2] = 12;
-                        }
-                        if (ref == 13 || ref == 26 || ref == 39 || ref == 52) {
-                            refArray[ref2] = 13;
-                        }
-                    }
-                }
-            }
-
-            for (int iNum = 0; iNum <= 26; iNum++) {
-                playerHand.add(deal(iNum));
-                playerCards.add(returnCard(iNum));
-                // playerRefArray.add(deck.deal(iNum));
-                aiHand.add(deal(iNum + 1));
-                AICards.add(returnCard(iNum + 1));
-                // AIRefArray.add(deck.deal(iNum + 1));
-                // player.addCard(deck.deal());
-                // ai.addCard(deck.deal());
-            }
-        } // end deprecated block
+        // {
+        // for (int j = 1; j <= 52; j++) {
+        //
+        // int position = 0;
+        // do {
+        // position = (int) (Math.random() * 52);
+        // } while (cardIcon[position] != null);
+        //
+        // URL cardURL = this.getClass().getClassLoader().getResource("images/"
+        // + j + ".png");
+        // cardIcon[position] = new ImageIcon(cardURL);
+        // }
+        // String refPath = cardIcon[0].toString();
+        // String filePath = refPath.substring(0, refPath.lastIndexOf("/"));
+        //
+        // for (int ref2 = 0; ref2 < 52; ref2++) {
+        //
+        // for (int ref = 1; ref <= 52; ref++) {
+        //
+        // if (cardIcon[ref2].toString().equals(filePath + "/" + ref + ".png"))
+        // {
+        //
+        // if (ref == 1 || ref == 14 || ref == 27 || ref == 40) {
+        // refArray[ref2] = 14;
+        // }
+        // if (ref == 2 || ref == 15 || ref == 28 || ref == 41) {
+        // refArray[ref2] = 2;
+        // }
+        // if (ref == 3 || ref == 16 || ref == 29 || ref == 42) {
+        // refArray[ref2] = 3;
+        // }
+        // if (ref == 4 || ref == 17 || ref == 30 || ref == 43) {
+        // refArray[ref2] = 4;
+        // }
+        // if (ref == 5 || ref == 18 || ref == 31 || ref == 44) {
+        // refArray[ref2] = 5;
+        // }
+        // if (ref == 6 || ref == 19 || ref == 32 || ref == 45) {
+        // refArray[ref2] = 6;
+        // }
+        // if (ref == 7 || ref == 20 || ref == 33 || ref == 46) {
+        // refArray[ref2] = 7;
+        // }
+        // if (ref == 8 || ref == 21 || ref == 34 || ref == 47) {
+        // refArray[ref2] = 8;
+        // }
+        // if (ref == 9 || ref == 22 || ref == 35 || ref == 48) {
+        // refArray[ref2] = 9;
+        // }
+        // if (ref == 10 || ref == 23 || ref == 36 || ref == 49) {
+        // refArray[ref2] = 10;
+        // }
+        // if (ref == 11 || ref == 24 || ref == 37 || ref == 50) {
+        // refArray[ref2] = 11;
+        // }
+        // if (ref == 12 || ref == 25 || ref == 38 || ref == 51) {
+        // refArray[ref2] = 12;
+        // }
+        // if (ref == 13 || ref == 26 || ref == 39 || ref == 52) {
+        // refArray[ref2] = 13;
+        // }
+        // }
+        // }
+        //
+        // }
+        //
+        // for (int iNum = 0; iNum <= 26; iNum++) {
+        // playerHand.add(deal(iNum));
+        // playerCards.add(returnCard(iNum));
+        // // playerRefArray.add(deck.deal(iNum));
+        // aiHand.add(deal(iNum + 1));
+        // AICards.add(returnCard(iNum + 1));
+        // // AIRefArray.add(deck.deal(iNum + 1));
+        // // player.addCard(deck.deal());
+        // // ai.addCard(deck.deal());
+        // }
+        // } // end deprecated block
+        System.out.println("shuffle complete");
     } // end method
 
     /**
