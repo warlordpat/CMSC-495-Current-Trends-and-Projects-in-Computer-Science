@@ -80,14 +80,26 @@ public class Hand extends JLabel {
         cards.add(card); // add the card to the Hand's List
         add(card, 0); // add the card to the hand JLabel
         System.out.println("card added to hand and label");
+        resize();
+        repaint(); // force the GUI to update when a card is added
+    } // end method
+
+    /**
+     * Resizes the Hand. Use when the number of Cards in the hand changes.
+     */
+    private void resize() {
+        int index = 0;
+        for (Card card : cards) {
+            card.setBounds(index * 75, 0, 72, 96);
+            index++;
+        }
         if (cards.size() != 0) {
             // resize the hand JComponent to the size of the hand
             setSize(3 * cards.size() + cards.size() * 72, 96);
         } else {
             setSize(72, 96); // default size of a single card.
         }
-        repaint(); // force the GUI to update when a card is added
-    } // end method
+    }
 
     /**
      * Scores the Hand based on the value Map. Should be overridden in a
@@ -97,9 +109,11 @@ public class Hand extends JLabel {
      * @return the score of the Hand.
      */
     int scoreHand() {
+        System.out.println("in scoring");
         int sum = 0;
         boolean hasAce = false;
         for (Card card : cards) {
+            System.out.println("iterating over cards");
             if (card.getRank().equals(Rank.ACE)) {
                 // have an ace
                 hasAce = true;
@@ -122,6 +136,7 @@ public class Hand extends JLabel {
      * @return true, if busted
      */
     boolean isBusted() {
+        System.out.println("scoring hand");
         if (scoreHand() <= 21) {
             return false;
         } else {
@@ -148,12 +163,24 @@ public class Hand extends JLabel {
     }
 
     /**
-     * Removes (discards) a card. Does not do anything with the card.
+     * Gets a card at the given index.
+     * 
+     * @param index
+     *            the index of the Card
+     * @return the Card at that index
+     */
+    Card getCard(int index) {
+        return cards.get(index);
+    } // end method
+
+    /**
+     * Removes (discards) all cards. Does not do anything with the card.
      */
     public void returnCards() {
         while (cards.size() > 0) {
             cards.remove(0);
         }
+        resize();
     } // end method
 
     /**
@@ -185,7 +212,9 @@ public class Hand extends JLabel {
      * @return the Card removed from the Hand
      */
     public Card removeCard() {
-        return cards.remove(0);
+        Card card = cards.remove(0);
+        resize();
+        return card;
     } // end method
 
     /*
