@@ -3,6 +3,7 @@ package group3;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.util.*;
 import javax.swing.*;
 
@@ -15,10 +16,45 @@ public class Blackjack extends JPanel {
     /**
      * 
      */
+    private static final String REMAIN = "Remaining ";
+    /**
+     * 
+     */
     private static final long serialVersionUID = 510809952979347694L;
+    /**
+     * The current deck in play.
+     */
     private Deck deck;
     private Hand dealer, player;
+    /**
+     * A hand to hold the player's split hand cards.
+     */
+    private Hand playerSplitHand;
+    /**
+     * If the hand is still in play.
+     */
     boolean handInPlay;
+    /**
+     * If the hand was split.
+     */
+    @SuppressWarnings("unused")
+    private boolean wasSplit;
+    /**
+     * If the player's first hand is complete.
+     */
+    @SuppressWarnings("unused")
+    private boolean doneHand1;
+    /**
+     * If the second hand is still in play.
+     */
+    @SuppressWarnings("unused")
+    private boolean handTwoInPlay;
+    private boolean splitTest = true;
+    /**
+     * The GUI element that displays the number of cards remaining in the deck.
+     */
+    private JLabel remaining;
+    private JButton jbSplit;
 
     /**
      * 
@@ -32,6 +68,7 @@ public class Blackjack extends JPanel {
     public void begin() {
         System.out.println("beginning");
         patrickGUI();
+
         newGame();
         deal();
     }
@@ -40,6 +77,9 @@ public class Blackjack extends JPanel {
         deck = new Deck();
         deck.shuffle();
         deck.setBounds(60, 35, 79, 96); // set the deck size
+        remaining = new JLabel(REMAIN + deck.deckSize());
+        remaining.setBounds(60 + 72, 30, 80, 50);
+        add(remaining);
         System.out.println("Adding Deck");
         add(deck); // add the deck to the play surface
 
@@ -84,82 +124,186 @@ public class Blackjack extends JPanel {
      * Cards left gets low.
      */
     public void deal() {
-        if (deck.deckSize() < 8) {
+        if (deck.deckSize() < 10) {
+            System.out.println("reshuffling");
             deck = new Deck();
             deck.shuffle();
-            JOptionPane.showMessageDialog(null, "Reshuffling...");
+            JOptionPane.showMessageDialog(this, "Reshuffling...");
         }
         if (!handInPlay) {
             System.out.println("Dealing new hand");
             remove(dealer);
             dealer = new Hand();
-            dealer.setBounds(400, 100, (2 * 72), 96); // adds a new dealer hand
+            dealer.setBounds(200, 100, (2 * 72), 96); // adds a new dealer hand
                                                       // to the GUI
             add(dealer);
 
             player = new Hand();
-            player.setBounds(400, 400, (2 * 72), 96); // adds a new player hand
+            player.setBounds(200, 300, (2 * 72), 96); // adds a new player hand
                                                       // to the GUI
             add(player);
 
-            Card temp = deck.deal();
-            player.addCard(temp);
-            temp.flip();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            {
+                addCardFaceUp(player);
+
+                // try {
+                // Thread.sleep(200);
+                // } catch (InterruptedException e) {
+                // e.printStackTrace();
+                // }
+
+                addCardFaceUp(dealer);
+
+                // try {
+                // Thread.sleep(200);
+                // } catch (InterruptedException e) {
+                // e.printStackTrace();
+                // }
+
+                addCardFaceUp(player);
+
+                // try {
+                // Thread.sleep(200);
+                // } catch (InterruptedException e) {
+                // e.printStackTrace();
+                // }
+
+                dealer.addCard(deck.deal());
+                updateRemain();
             }
-            temp = deck.deal();
-            dealer.addCard(temp);
-            temp.flip();
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            temp = deck.deal();
-            player.addCard(temp);
-            temp.flip();
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            dealer.addCard(deck.deal());
             System.out.println(dealer);
+            if (isSplittable()) {
+                add(jbSplit);
+            }
             handInPlay = true;
             repaint();
         }
     }
 
+    /**
+     * Adds a card to the given player and flips it face up.
+     * 
+     * @param player
+     *            the player to give the card to
+     */
+    private void addCardFaceUp(Hand player) {
+        Card temp;
+
+        if (splitTest) {
+            temp = new Card(Rank.ACE, Suit.CLUB);
+        } else {
+            temp = deck.deal();
+        }
+        updateRemain();
+        player.addCard(temp);
+        temp.flip();
+    } // end method
+
+    /**
+     * Updates the card remaining in the deck GUI element.
+     */
+    private void updateRemain() {
+        remaining.setText(REMAIN + deck.deckSize());
+    }
+
     public void hit() {
+        System.out.println("hitting");
         if (handInPlay) {
-            player.addCard(deck.deal());
+            Card card = deck.deal();
+            updateRemain();
+            card.flip();
+            System.out.println(card);
+            player.addCard(card);
+
+            // try {
+            // Thread.sleep(200);
+            // } catch (InterruptedException e) {
+            // e.printStackTrace();
+            // }
+
+            // repaint();
+
+            int answer = -1;
+            System.out.println("Bust checking");
             if (player.isBusted()) {
-                JOptionPane.showMessageDialog(null, "Busted! You lose");
+                System.out.println("Getting answer");
+                answer = JOptionPane.showConfirmDialog(this, "Busted! You lose this hand\nDeal again?", "Deal again?",
+                        JOptionPane.YES_NO_OPTION);
+                System.out.println("");
                 handInPlay = false;
             } // end if
+            if (answer == JOptionPane.YES_OPTION) {
+                reset();
+            }
         } // end if
     } // end method
 
     public void stand() {
+        // stand only matters if the hand is still in play
         if (handInPlay) {
+            dealer.getCard(1).flip();
             while (dealer.scoreHand() <= 17) {
-                dealer.addCard(deck.deal());
+                Card card = deck.deal();
+                updateRemain();
+                dealer.addCard(card);
+                card.flip();
             }
             handInPlay = false;
+            int answer;
             if (dealer.scoreHand() >= player.scoreHand() && !dealer.isBusted()) {
-                JOptionPane.showMessageDialog(null, "You lose.");
+                answer = JOptionPane.showConfirmDialog(this, "You lose this hand\nDeal again?", "Deal again?",
+                        JOptionPane.YES_NO_OPTION);
             } else {
-                JOptionPane.showMessageDialog(null, "You win!");
+                answer = JOptionPane.showConfirmDialog(this, "You win this hand\nDeal again?", "Deal again?",
+                        JOptionPane.YES_NO_OPTION);
+            }
+            if (answer == JOptionPane.YES_OPTION) {
+                reset();
             }
         }
     }
+
+    /**
+     * 
+     */
+    private void reset() {
+        System.out.println("Answered yes");
+        remove(player);
+        remove(dealer);
+        System.out.println("removed player/dealer");
+        revalidate();
+        repaint();
+        System.out.println("making deal");
+        deal();
+        System.out.println("finished deal");
+    } // end method
+
+    /**
+     * Determines if the players hand can be split.
+     * 
+     * @return yes, if the players hand can be split
+     */
+    boolean isSplittable() {
+        if (player.getCards().size() == 2 && player.getCard(0).getRank().equals(player.getCard(1).getRank())) {
+            return true;
+        }
+        return false;
+    } // end method
+
+    /**
+     * Splits the player's hand into two separate hands.
+     */
+    void split() {
+        wasSplit = true;
+        playerSplitHand = new Hand();
+        handTwoInPlay = true;
+        playerSplitHand.addCard(player.removeCard());
+        // now add the new hand to the GUI
+        playerSplitHand.setBounds(200, 300 + 100, (1 * 72), 96);
+        add(playerSplitHand);
+        revalidate();
+        repaint();
+    } // end method
 
     public boolean isHandInPlay() {
         return handInPlay;
@@ -179,6 +323,44 @@ public class Blackjack extends JPanel {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        int BUTTON_SIZE = 80;
+        {
+            JButton hit = new JButton("Hit");
+            hit.setFont(new Font("Courier Bold", Font.BOLD, 17));
+            // hit.setBackground(new Color(192, 108, 108));
+            hit.setBounds(60, 200, BUTTON_SIZE, BUTTON_SIZE);
+            add(hit);
+            hit.addActionListener(al -> {
+                hit();
+                System.out.println("finished hit button processing");
+            });
+        }
+
+        {
+            JButton stand = new JButton("Stand");
+            stand.setFont(new Font("Courier Bold", Font.BOLD, 17));
+            // stand.setBackground(new Color(192, 108, 108));
+            stand.setBounds(60, 200 + BUTTON_SIZE, BUTTON_SIZE, BUTTON_SIZE);
+            add(stand);
+            stand.addActionListener(al -> {
+                stand();
+                System.out.println("finished stand button processing");
+            });
+        }
+        {
+            jbSplit = new JButton("Split");
+            jbSplit.setFont(new Font("Courier Bold", Font.BOLD, 17));
+            // split.setBackground(new Color(192, 108, 108));
+            jbSplit.setBounds(60, 200 + 2 * BUTTON_SIZE, BUTTON_SIZE, BUTTON_SIZE);
+            // add(split);
+            jbSplit.addActionListener(al -> {
+                if (isSplittable()) {
+                    split();
+                    remove(jbSplit);
+                }
+                System.out.println("finished split button processing");
+            });
+        }
 
     }
 
