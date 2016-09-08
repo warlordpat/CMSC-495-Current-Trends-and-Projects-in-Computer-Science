@@ -136,7 +136,7 @@ public class Card extends JComponent {
         // System.out.println("currentImage: " + currentImage.getWidth() + ", "
         // + currentImage.getHeight());
         try {
-            Thread.sleep(500); // pause so you can see the flip
+            Thread.sleep(100); // pause so you can see the flip
         } catch (InterruptedException e) {
             e.printStackTrace();
         } // end catch
