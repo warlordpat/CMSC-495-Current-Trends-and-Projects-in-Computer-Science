@@ -2,6 +2,7 @@ package group3;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -60,12 +61,14 @@ public class Hand extends JLabel {
      * resizes itself to allow all cards to be placed on the GUI by default.
      */
     public Hand() {
+        super();
         cards = new ArrayList<>();
         setBackground(null);
         setLayout(null);
         // load card backs from Cards class to reduce image loading error
         // surface.
         cardBack = Card.getBacks().getSubimage(72, 0, 72, 96);
+        this.setPreferredSize(new Dimension(72, 96));
     } // end constructor
 
     /**
