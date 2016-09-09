@@ -49,7 +49,7 @@ public class Blackjack extends JPanel {
      */
     @SuppressWarnings("unused")
     private boolean handTwoInPlay;
-    private boolean splitTest = true;
+    private boolean splitTest = false;
     /**
      * The GUI element that displays the number of cards remaining in the deck.
      */
@@ -174,6 +174,9 @@ public class Blackjack extends JPanel {
             System.out.println(dealer);
             if (isSplittable()) {
                 add(jbSplit);
+                jbSplit.setVisible(true);
+            } else {
+                jbSplit.setVisible(false);
             }
             handInPlay = true;
             repaint();
@@ -270,6 +273,9 @@ public class Blackjack extends JPanel {
         System.out.println("Answered yes");
         remove(player);
         remove(dealer);
+        if (handTwoInPlay) {
+            remove(playerSplitHand);
+        }
         System.out.println("removed player/dealer");
         revalidate();
         repaint();
