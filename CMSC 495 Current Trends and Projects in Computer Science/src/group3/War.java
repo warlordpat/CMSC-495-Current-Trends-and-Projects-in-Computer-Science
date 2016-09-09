@@ -2,35 +2,16 @@ package group3;
 
 import java.awt.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Objects;
-
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 
 public class War {
 
     URL imageURL = this.getClass().getClassLoader().getResource("images/cardBack.png");
     ImageIcon cardBacks = new ImageIcon(imageURL);
-    static ImageIcon[] cards = new ImageIcon[52];
-    static int[] refArray = new int[52];
-    // private ArrayList<Integer> playerHand = new ArrayList<>();
-    // private ArrayList<Integer> aiHand = new ArrayList<>();
-    private ArrayList<Integer> warPlayer = new ArrayList<>();
-    private ArrayList<Integer> warAI = new ArrayList<>();
-    // private ArrayList<ImageIcon> playerCards = new ArrayList<>();
-    // private ArrayList<ImageIcon> AICards = new ArrayList<>();
-    private ArrayList<ImageIcon> warPlayerCards = new ArrayList<>();
-    private ArrayList<ImageIcon> warAICards = new ArrayList<>();
-    // private ArrayList<Integer> playerRefArray = new ArrayList<Integer>();
-    // private ArrayList<Integer> AIRefArray = new ArrayList<Integer>();
-
-    // private Stack playerStack = new Stack();
-    // private Stack aiStack = new Stack();
     private Deck deck;
     private int playCount = 0;
     private int warIndex = 0;
-    private Hand ai, player, war;
+    private Hand ai, player;
     private Card playerCard, aiCard;
     JTextArea jta;
     JFrame frame = new JFrame("War!");
@@ -48,25 +29,6 @@ public class War {
     JLabel blankLabel2 = new JLabel("  ");
     JLabel blankLabel3 = new JLabel("  ");
     boolean bNew;
-
-    // Replaced with createRefArray method. Using graphics, value of the cards
-    // must be determined by preset name.
-    // private static Map<Rank, Integer> values = new HashMap<>();
-    // static {
-    // values.put(Rank.ACE, 11);
-    // values.put(Rank.TWO, 2);
-    // values.put(Rank.THREE, 3);
-    // values.put(Rank.FOUR, 4);
-    // values.put(Rank.FIVE, 5);
-    // values.put(Rank.SIX, 6);
-    // values.put(Rank.SEVEN, 7);
-    // values.put(Rank.EIGHT, 8);
-    // values.put(Rank.NINE, 9);
-    // values.put(Rank.TEN, 10);
-    // values.put(Rank.JACK, 10);
-    // values.put(Rank.QUEEN, 10);
-    // values.put(Rank.KING, 10);
-    // }
 
     public War() {
 
@@ -86,33 +48,18 @@ public class War {
                 ai.addCard(temp);
             } // end else
         } // end if
-          // war = new Hand();
         jta = new JTextArea(50, 50);
         bNew = false;
-        // player.returnCards();
-        // ai.returnCards();
-        // Split();
         gui();
         playCount = 0;
-
     }
 
     public static void main(String[] args) {
-
-        new War();
-
-    }
-
-    public void Split() {
-
-    }
-
-    public static void createRefArray() {
-
+        War test = new War();
+        test.begin();
     }
 
     public void gui() {
-
         frame.setVisible(true);
         frame.setSize(900, 900);
         frame.setResizable(false);
@@ -138,7 +85,6 @@ public class War {
         });
 
         JPanel pDisplay = new JPanel(new BorderLayout());
-
         menuItemD.addActionListener(ae -> {
             Directions();
         });
@@ -168,7 +114,6 @@ public class War {
         panel.add(jbOne, BorderLayout.SOUTH);
         warFrame.add(warPanel);
         frame.add(panel);
-
         frame.pack();
     }
 
@@ -292,9 +237,6 @@ public class War {
 
     }
 
-    // public void Display() {
-    // jta.append("[" + player.handSize() + " vs " + ai.handSize() + "]\n");
-    // }
     public void Directions() {
         JOptionPane.showMessageDialog(null,
                 "The player with the higher card wins. \nIn the event of a tie, each player offers \nthe top 3 cards of their decks, and \nthen the player with the highest \n4th card wins the whole pile.");
