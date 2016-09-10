@@ -1,6 +1,5 @@
 package group3;
 
-
 import java.awt.*;
 import java.util.*;
 import javax.swing.*;
@@ -34,17 +33,20 @@ public class ThirtyOne {
     private JButton jbPlayerCard1, jbPlayerCard2, jbPlayerCard3;
     private int player31;
     private int ai31;
+
     public ThirtyOne() {
-        
+
         deck = new Deck();
         deck.shuffle();
         ai = new Hand();
         player = new Hand();
     }
+
     public void begin() {
         gui();
         deal();
     }
+
     public void deal() {
         if (deck.deckSize() < 8) {
             deck = new Deck();
@@ -72,6 +74,7 @@ public class ThirtyOne {
         ai.addCard(aiCard2);
         ai.addCard(aiCard3);
     }
+
     public void gui() {
         Random rand = new Random();
         JFrame frame = new JFrame("Thirty-One");
@@ -100,7 +103,7 @@ public class ThirtyOne {
             Directions();
         });
         menuItem1.addActionListener(ae -> {
-            //add in High Score code
+            // add in High Score code
         });
         menuItem2.addActionListener(ae -> {
             frame.dispose();
@@ -128,214 +131,185 @@ public class ThirtyOne {
         JButton jbCard1 = new JButton(CenterCard1);
         JButton jbCard2 = new JButton(CenterCard2);
         JButton jbCard3 = new JButton(CenterCard3);
-        if ((rand.nextInt(2)+1) == 1)
-        {
+        if ((rand.nextInt(2) + 1) == 1) {
             TopPanel.add(jbCard1, BorderLayout.LINE_START);
             TopPanel.add(jbCard2, BorderLayout.CENTER);
             TopPanel.add(jbCard3, BorderLayout.LINE_END);
-        }//player goes first
-        else
-        {
-            if (iCard1 > iCard2)
-            {
-                if (iCard1 > iCard3)
-                {
+        } // player goes first
+        else {
+            if (iCard1 > iCard2) {
+                if (iCard1 > iCard3) {
                     ai.addCard(Card1);
                     TopPanel.add(jbCard2, BorderLayout.LINE_START);
                     TopPanel.add(jbCard3, BorderLayout.LINE_END);
-                }
-                else
-                {
+                } else {
                     ai.addCard(Card3);
                     TopPanel.add(jbCard1, BorderLayout.LINE_START);
                     TopPanel.add(jbCard2, BorderLayout.LINE_END);
                 }
-            }
-            else
-            {
+            } else {
                 ai.addCard(Card2);
                 TopPanel.add(jbCard1, BorderLayout.LINE_START);
                 TopPanel.add(jbCard3, BorderLayout.LINE_END);
             }
-        }//ai goes first
+        } // ai goes first
         jbCard1.addActionListener(ae -> {
-            if (player.handSize() < 4)
-            {
+            if (player.handSize() < 4) {
                 player.addCard(Card1);
                 TopPanel.remove(jbCard1);
                 player31 = 31 - player.total();
                 player31 = Math.abs(player31);
                 ai31 = 31 - ai.total();
                 ai31 = Math.abs(ai31);
-                if (player31 < ai31)
-                {
-                    Object[] options = {"Yes", "No"};
-                    int n = JOptionPane.showOptionDialog(frame, ("You win " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"), "You Win!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-                    if (n == JOptionPane.YES_OPTION)
-                    {
+                if (player31 < ai31) {
+                    Object[] options = { "Yes", "No" };
+                    int n = JOptionPane.showOptionDialog(frame,
+                            ("You win " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"),
+                            "You Win!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+                            options[1]);
+                    if (n == JOptionPane.YES_OPTION) {
                         frame.dispose();
                         deck = new Deck();
                         deck.shuffle();
                         begin();
-                    }
-                    else
-                    {
+                    } else {
                         frame.dispose();
                     }
-                }
-                else if (player31 == ai31)
-                {
-                    Object[] options = {"Yes", "No"};
-                    int n = JOptionPane.showOptionDialog(frame, ("You tied at " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"), "You Tie", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-                    if (n == JOptionPane.YES_OPTION)
-                    {
-                        frame.dispose();
-                        deck = new Deck();
-                        deck.shuffle();
-                        begin();
-                    }
-                    else
-                    {
-                        frame.dispose();
-                    }
-                }
-                else
-                {
-                    Object[] options = {"Yes", "No"};
-                    int n = JOptionPane.showOptionDialog(frame, ("You lose " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"), "You Lose", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-                    if (n == JOptionPane.YES_OPTION)
-                    {
+                } else if (player31 == ai31) {
+                    Object[] options = { "Yes", "No" };
+                    int n = JOptionPane.showOptionDialog(frame,
+                            ("You tied at " + player.total() + " to " + ai.total()
+                                    + "!\nWould you like to play again?"),
+                            "You Tie", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+                            options[1]);
+                    if (n == JOptionPane.YES_OPTION) {
                         frame.dispose();
                         deck = new Deck();
                         deck.shuffle();
                         begin();
+                    } else {
+                        frame.dispose();
                     }
-                    else
-                    {
+                } else {
+                    Object[] options = { "Yes", "No" };
+                    int n = JOptionPane.showOptionDialog(frame,
+                            ("You lose " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"),
+                            "You Lose", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+                            options[1]);
+                    if (n == JOptionPane.YES_OPTION) {
+                        frame.dispose();
+                        deck = new Deck();
+                        deck.shuffle();
+                        begin();
+                    } else {
                         frame.dispose();
                     }
                 }
-            }
-            else
-            {
+            } else {
                 JOptionPane.showMessageDialog(null, "You already have 4 cards in your hand");
             }
         });
         jbCard2.addActionListener(ae -> {
-            if (player.handSize() < 4)
-            {
+            if (player.handSize() < 4) {
                 player.addCard(Card2);
                 TopPanel.remove(jbCard2);
-                if (player.total() > ai.total())
-                {
-                    Object[] options = {"Yes", "No"};
-                    int n = JOptionPane.showOptionDialog(frame, ("You win " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"), "You Win!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-                    if (n == JOptionPane.YES_OPTION)
-                    {
+                if (player.total() > ai.total()) {
+                    Object[] options = { "Yes", "No" };
+                    int n = JOptionPane.showOptionDialog(frame,
+                            ("You win " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"),
+                            "You Win!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+                            options[1]);
+                    if (n == JOptionPane.YES_OPTION) {
                         frame.dispose();
                         deck = new Deck();
                         deck.shuffle();
                         begin();
-                    }
-                    else
-                    {
+                    } else {
                         frame.dispose();
                     }
-                }
-                else if (player.total() == ai.total())
-                {
-                    Object[] options = {"Yes", "No"};
-                    int n = JOptionPane.showOptionDialog(frame, ("You tied at " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"), "You Tie", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-                    if (n == JOptionPane.YES_OPTION)
-                    {
-                        frame.dispose();
-                        deck = new Deck();
-                        deck.shuffle();
-                        begin();
-                    }
-                    else
-                    {
-                        frame.dispose();
-                    }
-                }
-                else
-                {
-                    Object[] options = {"Yes", "No"};
-                    int n = JOptionPane.showOptionDialog(frame, ("You lose " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"), "You Lose", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-                    if (n == JOptionPane.YES_OPTION)
-                    {
+                } else if (player.total() == ai.total()) {
+                    Object[] options = { "Yes", "No" };
+                    int n = JOptionPane.showOptionDialog(frame,
+                            ("You tied at " + player.total() + " to " + ai.total()
+                                    + "!\nWould you like to play again?"),
+                            "You Tie", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+                            options[1]);
+                    if (n == JOptionPane.YES_OPTION) {
                         frame.dispose();
                         deck = new Deck();
                         deck.shuffle();
                         begin();
+                    } else {
+                        frame.dispose();
                     }
-                    else
-                    {
+                } else {
+                    Object[] options = { "Yes", "No" };
+                    int n = JOptionPane.showOptionDialog(frame,
+                            ("You lose " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"),
+                            "You Lose", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+                            options[1]);
+                    if (n == JOptionPane.YES_OPTION) {
+                        frame.dispose();
+                        deck = new Deck();
+                        deck.shuffle();
+                        begin();
+                    } else {
                         frame.dispose();
                     }
                 }
-            }
-            else
-            {
+            } else {
                 JOptionPane.showMessageDialog(null, "You already have 4 cards in your hand");
             }
         });
         jbCard3.addActionListener(ae -> {
-            if (player.handSize() < 4)
-            {
+            if (player.handSize() < 4) {
                 player.addCard(Card3);
                 TopPanel.remove(jbCard3);
-                if (player.total() > ai.total())
-                {
-                    Object[] options = {"Yes", "No"};
-                    int n = JOptionPane.showOptionDialog(frame, ("You win " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"), "You Win!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-                    if (n == JOptionPane.YES_OPTION)
-                    {
+                if (player.total() > ai.total()) {
+                    Object[] options = { "Yes", "No" };
+                    int n = JOptionPane.showOptionDialog(frame,
+                            ("You win " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"),
+                            "You Win!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+                            options[1]);
+                    if (n == JOptionPane.YES_OPTION) {
                         frame.dispose();
                         deck = new Deck();
                         deck.shuffle();
                         begin();
-                    }
-                    else
-                    {
+                    } else {
                         frame.dispose();
                     }
-                }
-                else if (player.total() == ai.total())
-                {
-                    Object[] options = {"Yes", "No"};
-                    int n = JOptionPane.showOptionDialog(frame, ("You tied at " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"), "You Tie", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-                    if (n == JOptionPane.YES_OPTION)
-                    {
-                        frame.dispose();
-                        deck = new Deck();
-                        deck.shuffle();
-                        begin();
-                    }
-                    else
-                    {
-                        frame.dispose();
-                    }
-                }
-                else
-                {
-                    Object[] options = {"Yes", "No"};
-                    int n = JOptionPane.showOptionDialog(frame, ("You lose " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"), "You Lose", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-                    if (n == JOptionPane.YES_OPTION)
-                    {
+                } else if (player.total() == ai.total()) {
+                    Object[] options = { "Yes", "No" };
+                    int n = JOptionPane.showOptionDialog(frame,
+                            ("You tied at " + player.total() + " to " + ai.total()
+                                    + "!\nWould you like to play again?"),
+                            "You Tie", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+                            options[1]);
+                    if (n == JOptionPane.YES_OPTION) {
                         frame.dispose();
                         deck = new Deck();
                         deck.shuffle();
                         begin();
+                    } else {
+                        frame.dispose();
                     }
-                    else
-                    {
+                } else {
+                    Object[] options = { "Yes", "No" };
+                    int n = JOptionPane.showOptionDialog(frame,
+                            ("You lose " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"),
+                            "You Lose", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+                            options[1]);
+                    if (n == JOptionPane.YES_OPTION) {
+                        frame.dispose();
+                        deck = new Deck();
+                        deck.shuffle();
+                        begin();
+                    } else {
                         frame.dispose();
                     }
                 }
-            }
-            else
-            {
+            } else {
                 JOptionPane.showMessageDialog(null, "You already have 4 cards in your hand");
             }
         });
@@ -356,7 +330,9 @@ public class ThirtyOne {
         frame.add(splitPaneHorizontal);
         frame.pack();
     }
+
     public void Directions() {
-        JOptionPane.showMessageDialog(null, "The goal of the game is to get the closest to 31. Whichever player is closer wins. Click one of the center cards to add it to your hand.");
+        JOptionPane.showMessageDialog(null,
+                "The goal of the game is to get the closest to 31. Whichever player is closer wins. Click one of the center cards to add it to your hand.");
     }
 }
