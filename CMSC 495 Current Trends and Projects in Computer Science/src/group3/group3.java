@@ -11,7 +11,7 @@ import javax.swing.border.*;
 public class group3 {
 
     Blackjack bj;
-    // ThirtyOne thirtyone = new ThirtyOne();
+     ThirtyOne thirtyone = new ThirtyOne();
     War war = new War();
     Concentration concentration = new Concentration();
     HighLow highLow = new HighLow();
@@ -81,8 +81,8 @@ public class group3 {
         JButton jbThirtyOne = new JButton("Thirty-One");
         jbThirtyOne.setFont(new Font("Courier Bold", Font.BOLD, 17));
         jbThirtyOne.addActionListener(ae -> {
-            // thirtyone = new ThirtyOne();
-            // thirtyone.begin();
+             thirtyone = new ThirtyOne();
+             thirtyone.begin();
         });
         JButton jbHighLow = new JButton("High or Low");
         jbHighLow.setFont(new Font("Courier Bold", Font.BOLD, 17));
