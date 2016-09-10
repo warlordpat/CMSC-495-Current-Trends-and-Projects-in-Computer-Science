@@ -100,9 +100,11 @@ public class War {
         });
 
         menuItemD.addActionListener(ae -> {
-            Directions();
+            directions();
         });
-
+        menuItem2.addActionListener(ae -> {
+            frame.dispose();
+        });
         JLayeredPane layeredPanePlayer = new JLayeredPane();
         JLabel backLabel = new JLabel(cardBacks, JLabel.CENTER);
         backLabel.setSize(106, 144);
@@ -224,7 +226,7 @@ public class War {
         handSizeAI.setText(Integer.toString(ai.handSize()));
     }
 
-    public void Directions() {
+    public void directions() {
         JOptionPane.showMessageDialog(null,
                 "The player with the higher card wins. \nIn the event of a tie, each player offers \nthe top 3 cards of their decks, and \nthen the player with the highest \n4th card wins the whole pile.");
     }
