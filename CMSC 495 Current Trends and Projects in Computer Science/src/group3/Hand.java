@@ -112,11 +112,11 @@ public class Hand extends JLabel {
      * @return the score of the Hand.
      */
     int scoreHand() {
-        System.out.println("in scoring");
+//        System.out.println("in scoring");
         int sum = 0;
         boolean hasAce = false;
         for (Card card : cards) {
-            System.out.println("iterating over cards");
+//            System.out.println("iterating over cards");
             if (card.getRank().equals(Rank.ACE)) {
                 // have an ace
                 hasAce = true;
