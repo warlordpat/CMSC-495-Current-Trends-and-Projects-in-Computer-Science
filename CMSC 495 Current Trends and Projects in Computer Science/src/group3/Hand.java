@@ -82,7 +82,7 @@ public class Hand extends JLabel {
         card.setBounds(cards.size() * 75, 0, 72, 96);
         cards.add(card); // add the card to the Hand's List
         add(card, 0); // add the card to the hand JLabel
-        System.out.println("card added to hand and label");
+//        System.out.println("card added to hand and label");
         resize();
         repaint(); // force the GUI to update when a card is added
     } // end method
