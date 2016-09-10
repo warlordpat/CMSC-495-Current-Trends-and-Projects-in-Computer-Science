@@ -14,24 +14,34 @@ public class War {
     private Hand ai, player;
     private Card playerCard, aiCard;
     JTextArea jta;
-    JFrame frame = new JFrame("War!");
-    JFrame warFrame = new JFrame("It's War!");
-    JPanel panel = new JPanel(new BorderLayout());
-    JPanel gameBoard = new JPanel(new GridLayout(0, 3, 2, 2));
-    JPanel warPanel = new JPanel(new GridLayout(0, 8, 15, 0));
-    JLabel warLabel1 = new JLabel(" ");
-    JLabel warLabel2 = new JLabel(" ");
-    JLabel warLabel3 = new JLabel(" ");
-    JLabel warLabel4 = new JLabel(" ");
-    JLabel playerDiscardLabel = new JLabel("  Player Cards   ");
-    JLabel aiDiscardLabel = new JLabel("  Computer Cards  ");
-    JLabel blankLabel1 = new JLabel("  ");
-    JLabel blankLabel2 = new JLabel("  ");
-    JLabel blankLabel3 = new JLabel("  ");
+    JFrame frame;
+    WarFrame warFrame;
+    JPanel panel;
+    JPanel gameBoard;
+
+    JLabel playerDiscardLabel;
+    JLabel aiDiscardLabel;
+    JLabel blankLabel1;
+    JLabel blankLabel2;
+    JLabel blankLabel3;
     boolean bNew;
+    private JLabel handSizeAI;
+    private JLabel handSizePlayer;
+    private boolean gameOver;
 
     public War() {
-
+        frame = new JFrame("War!");
+        warFrame = new WarFrame("It's War!");
+        panel = new JPanel(new BorderLayout());
+        gameBoard = new JPanel(new GridLayout(0, 3, 2, 2));
+        playerDiscardLabel = new JLabel();
+        playerDiscardLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        aiDiscardLabel = new JLabel();
+        aiDiscardLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        blankLabel1 = new JLabel("  ");
+        blankLabel2 = new JLabel("  ");
+        blankLabel3 = new JLabel("  ");
+        gameOver = false;
     }
 
     public void begin() {
@@ -80,161 +90,138 @@ public class War {
         frame.setJMenuBar(menuBar);
         JButton jbOne = new JButton("Battle");
         jbOne.addActionListener(ae -> {
-            Battle();
-            playCount++;
+            if (warFrame.isVisible()) {
+                warFrame.setVisible(false);
+            }
+            if (!gameOver) {
+                battle();
+                playCount++;
+            }
         });
 
-        JPanel pDisplay = new JPanel(new BorderLayout());
         menuItemD.addActionListener(ae -> {
             Directions();
         });
-        JLabel backLabel = new JLabel(cardBacks);
-        JLabel backLabel2 = new JLabel(cardBacks);
 
-        JLabel blankLabel2 = new JLabel(" ");
-        JLabel blankLabel3 = new JLabel(" ");
-        JLabel blankLabel4 = new JLabel(" ");
-        JLabel blankLabel5 = new JLabel(" ");
+        JLayeredPane layeredPanePlayer = new JLayeredPane();
+        JLabel backLabel = new JLabel(cardBacks, JLabel.CENTER);
+        backLabel.setSize(106, 144);
+        layeredPanePlayer.setPreferredSize(backLabel.getPreferredSize());
+        handSizePlayer = new JLabel("26");
+        handSizePlayer.setFont(new Font("Tahoma", Font.PLAIN, 30));
+        handSizePlayer.setHorizontalAlignment(SwingConstants.CENTER);
+        handSizePlayer.setLocation(69, 0);
+        handSizePlayer.setSize(37, 33);
+        handSizePlayer.setBackground(Color.WHITE);
+        layeredPanePlayer.add(handSizePlayer, new Integer(1));
+        layeredPanePlayer.add(backLabel, new Integer(0));
+
+        JLabel backLabel2 = new JLabel(cardBacks, JLabel.CENTER);
+        JLayeredPane layeredPaneAI = new JLayeredPane();
+        backLabel2.setSize(106, 144);
+        layeredPaneAI.setPreferredSize(backLabel.getPreferredSize());
+        handSizeAI = new JLabel("26");
+        handSizeAI.setFont(new Font("Tahoma", Font.PLAIN, 30));
+        handSizeAI.setHorizontalAlignment(SwingConstants.CENTER);
+        handSizeAI.setLocation(0, 0);
+        handSizeAI.setSize(37, 33);
+        handSizeAI.setBackground(Color.WHITE);
+        layeredPaneAI.add(handSizeAI, new Integer(1));
+        layeredPaneAI.add(backLabel2, new Integer(0));
+
         JLabel topLabel = new JLabel("      Player Cards                                          "
                 + "                                                                         Computer Cards   ");
-        // panel.add(blankLabel1);
-        // panel.add(blankLabel2);
-        // panel.add(blankLabel3);
+
         panel.add(topLabel, BorderLayout.NORTH);
-        // panel.add(player, BorderLayout.WEST);
-        panel.add(backLabel, BorderLayout.WEST);
-        // panel.add(blankLabel1, BorderLayout.CENTER);
-        panel.add(backLabel2, BorderLayout.EAST);
+        panel.add(layeredPanePlayer, BorderLayout.WEST);
+        panel.add(layeredPaneAI, BorderLayout.EAST);
         gameBoard.add(playerDiscardLabel);
         gameBoard.add(blankLabel1);
         gameBoard.add(aiDiscardLabel);
         panel.add(gameBoard, BorderLayout.CENTER);
-        // panel.add(blankLabel4);
-        // panel.add(blankLabel5);
         panel.add(jbOne, BorderLayout.SOUTH);
-        warFrame.add(warPanel);
-        frame.add(panel);
+        frame.getContentPane().add(panel);
         frame.pack();
     }
 
-    public void Battle() {
-
-        JLabel warPlayerLabel1 = new JLabel("", SwingConstants.CENTER);
-        JLabel warPlayerLabel2 = new JLabel("", SwingConstants.CENTER);
-        JLabel warPlayerLabel3 = new JLabel("", SwingConstants.CENTER);
-        JLabel breakPlayerLabel = new JLabel("", SwingConstants.CENTER);
-        JLabel warAILabel1 = new JLabel("", SwingConstants.CENTER);
-        JLabel warAILabel2 = new JLabel("", SwingConstants.CENTER);
-        JLabel warAILabel3 = new JLabel("", SwingConstants.CENTER);
-        JLabel breakAILabel = new JLabel("", SwingConstants.CENTER);
-
+    public void battle() {
         Card playerCard = player.removeCard();
         Card aiCard = ai.removeCard();
         playerDiscardLabel.setIcon(new ImageIcon(playerCard.front));
         aiDiscardLabel.setIcon(new ImageIcon(aiCard.front));
-
-        gameBoard.add(aiDiscardLabel);
-
         if (playerCard.getRank().compareTo(aiCard.getRank()) > 0) {
             // player card has a higher rank than ai card
             player.addCard(playerCard);
             player.addCard(aiCard);
-            blankLabel1.setText("You won this fight!");
+            updateHandSizeDisplay();
+            if (ai.handSize() == 0) {
+                blankLabel1.setText("Game Over/nYou win!");
+                gameOver = true;
+            } else {
+                blankLabel1.setText("You won this fight!");
+            }
         } else if (playerCard.getRank().compareTo(aiCard.getRank()) < 0) {
             // ai card has a higher rank than player card
             ai.addCard(playerCard);
             ai.addCard(aiCard);
-            blankLabel1.setText("You lost this fight!");
-            warLabel1.setText("YOU ");
-            warLabel2.setText("LOST ");
-            warLabel3.setText("THIS ");
-            warLabel4.setText("BATTLE!");
+            updateHandSizeDisplay();
+            if (player.handSize() == 0) {
+                blankLabel1.setText("Game Over/nYou lose!");
+                gameOver = true;
+            } else {
+                blankLabel1.setText("You lost this fight!");
+            } // end else
         } else {
             // equal, go to war!
-            blankLabel1.setText("WAR!");
-            warLabel1.setText("PREPARE ");
-            warLabel2.setText("FOR ");
-            warLabel3.setText("ANOTHER ");
-            warLabel4.setText("BATTLE!");
-            JLabel p1Label = new JLabel("Player Card 1", SwingConstants.CENTER);
-            JLabel p2Label = new JLabel("Player Card 2", SwingConstants.CENTER);
-            JLabel p3Label = new JLabel("Player Card 3", SwingConstants.CENTER);
-            JLabel p4Label = new JLabel("Player Card 4", SwingConstants.CENTER);
-            JLabel a1Label = new JLabel("AI Card 1", SwingConstants.CENTER);
-            JLabel a2Label = new JLabel("AI Card 2", SwingConstants.CENTER);
-            JLabel a3Label = new JLabel("AI Card 3", SwingConstants.CENTER);
-            JLabel a4Label = new JLabel("AI Card 4", SwingConstants.CENTER);
-            p1Label.setVerticalAlignment(SwingConstants.BOTTOM);
-            p2Label.setVerticalAlignment(SwingConstants.BOTTOM);
-            p3Label.setVerticalAlignment(SwingConstants.BOTTOM);
-            p4Label.setVerticalAlignment(SwingConstants.BOTTOM);
-            a1Label.setVerticalAlignment(SwingConstants.BOTTOM);
-            a2Label.setVerticalAlignment(SwingConstants.BOTTOM);
-            a3Label.setVerticalAlignment(SwingConstants.BOTTOM);
-            a4Label.setVerticalAlignment(SwingConstants.BOTTOM);
-            Card[] playerWar = new Card[4];
-            for (int i = 0; i < playerWar.length; i++) {
-                playerWar[i] = player.removeCard();
-            } // end for
-            Card[] aiWar = new Card[4];
-            for (int i = 0; i < aiWar.length; i++) {
-                aiWar[i] = ai.removeCard();
-            } // end for
-            warPlayerLabel1.setIcon(new ImageIcon(playerWar[0].front));
-            warPlayerLabel2.setIcon(new ImageIcon(playerWar[1].front));
-            warPlayerLabel3.setIcon(new ImageIcon(playerWar[2].front));
-            breakPlayerLabel.setIcon(new ImageIcon(playerWar[3].front));
-            warAILabel1.setIcon(new ImageIcon(aiWar[0].front));
-            warAILabel2.setIcon(new ImageIcon(aiWar[1].front));
-            warAILabel3.setIcon(new ImageIcon(aiWar[2].front));
-            breakAILabel.setIcon(new ImageIcon(aiWar[3].front));
-
-            warPanel.add(p1Label);
-            warPanel.add(p2Label);
-            warPanel.add(p3Label);
-            warPanel.add(p4Label);
-            warPanel.add(a4Label);
-            warPanel.add(a3Label);
-            warPanel.add(a2Label);
-            warPanel.add(a1Label);
-            warPanel.add(warPlayerLabel1);
-            warPanel.add(warPlayerLabel2);
-            warPanel.add(warPlayerLabel3);
-            warPanel.add(breakPlayerLabel);
-            warPanel.add(breakAILabel);
-            warPanel.add(warAILabel3);
-            warPanel.add(warAILabel2);
-            warPanel.add(warAILabel1);
-            warPanel.add(blankLabel2);
-            warPanel.add(blankLabel3);
-            warPanel.add(warLabel1);
-            warPanel.add(warLabel2);
-            warPanel.add(warLabel3);
-            warPanel.add(warLabel4);
-            warFrame.add(warPanel);
-            warFrame.pack();
-            warFrame.setVisible(true);
-            warFrame.setFocusable(true);
-
-            if (playerWar[3].getRank().compareTo(aiWar[3].getRank()) > 0) {
-                warLabel1.setText("YOU ");
-                warLabel2.setText("WON ");
-                warLabel3.setText("THIS ");
-                warLabel4.setText("BATTLE!");
-                for (int i = 0; i < playerWar.length; i++) {
-                    player.addCard(playerWar[i]);
-                } // end for
-                for (int i = 0; i < aiWar.length; i++) {
-                    player.addCard(playerWar[i]);
-                } // end for
+            // check to see if there are any cards left for a war
+            if (player.handSize() == 0) {
+                blankLabel1.setText("Game Over/nYou lose!");
+                gameOver = true;
+                ai.addCard(playerCard);
+                ai.addCard(aiCard);
+                updateHandSizeDisplay();
+                return;
+            }else if (ai.handSize() == 0) {
+                blankLabel1.setText("Game Over/nYou win!");
+                gameOver = true;
+                player.addCard(playerCard);
+                player.addCard(aiCard);
+                updateHandSizeDisplay();
+                return;
             }
-            // TODO Add two other war conditions
-            // TODO Put war into its own method
-            // TODO add hand size checks to ensure hand doesn't get empty in a war
-            // TODO ensure additional wars overwrite old display, not add additional display
+            if (war()) {
+                player.addCard(playerCard);
+                player.addCard(aiCard);
+            } else {
+                ai.addCard(playerCard);
+                ai.addCard(aiCard);
+            }
+            updateHandSizeDisplay();
+        } // end else
+    } // end method
 
-        }
+    /**
+     * 
+     */
+    private boolean war() {
+        System.out.println("Starting hands: player: " + player.handSize() + " ai: " + ai.handSize());
+        // blankLabel1.setText("You lost this fight!");
+        // warLabel1.setText("YOU ");
+        // warLabel2.setText("LOST ");
+        // warLabel3.setText("THIS ");
+        // warLabel4.setText("BATTLE!");
+        blankLabel1.setText("WAR!");
+        boolean whoWon = warFrame.setupGUI(player, ai, 1);
+        System.out.println("Ending hands: player: " + player.handSize() + " ai: " + ai.handSize());
+        return whoWon;
+    } // end method
 
+    /**
+     * 
+     */
+    private void updateHandSizeDisplay() {
+        handSizePlayer.setText(Integer.toString(player.handSize()));
+        handSizeAI.setText(Integer.toString(ai.handSize()));
     }
 
     public void Directions() {
