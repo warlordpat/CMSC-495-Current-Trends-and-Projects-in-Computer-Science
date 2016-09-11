@@ -461,6 +461,7 @@ public class Blackjack extends JPanel {
         remove(dealer);
         if (handTwoInPlay) {
             remove(playerSplitHand);
+            lblValue2.setVisible(false);
             handTwoInPlay = false;
             arrow.setLocation(125, 300);
             arrow.setVisible(false);
