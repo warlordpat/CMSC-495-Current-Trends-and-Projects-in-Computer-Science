@@ -15,12 +15,12 @@ public class HighLow extends JFrame implements ActionListener {
 
     URL imageURL = this.getClass().getClassLoader().getResource("images/cardBack.png");
     ImageIcon cardBacks = new ImageIcon(imageURL);
-    static ImageIcon[] cards = new ImageIcon[52];
+    static ImageIcon[] cards;
     static int[] refArray = new int [52];
-    static int score = 0;
+    static int score;
     static int index = 0;   
     JPanel panel = new JPanel(new GridLayout(0, 4, 8, 8));
-    JLabel upCard = new JLabel(cards[0]);
+    JLabel upCard;
     JLabel scoreCtLabel = new JLabel("", JLabel.LEFT);    
     
     public HighLow() {
@@ -194,6 +194,9 @@ public class HighLow extends JFrame implements ActionListener {
     
     private void createGUI() {
         
+        score  = 0;
+        cards  = new ImageIcon[52];
+        
         for (int j = 1; j <= 52; j++) {
 
             int position = 0;
@@ -201,11 +204,12 @@ public class HighLow extends JFrame implements ActionListener {
                 position = (int)(Math.random()*52);
             }
             while (cards[position] != null);
-            
+                            
             URL cardURL = this.getClass().getClassLoader().getResource("images/" + j + ".png");
             cards[position] = new ImageIcon(cardURL);
-
+                     System.out.println(cards[position]);
         }  
+         upCard = new JLabel(cards[0]);
 
         JFrame frame = new JFrame("High or Low!");
         frame.setVisible(true);
@@ -224,7 +228,7 @@ public class HighLow extends JFrame implements ActionListener {
         menu.add(menuItem);
         menu.add(menuItem1);
         menu.add(menuItem2);
-                
+
         JLabel backLabel = new JLabel(cardBacks);
         JLabel highLabel = new JLabel("HIGHER", JLabel.CENTER);
         highLabel.setFont(new Font("Courier Bold", Font.BOLD, 34));
@@ -260,6 +264,7 @@ public class HighLow extends JFrame implements ActionListener {
         frame.setJMenuBar(menuBar);
         frame.add(panel);
         frame.pack();
+                
     }
     
 }
