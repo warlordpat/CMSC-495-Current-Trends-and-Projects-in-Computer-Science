@@ -4,6 +4,9 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
@@ -23,14 +26,14 @@ public class Card extends JComponent {
      * Generated serial ID.
      */
     private static final long serialVersionUID = -2835610009194889206L;
-    /**
-     * Statically load the cards, so the card sprite map is only in memory once.
-     */
-    private static BufferedImage cards = readImage("images/cards_2.png");
-    /**
-     * Statically load the backs, so the back is only in memory once.
-     */
-    private static BufferedImage cardBacks = readImage("images/card_backs.png");
+//    /**
+//     * Statically load the cards, so the card sprite map is only in memory once.
+//     */
+//    transient private BufferedImage cards = readImage("images/cards_2.png");
+//    /**
+//     * Statically load the backs, so the back is only in memory once.
+//     */
+//    transient private BufferedImage cardBacks = readImage("images/card_backs.png");
 
     /**
      * Loads a sprite map statically to reduce memory usage of the cards.
@@ -40,7 +43,7 @@ public class Card extends JComponent {
      * @return the BufferedImage of the picture
      */
     static BufferedImage readImage(String location) {
-        System.out.println("Loading in image from Card Class!");
+//        System.out.println("Loading in image from Card Class!");
         try {
             return ImageIO.read(Card.class.getClassLoader().getResource(location));
         } catch (IOException e) {
@@ -55,8 +58,8 @@ public class Card extends JComponent {
      * 
      * @return the image of card backs.
      */
-    public static BufferedImage getBacks() {
-        return cardBacks;
+    public BufferedImage getBacks() {
+        return readImage("images/card_backs.png");
     } // end method
 
     /**
@@ -76,15 +79,15 @@ public class Card extends JComponent {
     /**
      * The image of the back of the card.
      */
-    BufferedImage back;
+    transient BufferedImage back;
     /**
      * The image of the front of the card.
      */
-    BufferedImage front;
+    transient BufferedImage front;
     /**
      * The image currently displayed on screen.
      */
-    BufferedImage currentImage;
+    transient BufferedImage currentImage;
 
     /**
      * Creates a Card of the given rank and suit and loads the image for the
@@ -100,8 +103,8 @@ public class Card extends JComponent {
         this.suit = suit;
         // System.out.println("loading " + rank.ordinal() * 72 + ", " +
         // suit.ordinal() * 96 + "");
-        back = cardBacks.getSubimage(72, 0, 72, 96);
-        front = cards.getSubimage(rank.ordinal() * 72, suit.ordinal() * 96, 72, 96);
+        back = getBacks().getSubimage(72, 0, 72, 96);
+        front = readImage("images/cards_2.png").getSubimage(rank.ordinal() * 72, suit.ordinal() * 96, 72, 96);
         currentImage = back;
         faceUp = false;
     } // end constructor
@@ -144,6 +147,30 @@ public class Card extends JComponent {
         repaint(); // update the screen
     } // end method
 
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+//        ImageIO.write(cards, "png", out); 
+//        ImageIO.write(cardBacks, "png", out);
+//        ImageIO.write(back, "png", out);
+//        ImageIO.write(front, "png", out);
+//        ImageIO.write(currentImage, "png", out);
+    } // end method
+    
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+//        cards = ImageIO.read(in);
+//        cardBacks = ImageIO.read(in);
+        back = getBacks().getSubimage(72, 0, 72, 96);
+        front = readImage("images/cards_2.png").getSubimage(rank.ordinal() * 72, suit.ordinal() * 96, 72, 96);
+        if (faceUp) {
+            currentImage = front;
+        } else {
+            currentImage = back;
+        }
+        
+//        currentImage = ImageIO.read(in);
+    } // end method
+    
     /*
      * (non-Javadoc)
      * 
