@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.util.*;
 import javax.swing.JLabel;
 
@@ -53,8 +52,8 @@ public class Hand extends JLabel {
     /**
      * The image of the back of the card
      */
-    @SuppressWarnings("unused")
-    private BufferedImage cardBack;
+//    @SuppressWarnings("unused")
+//    private BufferedImage cardBack;
 
     /**
      * Creates a new, empty Hand. The Hand has the ability to hold Cards, and
@@ -67,7 +66,7 @@ public class Hand extends JLabel {
         setLayout(null);
         // load card backs from Cards class to reduce image loading error
         // surface.
-        cardBack = Card.getBacks().getSubimage(72, 0, 72, 96);
+//        cardBack = Card.getBacks().getSubimage(72, 0, 72, 96);
         this.setPreferredSize(new Dimension(72, 96));
     } // end constructor
 
