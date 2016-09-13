@@ -5,6 +5,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.*;
 import javax.swing.*;
 
@@ -38,18 +43,16 @@ public class Blackjack extends JPanel {
     /**
      * If the hand was split.
      */
-    @SuppressWarnings("unused")
     private boolean wasSplit;
     /**
      * If the player's first hand is complete.
      */
-    @SuppressWarnings("unused")
     private boolean doneHand1;
     /**
      * If the second hand is still in play.
      */
     private boolean handTwoInPlay;
-    private boolean splitTest = true;
+    private boolean splitTest = false;
     /**
      * The GUI element that displays the number of cards remaining in the deck.
      */
@@ -59,33 +62,22 @@ public class Blackjack extends JPanel {
     private JPanel arrow;
     private JLabel lblValue1;
     private JLabel lblValue2;
+    private JFrame frame;
+    private boolean reload;
 
     /**
      * 
      */
     public Blackjack() {
-        setLayout(null);
-        setBackground(new Color(7, 99, 36)); // Card Table Green
         deck = new Deck();
-        deck.setBounds(60, 35, 79, 96); // set the deck size
-        // System.out.println("Adding Deck");
-        add(deck);
         remaining = new JLabel(REMAIN + deck.deckSize());
-        remaining.setBounds(60 + 72, 30, 80, 50);
-        add(remaining);
-
         dealer = new Hand();
-        dealer.setBounds(200, 100, (2 * 72), 96);
-        // System.out.println("Adding Dealer");
-        add(dealer);
-
-        panel = new JPanel();
-        panel.setBorder(null);
-        panel.setFocusable(false);
-        panel.setBounds(60, 200, 80, 240);
-        add(panel);
-
         arrow = new JPanel() {
+            /**
+             * 
+             */
+            private static final long serialVersionUID = -619516541179237701L;
+
             public void paintComponent(Graphics g) {
                 /*
                  * x1 x-position of first point y1 y-position of first point x2
@@ -118,29 +110,13 @@ public class Blackjack extends JPanel {
                 g.fillPolygon(xpoints, ypoints, 3);
             }
         };
-        arrow.setBounds(125, 300, 75, 40);
-        add(arrow);
-        arrow.setVisible(false);
+        panel = new JPanel();
         player = new Hand();
-        player.setBounds(200, 300, (2 * 72), 96);
-        add(player);
         playerSplitHand = new Hand();
-        playerSplitHand.setBounds(200, 300 + 100, (1 * 72), 96);
-        add(playerSplitHand);
-
         lblValue1 = new JLabel("Value:");
-        lblValue1.setVisible(false);
-        lblValue1.setFont(new Font("Courier Bold", Font.BOLD, 17));
-        lblValue1.setBounds(200, 275, 75, 14);
-        add(lblValue1);
-
         lblValue2 = new JLabel("Value: ");
-        lblValue2.setVisible(false);
-        lblValue2.setFont(new Font("Courier Bold", Font.BOLD, 17));
-        lblValue2.setBounds(200, 500, 75, 14);
-        add(lblValue2);
 
-        patrickGUI();
+        createGUI();
     }
 
     public void begin() {
@@ -293,6 +269,10 @@ public class Blackjack extends JPanel {
     }
 
     public void hit() {
+        if (isSplittable()) {
+            System.out.println("is splittable, but hit");
+            jbSplit.setVisible(false);
+        }
         if (deck.deckSize() == 0) {
             throw new Error("Deck Out of Cards!");
         }
@@ -511,14 +491,103 @@ public class Blackjack extends JPanel {
     /**
      * New BlackJack GUI
      */
-    public void patrickGUI() {
-        JFrame frame = new JFrame("Black Jack");
+    public void createGUI() {
+        setLayout(null);
+        setBackground(new Color(7, 99, 36)); // Card Table Green
+        deck.setBounds(60, 35, 79, 96); // set the deck size
+        // System.out.println("Adding Deck");
+        add(deck);
+        remaining.setBounds(60 + 72, 30, 80, 50);
+        add(remaining);
+        dealer.setBounds(200, 100, (2 * 72), 96);
+        // System.out.println("Adding Dealer");
+        add(dealer);
+        panel.setBorder(null);
+        panel.setFocusable(false);
+        panel.setBounds(60, 200, 80, 240);
+        add(panel);
+        arrow.setBounds(125, 300, 75, 40);
+        add(arrow);
+        arrow.setVisible(false);
+        player.setBounds(200, 300, (2 * 72), 96);
+        add(player);
+        playerSplitHand.setBounds(200, 300 + 100, (1 * 72), 96);
+        add(playerSplitHand);
+        lblValue1.setVisible(false);
+        lblValue1.setFont(new Font("Courier Bold", Font.BOLD, 17));
+        lblValue1.setBounds(200, 275, 75, 14);
+        add(lblValue1);
+        lblValue2.setVisible(false);
+        lblValue2.setFont(new Font("Courier Bold", Font.BOLD, 17));
+        lblValue2.setBounds(200, 500, 75, 14);
+        add(lblValue2);
+
+        frame = new JFrame("Black Jack");
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.setTitle("CGS BlackJack");
         frame.getContentPane().setLayout(new BorderLayout());
         frame.setPreferredSize(new Dimension(800, 600));
         frame.setResizable(false);
 
+        createMenu(frame);
+        frame.setContentPane(this);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        int BUTTON_SIZE = 80;
+        panel.setLayout(null);
+        panel.setBackground(new Color(7, 99, 36)); // Card Table Green
+        createButtons(BUTTON_SIZE);
+    }
+
+    /**
+     * @param BUTTON_SIZE
+     */
+    private void createButtons(int BUTTON_SIZE) {
+        JButton hit = new JButton("Hit");
+        hit.setPreferredSize(new Dimension(60, 60));
+        hit.setFont(new Font("Courier Bold", Font.BOLD, 17));
+        // hit.setBackground(new Color(192, 108, 108));
+        hit.setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
+        panel.add(hit);
+        hit.addActionListener(al -> {
+            hit();
+            System.out.println("finished hit button processing");
+        });
+        JButton stand;
+        if (reload) {
+            stand = new JButton("Stand 2");
+        } else {
+            stand = new JButton("Stand");
+        }
+        stand.setFont(new Font("Courier Bold", Font.BOLD, 17));
+        // stand.setBackground(new Color(192, 108, 108));
+        stand.setBounds(0, BUTTON_SIZE, BUTTON_SIZE, BUTTON_SIZE);
+        panel.add(stand);
+        stand.addActionListener(al -> {
+            stand();
+            System.out.println("finished stand button processing");
+        });
+        if (reload) {
+            jbSplit = new JButton("Split 2");
+        } else {
+            jbSplit = new JButton("Split");
+        }
+        jbSplit.setFont(new Font("Courier Bold", Font.BOLD, 17));
+        // split.setBackground(new Color(192, 108, 108));
+        jbSplit.setBounds(0, 2 * BUTTON_SIZE, BUTTON_SIZE, BUTTON_SIZE);
+        jbSplit.addActionListener(al -> {
+            if (isSplittable()) {
+                split();
+            }
+            System.out.println("finished split button processing");
+        });
+    }
+
+    /**
+     * @param frame
+     */
+    private void createMenu(JFrame frame) {
         JMenuBar menuBar = new JMenuBar();
         frame.setJMenuBar(menuBar);
 
@@ -527,6 +596,22 @@ public class Blackjack extends JPanel {
 
         JMenuItem mntmNewGame = new JMenuItem("New Game");
         mnMenu.add(mntmNewGame);
+        mntmNewGame.addActionListener(ae -> {
+            newGame();
+            reset();
+        });
+
+        JMenuItem mntmSaveGame = new JMenuItem("Save Game");
+        mnMenu.add(mntmSaveGame);
+        mntmSaveGame.addActionListener(ae -> {
+            saveGame();
+        });
+
+        JMenuItem mntmLoadGame = new JMenuItem("Load Game");
+        mnMenu.add(mntmLoadGame);
+        mntmLoadGame.addActionListener(ae -> {
+            loadGame();
+        });
 
         JMenuItem mntmHowToPlay = new JMenuItem("How to Play");
         mnMenu.add(mntmHowToPlay);
@@ -542,51 +627,10 @@ public class Blackjack extends JPanel {
             frame.dispose();
         });
         mnMenu.add(mntmReturnToMain);
-        frame.setContentPane(this);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        int BUTTON_SIZE = 80;
-        panel.setLayout(null);
-        panel.setBackground(new Color(7, 99, 36)); // Card Table Green
-        JButton hit = new JButton("Hit");
-        hit.setPreferredSize(new Dimension(60, 60));
-        hit.setFont(new Font("Courier Bold", Font.BOLD, 17));
-        // hit.setBackground(new Color(192, 108, 108));
-        hit.setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
-        panel.add(hit);
-        hit.addActionListener(al -> {
-            hit();
-            System.out.println("finished hit button processing");
-        });
-
-        JButton stand = new JButton("Stand");
-        stand.setFont(new Font("Courier Bold", Font.BOLD, 17));
-        // stand.setBackground(new Color(192, 108, 108));
-        stand.setBounds(0, BUTTON_SIZE, BUTTON_SIZE, BUTTON_SIZE);
-        panel.add(stand);
-        stand.addActionListener(al -> {
-            stand();
-            System.out.println("finished stand button processing");
-        });
-
-        jbSplit = new JButton("Split");
-        jbSplit.setFont(new Font("Courier Bold", Font.BOLD, 17));
-        // split.setBackground(new Color(192, 108, 108));
-        jbSplit.setBounds(0, 2 * BUTTON_SIZE, BUTTON_SIZE, BUTTON_SIZE);
-        // panel.add(jbSplit);
-        jbSplit.addActionListener(al -> {
-            if (isSplittable()) {
-                split();
-                remove(jbSplit);
-            }
-            System.out.println("finished split button processing");
-        });
-
     }
 
     /**
-     * 
+     * Shows the game play directions to the user.
      */
     private void directions() {
         JOptionPane.showMessageDialog(null,
@@ -601,44 +645,101 @@ public class Blackjack extends JPanel {
                         + "\nFace cards count as ten, and Aces count as 11 or 1.");
     }
 
-    public void gui() {
-        JFrame frame = new JFrame("Black Jack");
-        frame.setVisible(true);
-        JSplitPane splitPaneHorizontal = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        JPanel TopPanel = new JPanel();
-        TopPanel.setSize(600, 400);
-        JTextArea jtaDisplay = new JTextArea(30, 20);
-        jtaDisplay.append(display());
-        TopPanel.add(jtaDisplay);
-        JPanel BottomPanel = new JPanel(new BorderLayout());
-        BottomPanel.setSize(600, 100);
-        JButton jbHit = new JButton("Hit");
-        jbHit.addActionListener(ae -> {
-            hit();
-            jtaDisplay.append(display());
-            if (player.isBusted()) {
-                jtaDisplay.append("\nPress 'Deal' to play again");
+    /**
+     * Saves the state of the game to a file.
+     */
+    private void saveGame() {
+
+        try (FileOutputStream filestream = new FileOutputStream("BlackJack.ser");
+                ObjectOutputStream os = new ObjectOutputStream(filestream);) {
+            os.writeObject(deck);
+            os.writeObject(dealer);
+            os.writeObject(player);
+            os.writeObject(playerSplitHand);
+            os.writeBoolean(handOneInPlay);
+            os.writeBoolean(wasSplit);
+            os.writeBoolean(doneHand1);
+            os.writeBoolean(handTwoInPlay);
+            os.writeObject(remaining);
+            // os.writeObject(jbSplit);
+            // os.writeObject(panel);
+            // os.writeObject(arrow);
+            os.writeObject(lblValue1);
+            os.writeObject(lblValue2);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    } // end method
+
+    private void loadGame() {
+        remove(player);
+        remove(dealer);
+        remove(lblValue1);
+        remove(lblValue2);
+        remove(remaining);
+        if (handTwoInPlay) {
+            remove(playerSplitHand);
+            lblValue2.setVisible(false);
+            handTwoInPlay = false;
+            arrow.setLocation(125, 300);
+            arrow.setVisible(false);
+        }
+        System.out.println("removed player/dealer");
+        revalidate();
+        repaint();
+        try (FileInputStream filestream = new FileInputStream("BlackJack.ser");
+                ObjectInputStream os = new ObjectInputStream(filestream);) {
+            deck = (Deck) os.readObject();
+            dealer = (Hand) os.readObject();
+            player = (Hand) os.readObject();
+            playerSplitHand = (Hand) os.readObject();
+            boolean b1 = os.readBoolean();
+            boolean b2 = os.readBoolean();
+            boolean b3 = os.readBoolean();
+            boolean b4 = os.readBoolean();
+            remaining = (JLabel) os.readObject();
+            // jbSplit =
+            // JButton test = (JButton) os.readObject();
+            // // panel =
+            // JPanel tests1 = (JPanel) os.readObject();
+            // // arrow =
+            // JPanel tests2 = (JPanel) os.readObject();
+            lblValue1 = (JLabel) os.readObject();
+            lblValue2 = (JLabel) os.readObject();
+
+            System.out.println("loaded: " + "\n handOneInPlay " + b1 + "\n wasSplit      " + b2 + "\n doneHand1     "
+                    + b3 + "\n handTwoInPlay " + b4 + "\n" + lblValue1.getText() + lblValue2.getText()
+                    + isSplittable());
+
+            handOneInPlay = b1;
+            wasSplit = b2;
+            doneHand1 = b3;
+            handTwoInPlay = b4;
+            add(dealer);
+            add(player);
+            add(remaining);
+            add(lblValue1);
+            add(lblValue2);
+            if (isSplittable()) {
+                panel.add(jbSplit);
+                System.out.println("adding split button");
+                jbSplit.setVisible(true);
+            } else {
+                jbSplit.setVisible(false);
             }
-        });
-        JButton jbStand = new JButton("Stand");
-        jbStand.addActionListener(ae -> {
-            stand();
-            jtaDisplay.append(display());
-            jtaDisplay.append("\nPress 'Deal' to play again");
-        });
-        JButton jbDeal = new JButton("Deal");
-        jbDeal.addActionListener(ae -> {
-            deal();
-            jtaDisplay.append(display());
-        });
-        BottomPanel.add(jbDeal, BorderLayout.LINE_START);
-        BottomPanel.add(jbHit, BorderLayout.CENTER);
-        BottomPanel.add(jbStand, BorderLayout.LINE_END);
-        splitPaneHorizontal.setTopComponent(TopPanel);
-        splitPaneHorizontal.setBottomComponent(BottomPanel);
-        frame.getContentPane().add(splitPaneHorizontal);
-        frame.setSize(600, 600);
-    }
+            if (wasSplit) {
+                playerSplitHand.setBounds(200, 300 + 100, (1 * 72), 96);
+                add(playerSplitHand);
+                jbSplit.setVisible(false);
+                arrow.setVisible(true);
+            }
+            updateRemain();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    } // end method
 
     /**
      * Runs a test of BlackJack by itself.
