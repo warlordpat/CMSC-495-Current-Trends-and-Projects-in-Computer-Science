@@ -5,11 +5,13 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.net.URL;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import javax.swing.ImageIcon;
+import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 
 /**
@@ -38,16 +40,16 @@ public class Deck extends JLabel {
     /**
      * The image of the back of the card
      */
-    private BufferedImage cardBack;
+    transient private BufferedImage cardBack;
 
     // below fields will be removed once games convert to functionality in the
     // Hand class.
-    static ImageIcon[] cardIcon = new ImageIcon[52];
-    static int[] refArray = new int[52];
-    private ArrayList<Integer> playerHand = new ArrayList<>();
-    private ArrayList<Integer> aiHand = new ArrayList<>();
-    private ArrayList<ImageIcon> playerCards = new ArrayList<>();
-    private ArrayList<ImageIcon> AICards = new ArrayList<>();
+//    static ImageIcon[] cardIcon = new ImageIcon[52];
+//    static int[] refArray = new int[52];
+//    private ArrayList<Integer> playerHand = new ArrayList<>();
+//    private ArrayList<Integer> aiHand = new ArrayList<>();
+//    private ArrayList<ImageIcon> playerCards = new ArrayList<>();
+//    private ArrayList<ImageIcon> AICards = new ArrayList<>();
 
     /**
      * Generate a new full, un-shuffled deck. Loads a card back to represent the
@@ -67,9 +69,20 @@ public class Deck extends JLabel {
 
         // load card backs from Cards class to reduce image loading error
         // surface.
-        cardBack = Card.getBacks().getSubimage(72, 0, 72, 96);
+        cardBack = new Card(Rank.ACE, Suit.CLUB).getBacks().getSubimage(72, 0, 72, 96);
     } // end method
 
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+        ImageIO.write(cardBack, "png", out);
+    } // end method
+    
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        cardBack = ImageIO.read(in);
+    } // end method
+    
+    
     /**
      * Shuffles the deck randomly.
      */
@@ -168,147 +181,147 @@ public class Deck extends JLabel {
     } // end method
 
     /**
-     * Functionality will be moved into Hand class.
-     * 
-     * @param tempPlayerCard
-     *            image of a card
-     */
-    @Deprecated
-    void addPlayerCards(ImageIcon tempPlayerCard) {
-        playerCards.add(tempPlayerCard);
-    }
-
-    /**
-     * Functionality will be moved into Hand class.
-     * 
-     * @param cardValue
-     *            the value of a card
-     */
-    @Deprecated
-    void addPlayerHand(int cardValue) {
-        playerHand.add(cardValue);
-    }
-
-    /**
-     * Functionality will be moved into Hand class.
-     * 
-     * @param index
-     *            the index of the card to remove
-     */
-    @Deprecated
-    void removePlayerCards(int index) {
-        playerCards.remove(index);
-    }
-
-    /**
-     * Functionality will be moved into Hand class.
-     * 
-     * @param index
-     *            the index of the card to remove
-     */
-    @Deprecated
-    void removePlayerHand(int index) {
-        playerHand.remove(index);
-    }
-
-    /**
-     * Functionality will be moved into Hand class.
-     * 
-     * @param index
-     *            the index of the card to get
-     * @return
-     */
-    @Deprecated
-    ImageIcon getPlayerCards(int index) {
-        return playerCards.get(index);
-    }
-
-    /**
-     * Functionality will be moved into Hand class.
-     * 
-     * @param index
-     *            the index of the card to get
-     * @return
-     */
-    @Deprecated
-    int getPlayerHand(int index) {
-        return playerHand.get(index);
-    }
-
-    /**
-     * Functionality will be moved into Hand class.
-     * 
-     * @param tempPlayerCard
-     */
-    @Deprecated
-    void addAICards(ImageIcon tempPlayerCard) {
-        AICards.add(tempPlayerCard);
-    }
-
-    /**
-     * Functionality will be moved into Hand class.
-     * 
-     * @param cardValue
-     */
-    @Deprecated
-    void addAIHand(int cardValue) {
-        aiHand.add(cardValue);
-    }
-
-    /**
-     * Functionality will be moved into Hand class.
-     * 
-     * @param index
-     */
-    @Deprecated
-    void removeAICards(int index) {
-        AICards.remove(index);
-    }
-
-    /**
-     * Functionality will be moved into Hand class.
-     * 
-     * @param index
-     *            the index of the card to remove
-     */
-    @Deprecated
-    void removeAIHand(int index) {
-        aiHand.remove(index);
-    }
-
-    /**
-     * Functionality will be moved into Hand class.
-     * 
-     * @param index
-     *            the index of the card to get
-     * @return
-     */
-    @Deprecated
-    int getAIHand(int index) {
-        return aiHand.get(index);
-    }
-
-    /**
-     * Functionality will be moved into Hand class.
-     * 
-     * @param index
-     *            the index of the card to get
-     * @return
-     */
-    @Deprecated
-    ImageIcon getAICards(int index) {
-        return AICards.get(index);
-    }
-
-    /**
-     * Deals a card from the deck. Functionality will be moved into Hand class.
-     * 
-     * @return a Card from the top of the deck
-     */
-    @Deprecated
-    int deal(int index) {
-        return refArray[index];
-    } // end method
+//     * Functionality will be moved into Hand class.
+//     * 
+//     * @param tempPlayerCard
+//     *            image of a card
+//     */
+//    @Deprecated
+//    void addPlayerCards(ImageIcon tempPlayerCard) {
+//        playerCards.add(tempPlayerCard);
+//    }
+//
+//    /**
+//     * Functionality will be moved into Hand class.
+//     * 
+//     * @param cardValue
+//     *            the value of a card
+//     */
+//    @Deprecated
+//    void addPlayerHand(int cardValue) {
+//        playerHand.add(cardValue);
+//    }
+//
+//    /**
+//     * Functionality will be moved into Hand class.
+//     * 
+//     * @param index
+//     *            the index of the card to remove
+//     */
+//    @Deprecated
+//    void removePlayerCards(int index) {
+//        playerCards.remove(index);
+//    }
+//
+//    /**
+//     * Functionality will be moved into Hand class.
+//     * 
+//     * @param index
+//     *            the index of the card to remove
+//     */
+//    @Deprecated
+//    void removePlayerHand(int index) {
+//        playerHand.remove(index);
+//    }
+//
+//    /**
+//     * Functionality will be moved into Hand class.
+//     * 
+//     * @param index
+//     *            the index of the card to get
+//     * @return
+//     */
+//    @Deprecated
+//    ImageIcon getPlayerCards(int index) {
+//        return playerCards.get(index);
+//    }
+//
+//    /**
+//     * Functionality will be moved into Hand class.
+//     * 
+//     * @param index
+//     *            the index of the card to get
+//     * @return
+//     */
+//    @Deprecated
+//    int getPlayerHand(int index) {
+//        return playerHand.get(index);
+//    }
+//
+//    /**
+//     * Functionality will be moved into Hand class.
+//     * 
+//     * @param tempPlayerCard
+//     */
+//    @Deprecated
+//    void addAICards(ImageIcon tempPlayerCard) {
+//        AICards.add(tempPlayerCard);
+//    }
+//
+//    /**
+//     * Functionality will be moved into Hand class.
+//     * 
+//     * @param cardValue
+//     */
+//    @Deprecated
+//    void addAIHand(int cardValue) {
+//        aiHand.add(cardValue);
+//    }
+//
+//    /**
+//     * Functionality will be moved into Hand class.
+//     * 
+//     * @param index
+//     */
+//    @Deprecated
+//    void removeAICards(int index) {
+//        AICards.remove(index);
+//    }
+//
+//    /**
+//     * Functionality will be moved into Hand class.
+//     * 
+//     * @param index
+//     *            the index of the card to remove
+//     */
+//    @Deprecated
+//    void removeAIHand(int index) {
+//        aiHand.remove(index);
+//    }
+//
+//    /**
+//     * Functionality will be moved into Hand class.
+//     * 
+//     * @param index
+//     *            the index of the card to get
+//     * @return
+//     */
+//    @Deprecated
+//    int getAIHand(int index) {
+//        return aiHand.get(index);
+//    }
+//
+//    /**
+//     * Functionality will be moved into Hand class.
+//     * 
+//     * @param index
+//     *            the index of the card to get
+//     * @return
+//     */
+//    @Deprecated
+//    ImageIcon getAICards(int index) {
+//        return AICards.get(index);
+//    }
+//
+//    /**
+//     * Deals a card from the deck. Functionality will be moved into Hand class.
+//     * 
+//     * @return a Card from the top of the deck
+//     */
+//    @Deprecated
+//    int deal(int index) {
+//        return refArray[index];
+//    } // end method
 
     /**
      * Deals a card from the deck.
@@ -320,16 +333,16 @@ public class Deck extends JLabel {
     } // end method
 
     /**
-     * Returns a card image of the card at the given array location.
-     * 
-     * @param index
-     *            the array index
-     * @return an image of the card at that index
-     */
-    @Deprecated
-    ImageIcon returnCard(int index) {
-        return cardIcon[index];
-    }
+//     * Returns a card image of the card at the given array location.
+//     * 
+//     * @param index
+//     *            the array index
+//     * @return an image of the card at that index
+//     */
+//    @Deprecated
+//    ImageIcon returnCard(int index) {
+//        return cardIcon[index];
+//    }
 
     /*
      * (non-Javadoc)
