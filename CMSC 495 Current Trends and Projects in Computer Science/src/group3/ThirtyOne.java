@@ -1,3 +1,4 @@
+
 package group3;
 
 import java.awt.*;
@@ -33,9 +34,15 @@ public class ThirtyOne {
     private JButton jbPlayerCard1, jbPlayerCard2, jbPlayerCard3;
     private int player31;
     private int ai31;
-
+    JFrame frame;
+    boolean bSpade = true;
+    boolean bHeart = true; 
+    boolean bClub = true;
+    boolean bDiamond = true;
+    
     public ThirtyOne() {
-
+        
+        frame = new JFrame("Thirty-One");
         deck = new Deck();
         deck.shuffle();
         ai = new Hand();
@@ -43,6 +50,7 @@ public class ThirtyOne {
     }
 
     public void begin() {
+        frame = new JFrame("Thirty-One");
         gui();
         deal();
     }
@@ -77,7 +85,6 @@ public class ThirtyOne {
 
     public void gui() {
         Random rand = new Random();
-        JFrame frame = new JFrame("Thirty-One");
         frame.setVisible(true);
         frame.setSize(900, 900);
         frame.setResizable(false);
@@ -161,50 +168,6 @@ public class ThirtyOne {
                 player31 = Math.abs(player31);
                 ai31 = 31 - ai.total();
                 ai31 = Math.abs(ai31);
-                if (player31 < ai31) {
-                    Object[] options = { "Yes", "No" };
-                    int n = JOptionPane.showOptionDialog(frame,
-                            ("You win " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"),
-                            "You Win!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[1]);
-                    if (n == JOptionPane.YES_OPTION) {
-                        frame.dispose();
-                        deck = new Deck();
-                        deck.shuffle();
-                        begin();
-                    } else {
-                        frame.dispose();
-                    }
-                } else if (player31 == ai31) {
-                    Object[] options = { "Yes", "No" };
-                    int n = JOptionPane.showOptionDialog(frame,
-                            ("You tied at " + player.total() + " to " + ai.total()
-                                    + "!\nWould you like to play again?"),
-                            "You Tie", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[1]);
-                    if (n == JOptionPane.YES_OPTION) {
-                        frame.dispose();
-                        deck = new Deck();
-                        deck.shuffle();
-                        begin();
-                    } else {
-                        frame.dispose();
-                    }
-                } else {
-                    Object[] options = { "Yes", "No" };
-                    int n = JOptionPane.showOptionDialog(frame,
-                            ("You lose " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"),
-                            "You Lose", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[1]);
-                    if (n == JOptionPane.YES_OPTION) {
-                        frame.dispose();
-                        deck = new Deck();
-                        deck.shuffle();
-                        begin();
-                    } else {
-                        frame.dispose();
-                    }
-                }
             } else {
                 JOptionPane.showMessageDialog(null, "You already have 4 cards in your hand");
             }
@@ -213,50 +176,10 @@ public class ThirtyOne {
             if (player.handSize() < 4) {
                 player.addCard(Card2);
                 TopPanel.remove(jbCard2);
-                if (player.total() > ai.total()) {
-                    Object[] options = { "Yes", "No" };
-                    int n = JOptionPane.showOptionDialog(frame,
-                            ("You win " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"),
-                            "You Win!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[1]);
-                    if (n == JOptionPane.YES_OPTION) {
-                        frame.dispose();
-                        deck = new Deck();
-                        deck.shuffle();
-                        begin();
-                    } else {
-                        frame.dispose();
-                    }
-                } else if (player.total() == ai.total()) {
-                    Object[] options = { "Yes", "No" };
-                    int n = JOptionPane.showOptionDialog(frame,
-                            ("You tied at " + player.total() + " to " + ai.total()
-                                    + "!\nWould you like to play again?"),
-                            "You Tie", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[1]);
-                    if (n == JOptionPane.YES_OPTION) {
-                        frame.dispose();
-                        deck = new Deck();
-                        deck.shuffle();
-                        begin();
-                    } else {
-                        frame.dispose();
-                    }
-                } else {
-                    Object[] options = { "Yes", "No" };
-                    int n = JOptionPane.showOptionDialog(frame,
-                            ("You lose " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"),
-                            "You Lose", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[1]);
-                    if (n == JOptionPane.YES_OPTION) {
-                        frame.dispose();
-                        deck = new Deck();
-                        deck.shuffle();
-                        begin();
-                    } else {
-                        frame.dispose();
-                    }
-                }
+                player31 = 31 - player.total();
+                player31 = Math.abs(player31);
+                ai31 = 31 - ai.total();
+                ai31 = Math.abs(ai31);
             } else {
                 JOptionPane.showMessageDialog(null, "You already have 4 cards in your hand");
             }
@@ -265,56 +188,99 @@ public class ThirtyOne {
             if (player.handSize() < 4) {
                 player.addCard(Card3);
                 TopPanel.remove(jbCard3);
-                if (player.total() > ai.total()) {
-                    Object[] options = { "Yes", "No" };
-                    int n = JOptionPane.showOptionDialog(frame,
-                            ("You win " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"),
-                            "You Win!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[1]);
-                    if (n == JOptionPane.YES_OPTION) {
-                        frame.dispose();
-                        deck = new Deck();
-                        deck.shuffle();
-                        begin();
-                    } else {
-                        frame.dispose();
-                    }
-                } else if (player.total() == ai.total()) {
-                    Object[] options = { "Yes", "No" };
-                    int n = JOptionPane.showOptionDialog(frame,
-                            ("You tied at " + player.total() + " to " + ai.total()
-                                    + "!\nWould you like to play again?"),
-                            "You Tie", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[1]);
-                    if (n == JOptionPane.YES_OPTION) {
-                        frame.dispose();
-                        deck = new Deck();
-                        deck.shuffle();
-                        begin();
-                    } else {
-                        frame.dispose();
-                    }
-                } else {
-                    Object[] options = { "Yes", "No" };
-                    int n = JOptionPane.showOptionDialog(frame,
-                            ("You lose " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"),
-                            "You Lose", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[1]);
-                    if (n == JOptionPane.YES_OPTION) {
-                        frame.dispose();
-                        deck = new Deck();
-                        deck.shuffle();
-                        begin();
-                    } else {
-                        frame.dispose();
-                    }
-                }
+                player31 = 31 - player.total();
+                player31 = Math.abs(player31);
+                ai31 = 31 - ai.total();
+                ai31 = Math.abs(ai31);
             } else {
                 JOptionPane.showMessageDialog(null, "You already have 4 cards in your hand");
             }
         });
         JSplitPane split1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         JSplitPane split2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        JSplitPane splitBottom = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        JPanel dialPanel = new JPanel(new GridLayout(0,3));
+        JLabel jlSpade = new JLabel("Spade");
+        JRadioButton spadePos = new JRadioButton("Positive");
+        spadePos.setSelected(true);
+        JRadioButton spadeNeg = new JRadioButton("Negative");
+        spadeNeg.setSelected(true);
+        ButtonGroup spadeGroup = new ButtonGroup();
+        spadeGroup.add(spadePos);
+        spadeGroup.add(spadeNeg);
+        JLabel jlHeart = new JLabel("Heart");
+        JRadioButton heartPos = new JRadioButton("Positive");
+        heartPos.setSelected(true);
+        JRadioButton heartNeg = new JRadioButton("Negative");
+        heartNeg.setSelected(true);
+        ButtonGroup heartGroup = new ButtonGroup();
+        heartGroup.add(heartPos);
+        heartGroup.add(heartNeg);
+        JLabel jlClub = new JLabel("Club");
+        JRadioButton clubPos = new JRadioButton("Positive");
+        clubPos.setSelected(true);
+        JRadioButton clubNeg = new JRadioButton("Negative");
+        clubNeg.setSelected(true);
+        ButtonGroup clubGroup = new ButtonGroup();
+        clubGroup.add(clubPos);
+        clubGroup.add(clubNeg);
+        JLabel jlDiamond = new JLabel("Diamond");
+        JRadioButton diamondPos = new JRadioButton("Positive");
+        diamondPos.setSelected(true);
+        JRadioButton diamondNeg = new JRadioButton("Negative");
+        diamondNeg.setSelected(true);
+        ButtonGroup diamondGroup = new ButtonGroup();
+        diamondGroup.add(diamondPos);
+        diamondGroup.add(diamondNeg);
+        JButton jbCalculate = new JButton ("Calculate");
+        dialPanel.add(jlSpade);
+        dialPanel.add(spadePos);
+        dialPanel.add(spadeNeg);
+        dialPanel.add(jlHeart);
+        dialPanel.add(heartPos);
+        dialPanel.add(heartNeg);
+        dialPanel.add(jlClub);
+        dialPanel.add(clubPos);
+        dialPanel.add(clubNeg);
+        dialPanel.add(jlDiamond);
+        dialPanel.add(diamondPos);
+        dialPanel.add(diamondNeg);
+        dialPanel.add(jbCalculate);
+        if (spadePos.isSelected())
+        {
+            bSpade = true;
+        }
+        else
+        {
+            bSpade = false;
+        }
+        if (heartPos.isSelected())
+        {
+            bHeart = true;
+        }
+        else
+        {
+            bHeart = false;
+        }
+        if (clubPos.isSelected())
+        {
+            bClub = true;
+        }
+        else
+        {
+            bClub = false;
+        }
+        if (diamondPos.isSelected())
+        {
+            bDiamond = true;
+        }
+        else
+        {
+            bDiamond = false;
+        }
+        jbCalculate.addActionListener(ae -> {
+            results();
+        });
         JLabel jlCenter = new JLabel("Center Cards");
         JLabel jlPlayer = new JLabel("Player Hand");
         JPanel centerPanel = new JPanel();
@@ -325,8 +291,10 @@ public class ThirtyOne {
         split1.setBottomComponent(TopPanel);
         split2.setTopComponent(playerPanel);
         split2.setBottomComponent(BottomPanel);
+        splitBottom.setTopComponent(split2);
+        splitBottom.setBottomComponent(dialPanel);
         splitPaneHorizontal.setTopComponent(split1);
-        splitPaneHorizontal.setBottomComponent(split2);
+        splitPaneHorizontal.setBottomComponent(splitBottom);
         frame.add(splitPaneHorizontal);
         frame.pack();
     }
@@ -334,5 +302,223 @@ public class ThirtyOne {
     public void Directions() {
         JOptionPane.showMessageDialog(null,
                 "The goal of the game is to get the closest to 31. Whichever player is closer wins. Click one of the center cards to add it to your hand.");
+    }
+    
+    public void results() {
+        int iSum = 0;
+        Card temp1 = player.getCard(0);
+        Card temp2 = player.getCard(1);
+        Card temp3 = player.getCard(2);
+        Card temp4 = player.getCard(3);
+        Map<Rank, Integer> values = new HashMap<>();
+        values.put(Rank.ACE, 1);
+        values.put(Rank.TWO, 2);
+        values.put(Rank.THREE, 3);
+        values.put(Rank.FOUR, 4);
+        values.put(Rank.FIVE, 5);
+        values.put(Rank.SIX, 6);
+        values.put(Rank.SEVEN, 7);
+        values.put(Rank.EIGHT, 8);
+        values.put(Rank.NINE, 9);
+        values.put(Rank.TEN, 10);
+        values.put(Rank.JACK, 10);
+        values.put(Rank.QUEEN, 10);
+        values.put(Rank.KING, 10);
+        if (bSpade == true)
+        {
+            if (temp1.getSuit() == Suit.SPADE)
+            {
+                iSum += values.get(temp1.getRank());
+            }
+            if (temp2.getSuit() == Suit.SPADE)
+            {
+                iSum += values.get(temp2.getRank());
+            }
+            if (temp3.getSuit() == Suit.SPADE)
+            {
+                iSum += values.get(temp3.getRank());
+            }
+            if (temp4.getSuit() == Suit.SPADE)
+            {
+                iSum += values.get(temp4.getRank());
+            }
+        }
+        else
+        {
+            if (temp1.getSuit() == Suit.SPADE)
+            {
+                iSum -= values.get(temp1.getRank());
+            }
+            if (temp2.getSuit() == Suit.SPADE)
+            {
+                iSum -= values.get(temp2.getRank());
+            }
+            if (temp3.getSuit() == Suit.SPADE)
+            {
+                iSum -= values.get(temp3.getRank());
+            }
+            if (temp4.getSuit() == Suit.SPADE)
+            {
+                iSum -= values.get(temp4.getRank());
+            }
+        }
+        if (bHeart == true)
+        {
+            if (temp1.getSuit() == Suit.HEART)
+            {
+                iSum += values.get(temp1.getRank());
+            }
+            if (temp2.getSuit() == Suit.HEART)
+            {
+                iSum += values.get(temp2.getRank());
+            }
+            if (temp3.getSuit() == Suit.HEART)
+            {
+                iSum += values.get(temp3.getRank());
+            }
+            if (temp4.getSuit() == Suit.HEART)
+            {
+                iSum += values.get(temp4.getRank());
+            }
+        }
+        else
+        {
+            if (temp1.getSuit() == Suit.HEART)
+            {
+                iSum -= values.get(temp1.getRank());
+            }
+            if (temp2.getSuit() == Suit.HEART)
+            {
+                iSum -= values.get(temp2.getRank());
+            }
+            if (temp3.getSuit() == Suit.HEART)
+            {
+                iSum -= values.get(temp3.getRank());
+            }
+            if (temp4.getSuit() == Suit.HEART)
+            {
+                iSum -= values.get(temp4.getRank());
+            }
+        }
+        if (bClub == true)
+        {
+            if (temp1.getSuit() == Suit.CLUB)
+            {
+                iSum += values.get(temp1.getRank());
+            }
+            if (temp2.getSuit() == Suit.CLUB)
+            {
+                iSum += values.get(temp2.getRank());
+            }
+            if (temp3.getSuit() == Suit.CLUB)
+            {
+                iSum += values.get(temp3.getRank());
+            }
+            if (temp4.getSuit() == Suit.CLUB)
+            {
+                iSum += values.get(temp4.getRank());
+            }
+        }
+        else
+        {
+            if (temp1.getSuit() == Suit.CLUB)
+            {
+                iSum -= values.get(temp1.getRank());
+            }
+            if (temp2.getSuit() == Suit.CLUB)
+            {
+                iSum -= values.get(temp2.getRank());
+            }
+            if (temp3.getSuit() == Suit.CLUB)
+            {
+                iSum -= values.get(temp3.getRank());
+            }
+            if (temp4.getSuit() == Suit.CLUB)
+            {
+                iSum -= values.get(temp4.getRank());
+            }
+        }
+        if (bDiamond == true)
+        {
+            if (temp1.getSuit() == Suit.DIAMOND)
+            {
+                iSum += values.get(temp1.getRank());
+            }
+            if (temp2.getSuit() == Suit.DIAMOND)
+            {
+                iSum += values.get(temp2.getRank());
+            }
+            if (temp3.getSuit() == Suit.DIAMOND)
+            {
+                iSum += values.get(temp3.getRank());
+            }
+            if (temp4.getSuit() == Suit.DIAMOND)
+            {
+                iSum += values.get(temp4.getRank());
+            }
+        }
+        else
+        {
+            if (temp1.getSuit() == Suit.DIAMOND)
+            {
+                iSum -= values.get(temp1.getRank());
+            }
+            if (temp2.getSuit() == Suit.DIAMOND)
+            {
+                iSum -= values.get(temp2.getRank());
+            }
+            if (temp3.getSuit() == Suit.DIAMOND)
+            {
+                iSum -= values.get(temp3.getRank());
+            }
+            if (temp4.getSuit() == Suit.DIAMOND)
+            {
+                iSum -= values.get(temp4.getRank());
+            }
+        }
+        if (iSum > ai.total()) {
+                    Object[] options = { "Yes", "No" };
+                    int n = JOptionPane.showOptionDialog(frame,
+                            ("You win " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"),
+                            "You Win!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+                            options[1]);
+                    if (n == JOptionPane.YES_OPTION) {
+                        frame.dispose();
+                        deck = new Deck();
+                        deck.shuffle();
+                        begin();
+                    } else {
+                        frame.dispose();
+                    }
+                } else if (iSum == ai.total()) {
+                    Object[] options = { "Yes", "No" };
+                    int n = JOptionPane.showOptionDialog(frame,
+                            ("You tied at " + player.total() + " to " + ai.total()
+                                    + "!\nWould you like to play again?"),
+                            "You Tie", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+                            options[1]);
+                    if (n == JOptionPane.YES_OPTION) {
+                        frame.dispose();
+                        deck = new Deck();
+                        deck.shuffle();
+                        begin();
+                    } else {
+                        frame.dispose();
+                    }
+                } else {
+                    Object[] options = { "Yes", "No" };
+                    int n = JOptionPane.showOptionDialog(frame,
+                            ("You lose " + player.total() + " to " + ai.total() + "!\nWould you like to play again?"),
+                            "You Lose", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+                            options[1]);
+                    if (n == JOptionPane.YES_OPTION) {
+                        frame.dispose();
+                        deck = new Deck();
+                        deck.shuffle();
+                        begin();
+                    } else {
+                        frame.dispose();
+                    }
+                }
     }
 }
