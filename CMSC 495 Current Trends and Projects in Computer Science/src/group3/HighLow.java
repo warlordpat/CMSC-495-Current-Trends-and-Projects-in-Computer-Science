@@ -137,7 +137,6 @@ public class HighLow extends JFrame implements ActionListener {
         
         if (index < 51) {
                       
-            System.out.println(e.getActionCommand());
             switch (e.getActionCommand()) {
                 case "New Game":
                     break;
@@ -146,7 +145,6 @@ public class HighLow extends JFrame implements ActionListener {
                     upCard.setIcon(cards[index]);
                     if (refArray[index] == refArray[index - 1]) {
                     
-                        System.out.println("Yes!");
                         score += 1;
                         scoreCtLabel.setText(String.valueOf(score));
                         
@@ -154,14 +152,11 @@ public class HighLow extends JFrame implements ActionListener {
                     }
                     else if (refArray[index] > refArray[index - 1]) {
 
-                        System.out.println("Yes!");
                         score += 1;
                         scoreCtLabel.setText(String.valueOf(score));
 
                     }
                     else if (refArray[index] < refArray[index - 1]){
-
-                        System.out.println("No!");
 
                     }
                     break;
@@ -170,21 +165,17 @@ public class HighLow extends JFrame implements ActionListener {
                     upCard.setIcon(cards[index]);
                     if (refArray[index] == refArray[index - 1]) {
 
-                        System.out.println("Yes!");
                         score += 1;
                         scoreCtLabel.setText(String.valueOf(score));
 
                     }
                     else if (refArray[index] < refArray[index - 1]) {
 
-                        System.out.println("Yes!");
                         score += 1;
                         scoreCtLabel.setText(String.valueOf(score));
 
                     }
                     else if (refArray[index] > refArray[index - 1]){
-
-                        System.out.println("No!");
 
                     }
                     break;
@@ -207,7 +198,7 @@ public class HighLow extends JFrame implements ActionListener {
                             
             URL cardURL = this.getClass().getClassLoader().getResource("images/" + j + ".png");
             cards[position] = new ImageIcon(cardURL);
-                     System.out.println(cards[position]);
+            
         }  
          upCard = new JLabel(cards[0]);
 
