@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -64,6 +65,7 @@ public class Blackjack extends JPanel {
     private JLabel lblValue2;
     private JFrame frame;
     private boolean reload;
+    private HighScores scores;
 
     /**
      * 
@@ -115,8 +117,60 @@ public class Blackjack extends JPanel {
         playerSplitHand = new Hand();
         lblValue1 = new JLabel("Value:");
         lblValue2 = new JLabel("Value: ");
+        String path = System.getProperty("user.home");
+        path += File.separator + "CGS";
+        File customDir = new File(path);
+        File scoreFile = new File(customDir, "BlackJack.score");
+        if (customDir.exists()) {
+            System.out.println(customDir + " already exists");
+            // load a score file
+            
+            if (scoreFile.exists()) {
+                System.out.println(scoreFile + " already exists");
+                loadHighScores(scoreFile);
+            } else {
+                // create new scorefile
+                System.out.println(scoreFile + " created");
+                scores = new HighScores();
+                saveHighScores(scoreFile);
+            }
+            
+        } else if (customDir.mkdirs()) {
+            System.out.println(customDir + " was created");
+            System.out.println(scoreFile + " created");
+            // Make a blank score file
+            scores = new HighScores();
+            saveHighScores(scoreFile);
+        } else {
+            System.out.println(customDir + " was not created");
+            // throw an error, why can't we access the user dir?
+        }
 
         createGUI();
+    }
+
+    /**
+     * 
+     */
+    private void saveHighScores(File scoreFile) {
+        try (FileOutputStream filestream = new FileOutputStream(scoreFile);
+                ObjectOutputStream os = new ObjectOutputStream(filestream);) {
+            os.writeObject(scores);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * @param scoreFile
+     */
+    private void loadHighScores(File scoreFile) {
+        try (FileInputStream filestream = new FileInputStream(scoreFile);
+                ObjectInputStream os = new ObjectInputStream(filestream);) {
+            scores = (HighScores) os.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public void begin() {
@@ -518,6 +572,10 @@ public class Blackjack extends JPanel {
         lblValue1.setBounds(200, 275, 75, 14);
         add(lblValue1);
         lblValue2.setVisible(false);
+
+        JLabel lblNewLabel = new JLabel("Info to go here");
+        lblNewLabel.setBounds(200, 250, 75, 14);
+        add(lblNewLabel);
         lblValue2.setFont(new Font("Courier Bold", Font.BOLD, 17));
         lblValue2.setBounds(200, 500, 75, 14);
         add(lblValue2);
@@ -621,12 +679,23 @@ public class Blackjack extends JPanel {
 
         JMenuItem mntmHighScores = new JMenuItem("High Scores");
         mnMenu.add(mntmHighScores);
+        mntmHighScores.addActionListener(ae -> {
+            highScores();
+        });
 
         JMenuItem mntmReturnToMain = new JMenuItem("Return to Main Menu");
         mntmReturnToMain.addActionListener(ae -> {
             frame.dispose();
         });
         mnMenu.add(mntmReturnToMain);
+    }
+
+    /**
+     * 
+     */
+    private void highScores() {
+        // TODO Auto-generated method stub
+        JOptionPane.showMessageDialog(frame, scores);
     }
 
     /**
