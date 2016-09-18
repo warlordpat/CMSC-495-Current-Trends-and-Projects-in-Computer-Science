@@ -2,6 +2,7 @@ package group3;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -13,6 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.*;
 import javax.swing.*;
+import java.awt.GridLayout;
 
 /**
  * @author Patrick Smith
@@ -24,6 +26,8 @@ public class Blackjack extends JPanel {
      * 
      */
     private static final String REMAIN = "Remaining ";
+    private static final double BLACKJACK_PAYOUT = 2.5;
+    private static final double NORMAL_PAYOUT = 2.0;
     /**
      * 
      */
@@ -33,6 +37,9 @@ public class Blackjack extends JPanel {
      */
     private Deck deck;
     private Hand dealer, player;
+    double playerCash;
+    Bet playerBetHand1;
+    Bet playerBetHand2;
     /**
      * A hand to hold the player's split hand cards.
      */
@@ -53,7 +60,7 @@ public class Blackjack extends JPanel {
      * If the second hand is still in play.
      */
     private boolean handTwoInPlay;
-    private boolean splitTest = false;
+    private boolean splitTest = true;
     /**
      * The GUI element that displays the number of cards remaining in the deck.
      */
@@ -66,6 +73,13 @@ public class Blackjack extends JPanel {
     private JFrame frame;
     private boolean reload;
     private HighScores scores;
+    private JPanel bettingPanel;
+    private JLabel lblInstructions;
+    private JButton deal;
+    private JLabel lblBet;
+    private JButton hit;
+    private JButton stand;
+    private JLabel lblCash;
 
     /**
      * 
@@ -74,6 +88,8 @@ public class Blackjack extends JPanel {
         deck = new Deck();
         remaining = new JLabel(REMAIN + deck.deckSize());
         dealer = new Hand();
+        playerCash = 1000;
+        playerBetHand1 = new Bet();
         arrow = new JPanel() {
             /**
              * 
@@ -124,7 +140,7 @@ public class Blackjack extends JPanel {
         if (customDir.exists()) {
             System.out.println(customDir + " already exists");
             // load a score file
-            
+
             if (scoreFile.exists()) {
                 System.out.println(scoreFile + " already exists");
                 loadHighScores(scoreFile);
@@ -134,7 +150,7 @@ public class Blackjack extends JPanel {
                 scores = new HighScores();
                 saveHighScores(scoreFile);
             }
-            
+
         } else if (customDir.mkdirs()) {
             System.out.println(customDir + " was created");
             System.out.println(scoreFile + " created");
@@ -176,7 +192,7 @@ public class Blackjack extends JPanel {
     public void begin() {
         System.out.println("beginning");
         newGame();
-        deal();
+        // deal();
     }
 
     void newGame() {
@@ -218,6 +234,11 @@ public class Blackjack extends JPanel {
      * Cards left gets low.
      */
     public void deal() {
+        bettingPanel.setVisible(false);
+        // for (Component button: bettingPanel.getComponents()) {
+        // button.setVisible(false);
+        // }
+        lblInstructions.setVisible(false);
         if (deck.deckSize() < 10) {
             System.out.println("reshuffling");
             deck = new Deck();
@@ -272,6 +293,8 @@ public class Blackjack extends JPanel {
                 jbSplit.setVisible(false);
             }
             handOneInPlay = true;
+            hit.setVisible(true);
+            stand.setVisible(true);
             updateRemain();
             repaint();
         }
@@ -344,25 +367,15 @@ public class Blackjack extends JPanel {
             // e.printStackTrace();
             // }
 
-            // repaint();
-
-            int answer = -1;
             System.out.println("Bust checking");
             if (player.isBusted() && !handTwoInPlay) {
-                System.out.println("Getting answer");
-                answer = JOptionPane.showConfirmDialog(this, "Busted! You lose this hand\nDeal again?", "Deal again?",
-                        JOptionPane.YES_NO_OPTION);
-                System.out.println("");
                 handOneInPlay = false;
+                checkWinConditions();
             } // end if
             else if (player.isBusted()) {
                 System.out.println("Busted Hand One");
                 shiftToHandTwo();
             }
-            if (answer == JOptionPane.YES_OPTION) {
-                reset();
-            }
-
         } // end if
           // move on to hand two if hand one is done
         else if (handTwoInPlay) {
@@ -372,27 +385,18 @@ public class Blackjack extends JPanel {
             // System.out.println(card);
             playerSplitHand.addCard(card);
             updateRemain();
-            int answer = -1;
             System.out.println("Bust checking");
             // both hands busted
             if (playerSplitHand.isBusted() && player.isBusted()) {
-                System.out.println("Getting answer");
-                answer = JOptionPane.showConfirmDialog(this, "Busted! You lose this hand\nDeal again?", "Deal again?",
-                        JOptionPane.YES_NO_OPTION);
-                System.out.println("");
                 handOneInPlay = false;
+                checkWinConditions();
             } // end if
               // only hand two busted
             else if (playerSplitHand.isBusted()) {
                 // dealer's turn
                 dealerPlays();
             }
-            if (answer == JOptionPane.YES_OPTION) {
-                reset();
-            }
-
-        }
-        updateRemain();
+        } // end else if
     } // end method
 
     /**
@@ -404,6 +408,10 @@ public class Blackjack extends JPanel {
     }
 
     public void stand() {
+        if (isSplittable()) {
+            System.out.println("is splittable, but stood");
+            jbSplit.setVisible(false);
+        }
         // stand only matters if the hand is still in play
         if (handOneInPlay && !handTwoInPlay) {
             handOneInPlay = false;
@@ -413,8 +421,8 @@ public class Blackjack extends JPanel {
         } else if (handTwoInPlay) {
             System.out.println("standing on two!");
             dealerPlays();
-        }
-    }
+        } // end else if
+    } // end stand
 
     /**
      * 
@@ -427,46 +435,78 @@ public class Blackjack extends JPanel {
             dealer.addCard(card);
             card.flip();
         }
-        int answer;
-        boolean loseHandOne = dealer.scoreHand() >= player.scoreHand();
-        boolean loseHandTwo = dealer.scoreHand() >= playerSplitHand.scoreHand();
-        if (dealer.isBusted()) {
-            answer = winQuestion();
-        }
-        // one hand or both is not busted, otherwise we shouldn't get here
-        else if (player.isBusted()) {
-            // if hand 1 is busted, but not hand two
-            if (loseHandTwo) {
-                answer = loseQuestion();
-            } else {
-                answer = winQuestion();
-            }
-        } else if (playerSplitHand.isBusted()) {
-            // if hand 2 is busted but not hand one
-            if (loseHandOne) {
-                answer = loseQuestion();
-            } else {
-                answer = winQuestion();
-            }
-        } else {
-            // if neither hand is busted
-            if (loseHandOne && loseHandTwo) {
-                // lost both hands
-                answer = loseQuestion();
-            } else if (!loseHandOne && loseHandTwo) {
-                // won hand one, lost hand two
-                answer = winQuestion();
-            } else if (loseHandOne && !loseHandTwo) {
-                // lost hand one, won hand two
-                answer = winQuestion();
-            } else {
-                // won both hands
-                answer = winQuestion();
-            }
-        }
+        checkWinConditions();
+    } // end method
 
+    /**
+     * 
+     */
+    private void checkWinConditions() {
+        int answer;
+
+        // bust checking
+        if (player.isBusted() && !handTwoInPlay) {
+            System.out.println("Getting busted answer (only one hand in play)");
+            answer = loseQuestion(player);
+        } // end if
+        else if (playerSplitHand.isBusted() && player.isBusted()) {
+            System.out.println("Busted Both Hands");
+            answer = loseQuestion(player);
+        } else {
+
+            boolean loseHandOne = dealer.scoreHand() >= player.scoreHand();
+            boolean loseHandTwo = dealer.scoreHand() >= playerSplitHand.scoreHand();
+
+            if (dealer.isBusted()) {
+
+                answer = winQuestion();
+            }
+            // one hand or both is not busted, otherwise we shouldn't get here
+            else if (player.isBusted()) {
+                // if hand 1 is busted, but not hand two
+                if (loseHandTwo) {
+                    answer = loseQuestion(playerSplitHand);
+                } else {
+                    answer = winQuestion();
+                }
+            } else if (playerSplitHand.isBusted()) {
+                // if hand 2 is busted but not hand one
+                if (loseHandOne) {
+                    answer = loseQuestion(player);
+                } else {
+                    answer = winQuestion();
+                }
+            } else {
+                // if neither hand is busted
+                if (loseHandOne && loseHandTwo) {
+                    // lost both hands
+                    answer = loseQuestion(player);
+                } else if (!loseHandOne && loseHandTwo) {
+                    // won hand one, lost hand two
+                    answer = winQuestion();
+                } else if (loseHandOne && !loseHandTwo) {
+                    // lost hand one, won hand two
+                    answer = winQuestion();
+                } else {
+                    // won both hands
+                    answer = winQuestion();
+                }
+            }
+
+        }
         if (answer == JOptionPane.YES_OPTION) {
             reset();
+        } else {
+            // check to see if we qualify for a highscore
+            System.out.println("Checking for a high score");
+            if (scores.isHighScore(playerCash)) {
+                String initials = "";
+                while (initials.length() > 3 || initials.length() == 0) {
+                    JOptionPane.showInputDialog(this, "Enter Your Initials:\nMax of three characters", "New High Score",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+                HighScore score = new HighScore(initials, (int) playerCash);
+            }
         }
     }
 
@@ -474,6 +514,11 @@ public class Blackjack extends JPanel {
      * @return
      */
     private int winQuestion() {
+        if (player.isBlackjack()) {
+            playerCash += playerBetHand1.payout(BLACKJACK_PAYOUT);
+        } else {
+            playerCash += playerBetHand1.payout(NORMAL_PAYOUT);
+        }
         return JOptionPane.showConfirmDialog(this, "You win this hand\nDeal again?", "Deal again?",
                 JOptionPane.YES_NO_OPTION);
     }
@@ -481,9 +526,15 @@ public class Blackjack extends JPanel {
     /**
      * @return
      */
-    private int loseQuestion() {
-        return JOptionPane.showConfirmDialog(this, "You lose this hand\nDeal again?", "Deal again?",
-                JOptionPane.YES_NO_OPTION);
+    private int loseQuestion(Hand hand) {
+        playerCash += playerBetHand1.payout(0.0);
+        String message = "";
+        if (hand.isBusted()) {
+            message = "Busted! You lose this hand\nDeal again?";
+        } else {
+            message = "You lose this hand\nDeal again?";
+        }
+        return JOptionPane.showConfirmDialog(this, message, "Deal again?", JOptionPane.YES_NO_OPTION);
     }
 
     /**
@@ -501,11 +552,18 @@ public class Blackjack extends JPanel {
             arrow.setVisible(false);
         }
         System.out.println("removed player/dealer");
+
+        System.out.println("making deal");
+        lblValue1.setVisible(false);
+        hit.setVisible(false);
+        stand.setVisible(false);
+        deal.setVisible(true);
+        bettingPanel.setVisible(true);
+        lblBet.setText("$" + playerBetHand1.getMoney());
+        lblCash.setText("$" + playerCash);
+        System.out.println("finished deal");
         revalidate();
         repaint();
-        System.out.println("making deal");
-        deal();
-        System.out.println("finished deal");
     } // end method
 
     /**
@@ -529,8 +587,9 @@ public class Blackjack extends JPanel {
         handTwoInPlay = true;
         playerSplitHand.addCard(player.removeCard());
         // now add the new hand to the GUI
-        playerSplitHand.setBounds(200, 300 + 100, (1 * 72), 96);
+        playerSplitHand.setBounds(200, 351, (1 * 72), 96);        
         add(playerSplitHand);
+        setComponentZOrder(playerSplitHand, 0);
         jbSplit.setVisible(false);
         arrow.setVisible(true);
         updateRemain();
@@ -558,14 +617,49 @@ public class Blackjack extends JPanel {
         add(dealer);
         panel.setBorder(null);
         panel.setFocusable(false);
-        panel.setBounds(60, 200, 80, 240);
+        panel.setBounds(60, 200, 80, 320);
         add(panel);
         arrow.setBounds(125, 300, 75, 40);
         add(arrow);
         arrow.setVisible(false);
         player.setBounds(200, 300, (2 * 72), 96);
         add(player);
-        playerSplitHand.setBounds(200, 300 + 100, (1 * 72), 96);
+
+        lblCash = new JLabel("$" + playerCash);
+        lblCash.setHorizontalAlignment(SwingConstants.CENTER);
+        lblCash.setBackground(Color.WHITE);
+        lblCash.setForeground(Color.BLACK);
+        lblCash.setFont(new Font("Tahoma", Font.PLAIN, 16));
+        lblCash.setBounds(647, 479, 103, 23);
+        add(lblCash);
+
+        JLabel lblBalance = new JLabel("CURRENT BALANCE");
+        lblBalance.setFont(new Font("Tahoma", Font.PLAIN, 11));
+        lblBalance.setHorizontalAlignment(SwingConstants.CENTER);
+        lblBalance.setForeground(Color.WHITE);
+        lblBalance.setBounds(647, 506, 103, 14);
+        add(lblBalance);
+
+        JLabel lblBetBalance = new JLabel("BET");
+        lblBetBalance.setHorizontalAlignment(SwingConstants.CENTER);
+        lblBetBalance.setForeground(Color.WHITE);
+        lblBetBalance.setFont(new Font("Tahoma", Font.PLAIN, 11));
+        lblBetBalance.setBounds(647, 431, 103, 14);
+        add(lblBetBalance);
+
+        lblBet = new JLabel("$0");
+        lblBet.setHorizontalAlignment(SwingConstants.CENTER);
+        lblBet.setForeground(Color.BLACK);
+        lblBet.setFont(new Font("Tahoma", Font.PLAIN, 16));
+        lblBet.setBackground(Color.WHITE);
+        lblBet.setBounds(647, 445, 103, 23);
+        add(lblBet);
+
+        lblInstructions = new JLabel("<html>Place Your Bet!<br>Table minimum: $5</html>");
+        lblInstructions.setFont(new Font("Serif", Font.PLAIN, 30));
+        lblInstructions.setBounds(412, 100, 238, 66);
+        add(lblInstructions);
+        playerSplitHand.setBounds(200, 351, (1 * 72), 96);
         add(playerSplitHand);
         lblValue1.setVisible(false);
         lblValue1.setFont(new Font("Courier Bold", Font.BOLD, 17));
@@ -573,11 +667,73 @@ public class Blackjack extends JPanel {
         add(lblValue1);
         lblValue2.setVisible(false);
 
-        JLabel lblNewLabel = new JLabel("Info to go here");
-        lblNewLabel.setBounds(200, 250, 75, 14);
-        add(lblNewLabel);
+        JLabel lblPayout = new JLabel("BLACKJACK PAYS 3 TO 2");
+        lblPayout.setForeground(Color.LIGHT_GRAY);
+        lblPayout.setFont(new Font("Serif", Font.PLAIN, 20));
+        lblPayout.setBounds(200, 235, 268, 40);
+        add(lblPayout);
+
+        bettingPanel = new JPanel();
+        bettingPanel.setOpaque(false);
+        bettingPanel.setBounds(374, 479, 263, 50);
+        add(bettingPanel);
+        bettingPanel.setLayout(new GridLayout(0, 4, 0, 0));
+
+        JButton btnOne = new JButton("1");
+        btnOne.setForeground(Color.WHITE);
+        btnOne.setBackground(Color.BLUE);
+        bettingPanel.add(btnOne);
+        btnOne.addActionListener(al -> {
+            if (playerCash >= 1) {
+                playerBetHand1.add(1);
+                playerCash -= 1;
+                lblCash.setText("$" + playerCash);
+                lblBet.setText("$" + playerBetHand1.getMoney());
+            }
+            System.out.println("finished one button processing");
+        });
+        JButton btnFive = new JButton("5");
+        btnFive.setForeground(Color.WHITE);
+        btnFive.setBackground(Color.RED);
+        bettingPanel.add(btnFive);
+        btnFive.addActionListener(al -> {
+            if (playerCash >= 5) {
+                playerBetHand1.add(5);
+                playerCash -= 5;
+                lblCash.setText("$" + playerCash);
+                lblBet.setText("$" + playerBetHand1.getMoney());
+            }
+            System.out.println("finished five button processing");
+        });
+        JButton btnTwentyFive = new JButton("25");
+        btnTwentyFive.setForeground(Color.WHITE);
+        btnTwentyFive.setBackground(Color.ORANGE);
+        bettingPanel.add(btnTwentyFive);
+        btnTwentyFive.addActionListener(al -> {
+            if (playerCash >= 25) {
+                playerBetHand1.add(25);
+                playerCash -= 25;
+                lblCash.setText("$" + playerCash);
+                lblBet.setText("$" + playerBetHand1.getMoney());
+            }
+            System.out.println("finished twenty five button processing");
+        });
+        JButton btnHundred = new JButton("100");
+        btnHundred.setForeground(Color.WHITE);
+        btnHundred.setBackground(Color.BLACK);
+        bettingPanel.add(btnHundred);
+        btnHundred.addActionListener(al -> {
+            if (playerCash >= 100) {
+                playerBetHand1.add(100);
+                playerCash -= 100;
+                lblCash.setText("$" + playerCash);
+                lblBet.setText("$" + playerBetHand1.getMoney());
+            }
+            System.out.println("finished one hundred button processing");
+        });
+
         lblValue2.setFont(new Font("Courier Bold", Font.BOLD, 17));
-        lblValue2.setBounds(200, 500, 75, 14);
+        lblValue2.setBounds(200, 458, 75, 14);
         add(lblValue2);
 
         frame = new JFrame("Black Jack");
@@ -602,7 +758,7 @@ public class Blackjack extends JPanel {
      * @param BUTTON_SIZE
      */
     private void createButtons(int BUTTON_SIZE) {
-        JButton hit = new JButton("Hit");
+        hit = new JButton("Hit");
         hit.setPreferredSize(new Dimension(60, 60));
         hit.setFont(new Font("Courier Bold", Font.BOLD, 17));
         // hit.setBackground(new Color(192, 108, 108));
@@ -612,7 +768,8 @@ public class Blackjack extends JPanel {
             hit();
             System.out.println("finished hit button processing");
         });
-        JButton stand;
+        hit.setVisible(false);
+
         if (reload) {
             stand = new JButton("Stand 2");
         } else {
@@ -626,6 +783,25 @@ public class Blackjack extends JPanel {
             stand();
             System.out.println("finished stand button processing");
         });
+        stand.setVisible(false);
+
+        deal = new JButton("Deal");
+        deal.setBounds(0, 240, 80, 80);
+        panel.add(deal);
+        deal.setPreferredSize(new Dimension(60, 60));
+        deal.setFont(new Font("Dialog", Font.BOLD, 17));
+        deal.addActionListener(al -> {
+            if (playerBetHand1.getMoney() > 0) {
+                deal();
+                deal.setVisible(false);
+            } else {
+                JOptionPane.showMessageDialog(this, "You must bet at lease the minimum bet!", "Must Bet",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+            System.out.println("finished deal button processing");
+
+        });
+
         if (reload) {
             jbSplit = new JButton("Split 2");
         } else {
