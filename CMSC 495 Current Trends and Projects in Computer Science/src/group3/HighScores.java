@@ -28,20 +28,23 @@ public class HighScores implements Serializable{
         highscores = new ArrayList<>(10);
     }
 
-    void add(HighScore score) {
+    boolean add(HighScore score) {
         if (highscores.isEmpty()) {
             // only need to save the current highscore
             highscores.add(score);
+            return true;
         } else {
             HighScore lowestHighScore = highscores.get(highscores.size() - 1);
-            if (lowestHighScore.getScore() < score.getScore() || highscores.size() < 10) {
+            if (isHighScore(score.getScore())) {
                 if (highscores.size() == 10) {
                     highscores.remove(lowestHighScore);
                 } // end if
                 // Save new score
                 highscores.add(score);
                 Collections.sort(highscores, Collections.reverseOrder());
+                return true;
             }
+            return false;
         }
     } // end method
     
@@ -55,4 +58,21 @@ public class HighScores implements Serializable{
         } // end for
         return outputScores;
     } // end method
+
+    /**
+     * @param playerCash
+     * @return 
+     */
+    public boolean isHighScore(double score) {
+        if (highscores.size() == 0) {
+            return true;
+        }
+        HighScore lowestHighScore = highscores.get(highscores.size() - 1);
+        if (lowestHighScore.getScore() < score || highscores.size() < 10) {
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
 } // end class
