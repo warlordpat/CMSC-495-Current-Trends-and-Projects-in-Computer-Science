@@ -25,7 +25,7 @@ public class HighScore implements Comparable<HighScore>, Serializable {
     /**
      * The score
      */
-    private final int score;
+    private final double score;
     /**
      * The initials of the person with the high score.
      */
@@ -39,7 +39,7 @@ public class HighScore implements Comparable<HighScore>, Serializable {
      * @param score
      *            the score
      */
-    public HighScore(String initials, int score) {
+    public HighScore(String initials, double score) {
         this.initials = initials;
         this.score = score;
     } // end constructor
@@ -47,7 +47,7 @@ public class HighScore implements Comparable<HighScore>, Serializable {
     /**
      * @return the score
      */
-    public int getScore() {
+    public double getScore() {
         return score;
     } // end method
 
