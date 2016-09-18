@@ -219,6 +219,19 @@ public class Hand extends JLabel {
         return card;
     } // end method
 
+    /**
+     * Checks to see if a hand is has Blackjack.
+     * 
+     * @return true, if the hand has a value of 21 and only two cards
+     */
+    public boolean isBlackjack() {
+        if (handSize() == 2 && scoreHand() == 21) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     /*
      * (non-Javadoc) Draws the hand based on the size of the Hand.
      * 
