@@ -72,6 +72,6 @@ public class HighScore implements Comparable<HighScore>, Serializable {
 
     @Override
     public String toString() {
-        return initials + "," + score;
+        return initials + ", " + score;
     } // end method
 } // end class
