@@ -15,6 +15,8 @@ import java.io.ObjectOutputStream;
 import java.util.*;
 import javax.swing.*;
 import java.awt.GridLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * @author Patrick Smith
@@ -456,7 +458,7 @@ public class Blackjack extends JPanel {
 
             boolean loseHandOne = dealer.scoreHand() >= player.scoreHand();
             boolean loseHandTwo = dealer.scoreHand() >= playerSplitHand.scoreHand();
-
+            System.out.println("Hand one: " + loseHandOne + " Hand Two: " + loseHandTwo);
             if (dealer.isBusted()) {
 
                 answer = winQuestion();
@@ -498,14 +500,18 @@ public class Blackjack extends JPanel {
             reset();
         } else {
             // check to see if we qualify for a highscore
+            lblBet.setText("$" + playerBetHand1.getMoney());
+            lblCash.setText("$" + playerCash);
             System.out.println("Checking for a high score");
+
             if (scores.isHighScore(playerCash)) {
                 String initials = "";
                 while (initials.length() > 3 || initials.length() == 0) {
-                    JOptionPane.showInputDialog(this, "Enter Your Initials:\nMax of three characters", "New High Score",
-                            JOptionPane.INFORMATION_MESSAGE);
+                    initials = JOptionPane.showInputDialog(this, "Enter Your Initials:\nMax of three characters",
+                            "New High Score", JOptionPane.INFORMATION_MESSAGE);
                 }
                 HighScore score = new HighScore(initials, (int) playerCash);
+                scores.add(score);
             }
         }
     }
@@ -587,7 +593,7 @@ public class Blackjack extends JPanel {
         handTwoInPlay = true;
         playerSplitHand.addCard(player.removeCard());
         // now add the new hand to the GUI
-        playerSplitHand.setBounds(200, 351, (1 * 72), 96);        
+        playerSplitHand.setBounds(200, 351, (1 * 72), 96);
         add(playerSplitHand);
         setComponentZOrder(playerSplitHand, 0);
         jbSplit.setVisible(false);
@@ -742,7 +748,19 @@ public class Blackjack extends JPanel {
         frame.getContentPane().setLayout(new BorderLayout());
         frame.setPreferredSize(new Dimension(800, 600));
         frame.setResizable(false);
+        frame.addWindowListener(new WindowAdapter() {
 
+            @Override
+            public void windowClosing(WindowEvent e) {
+                // write out high scores here
+                String path = System.getProperty("user.home");
+                path += File.separator + "CGS";
+                File customDir = new File(path);
+                File scoreFile = new File(customDir, "BlackJack.score");
+                saveHighScores(scoreFile);
+                System.out.println("Frame is closing");
+            }
+        });
         createMenu(frame);
         frame.setContentPane(this);
         frame.pack();
@@ -966,6 +984,12 @@ public class Blackjack extends JPanel {
             add(remaining);
             add(lblValue1);
             add(lblValue2);
+            if (handOneInPlay || handTwoInPlay) {
+                deal.setVisible(false);
+                bettingPanel.setVisible(false);
+                hit.setVisible(true);
+                stand.setVisible(true);
+            }
             if (isSplittable()) {
                 panel.add(jbSplit);
                 System.out.println("adding split button");
