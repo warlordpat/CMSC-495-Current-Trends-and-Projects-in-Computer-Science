@@ -54,9 +54,9 @@ public class HighScores implements Serializable{
             return outputScores + "\nNo High Scores Yet!";
         }
         for (HighScore highScore : highscores) {
-            outputScores += highScore.getInitials() + "\t" + highScore.getScore() + "\n";
+            outputScores += highScore.getInitials() + "               " + highScore.getScore() + "\n";
         } // end for
-        return outputScores;
+        return outputScores + "";
     } // end method
 
     /**
