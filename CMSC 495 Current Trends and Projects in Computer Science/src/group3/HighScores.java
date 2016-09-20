@@ -16,7 +16,7 @@ import java.util.Collections;
  * @version 1.0
  * @since Sep 14, 2016
  */
-public class HighScores implements Serializable{
+public class HighScores implements Serializable {
 
     /**
      * 
@@ -39,7 +39,7 @@ public class HighScores implements Serializable{
                 if (highscores.size() == 10) {
                     highscores.remove(lowestHighScore);
                 } // end if
-                // Save new score
+                  // Save new score
                 highscores.add(score);
                 Collections.sort(highscores, Collections.reverseOrder());
                 return true;
@@ -47,7 +47,7 @@ public class HighScores implements Serializable{
             return false;
         }
     } // end method
-    
+
     public String toString() {
         String outputScores = "High Scores\n";
         if (highscores.isEmpty()) {
@@ -60,8 +60,11 @@ public class HighScores implements Serializable{
     } // end method
 
     /**
-     * @param playerCash
-     * @return 
+     * Checks if a score qualifies as a high score.
+     *
+     * @param score
+     *            the score to check
+     * @return true, if the score qualifies as a high score
      */
     public boolean isHighScore(double score) {
         if (highscores.size() == 0) {
@@ -73,6 +76,6 @@ public class HighScores implements Serializable{
         } else {
             return false;
         }
-        
+
     }
 } // end class
