@@ -2,14 +2,14 @@
 // Author: Patrick Smith
 // Date: Sep 9, 2016
 // Course: CMSC 495
-// Assignment: TODO
+// Assignment: Final Project, Group 3
 // Platform: Win10 x64 Java build 1.8.0_102
-// Purpose: TODO
+// Purpose: Holds and displays the WAR cards when a War is initiated.
+
 package group3;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
-
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,16 +19,22 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
 /**
+ * Holds and displays the WAR cards when a War is initiated.
+ *
  * @author Patrick Smith
  * @version 1.0
  * @since Sep 9, 2016
  */
 public class WarFrame extends JFrame {
-    JLabel warLabel1;
-    JLabel warLabel2;
-    JLabel warLabel3;
-    JLabel warLabel4;
-    JPanel warPanel;
+    /**
+     * Serial number required for serialization.
+     */
+    private static final long serialVersionUID = -6059721339041100139L;
+    private JLabel warLabel1;
+    private JLabel warLabel2;
+    private JLabel warLabel3;
+    private JLabel warLabel4;
+    private JPanel warPanel;
     private JLabel warPlayerLabel1;
     private JLabel warPlayerLabel2;
     private JLabel warPlayerLabel3;
@@ -44,9 +50,12 @@ public class WarFrame extends JFrame {
     private JLabel spacer;
 
     /**
-     * 
+     * Creates a new GUI to display the results of a War.
+     *
+     * @param title
+     *            The title of the frame
      */
-    public WarFrame(String title) {
+    public WarFrame(final String title) {
         super(title);
         warPanel = new JPanel(new GridLayout(0, 8, 15, 0));
         Dimension cardSize = new Dimension(72, 96);
@@ -130,7 +139,20 @@ public class WarFrame extends JFrame {
 
     }
 
-    boolean setupGUI(Hand player, Hand ai, int warLevel) {
+    /**
+     * Displays the War cards and the results to the War Frame. Recursively
+     * calls setupGUI if the final War cards are the same. Returns the outcome
+     * of the War to the caller.
+     *
+     * @param player
+     *            The players hand
+     * @param ai
+     *            The computers hand
+     * @param warLevel
+     *            The number of times at war
+     * @return True, if the player wins
+     */
+    final boolean setupGUI(final Hand player, final Hand ai, final int warLevel) {
         boolean whoWon;
         int warSize = 4;
         if (player.handSize() < 4) {
@@ -155,33 +177,34 @@ public class WarFrame extends JFrame {
         for (int i = 0; i < playerWar.length; i++) {
             switch (i) {
             case 0:
-                warPlayerLabel1.setIcon(new ImageIcon(playerWar[0].front));
+                warPlayerLabel1.setIcon(new ImageIcon(playerWar[i].front));
                 break;
             case 1:
-                warPlayerLabel2.setIcon(new ImageIcon(playerWar[1].front));
+                warPlayerLabel2.setIcon(new ImageIcon(playerWar[i].front));
                 break;
             case 2:
-                warPlayerLabel3.setIcon(new ImageIcon(playerWar[2].front));
+                warPlayerLabel3.setIcon(new ImageIcon(playerWar[i].front));
                 break;
             case 3:
-                breakPlayerLabel.setIcon(new ImageIcon(playerWar[3].front));
+                breakPlayerLabel.setIcon(new ImageIcon(playerWar[i].front));
                 break;
             }
         }
 
         for (int i = 0; i < aiWar.length; i++) {
+            ImageIcon icon = new ImageIcon(aiWar[i].front);
             switch (i) {
             case 0:
-                warAILabel1.setIcon(new ImageIcon(aiWar[0].front));
+                warAILabel1.setIcon(icon);
                 break;
             case 1:
-                warAILabel2.setIcon(new ImageIcon(aiWar[1].front));
+                warAILabel2.setIcon(icon);
                 break;
             case 2:
-                warAILabel3.setIcon(new ImageIcon(aiWar[2].front));
+                warAILabel3.setIcon(icon);
                 break;
             case 3:
-                breakAILabel.setIcon(new ImageIcon(aiWar[3].front));
+                breakAILabel.setIcon(icon);
                 break;
             }
         }
@@ -217,19 +240,25 @@ public class WarFrame extends JFrame {
         setVisible(true);
         setFocusable(true);
         return whoWon;
-    }
+    } // end method
 
     /**
+     * Returns the cards from the player and ai's hands to the winner of the
+     * War.
+     *
      * @param winner
+     *            The hand of the winner
      * @param playerWar
+     *            The cards the player used in the war
      * @param aiWar
+     *            The cards the ai used in the war
      */
-    private void returnCardsTo(Hand winner, Card[] playerWar, Card[] aiWar) {
+    private void returnCardsTo(final Hand winner, final Card[] playerWar, final Card[] aiWar) {
         for (int i = 0; i < playerWar.length; i++) {
             winner.addCard(playerWar[i]);
         } // end for
         for (int i = 0; i < aiWar.length; i++) {
             winner.addCard(aiWar[i]);
         } // end for
-    }
-}
+    } // end method
+} // end class
