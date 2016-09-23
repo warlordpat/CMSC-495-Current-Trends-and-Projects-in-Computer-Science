@@ -10,9 +10,17 @@ package group3;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridLayout;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -33,7 +41,7 @@ import javax.swing.SwingConstants;
  * @version 1.0
  * @since Sep 21, 2016
  */
-public class War {
+public class War implements Game{
     /**
      * The number of columns on the game board.
      */
@@ -66,6 +74,10 @@ public class War {
      * 
      */
     private int warIndex = 0;
+    /**
+     * The War high scores.
+     */
+    private HighScores scores;
     /**
      * The player's cards.
      */
@@ -134,6 +146,7 @@ public class War {
         aiDiscardLabel.setHorizontalAlignment(SwingConstants.CENTER);
         blankLabel1 = new JLabel("  ");
         gameOver = false;
+        scores = loadOrCreateScores("War");
     } // end constructor
 
     /**
@@ -180,16 +193,45 @@ public class War {
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("Menu");
         menuBar.add(menu);
-        JMenuItem menuItem = new JMenuItem("New Game");
-        JMenuItem menuItemD = new JMenuItem("How to Play");
-        JMenuItem menuItem1 = new JMenuItem("High Scores");
-        JMenuItem menuItem2 = new JMenuItem("Return to main menu");
+        
+        JMenuItem mntmNewGame = new JMenuItem("New Game");
+        menu.add(mntmNewGame);
+        mntmNewGame.addActionListener(ae -> {
+            // TODO add NewGame functionality
+//            newGame();
+//            reset();
+        });
+        
+        JMenuItem mntmSaveGame = new JMenuItem("Save Game");
+        menu.add(mntmSaveGame);
+        mntmSaveGame.addActionListener(ae -> {
+            saveGame();
+        });
 
-        menu.add(menuItem);
-        menu.add(menuItemD);
-        menu.add(menuItem1);
-        menu.add(menuItem2);
-
+        JMenuItem mntmLoadGame = new JMenuItem("Load Game");
+        menu.add(mntmLoadGame);
+        mntmLoadGame.addActionListener(ae -> {
+            loadGame();
+        });
+        
+        JMenuItem mntmHowToPlay = new JMenuItem("How to Play");
+        menu.add(mntmHowToPlay);
+        mntmHowToPlay.addActionListener(ae -> {
+            directions();
+        });
+        
+        JMenuItem mntmHighScores = new JMenuItem("High Scores");
+        menu.add(mntmHighScores);
+        mntmHighScores.addActionListener(ae -> {
+            highScores();
+        });
+        
+        JMenuItem mntmReturnToMain = new JMenuItem("Return to main menu");
+        menu.add(mntmReturnToMain);
+        mntmReturnToMain.addActionListener(ae -> {
+            frame.dispose();
+        });
+        
         frame.setJMenuBar(menuBar);
         JButton jbOne = new JButton("Battle");
         jbOne.addActionListener(ae -> {
@@ -202,12 +244,7 @@ public class War {
             }
         });
 
-        menuItemD.addActionListener(ae -> {
-            directions();
-        });
-        menuItem2.addActionListener(ae -> {
-            frame.dispose();
-        });
+        
         JLayeredPane layeredPanePlayer = new JLayeredPane();
         URL imageURL = this.getClass().getClassLoader().getResource("images/cardBack.png");
         ImageIcon cardBacks = new ImageIcon(imageURL);
@@ -260,7 +297,8 @@ public class War {
         Card playerCard = player.removeCard();
         Card aiCard = ai.removeCard();
         playerDiscardLabel.setIcon(new ImageIcon(playerCard.front));
-//        playerDiscardLabel.setPreferredSize(new Dimension(CARD_WIDTH, CARD_HEIGHT));
+        // playerDiscardLabel.setPreferredSize(new Dimension(CARD_WIDTH,
+        // CARD_HEIGHT));
         aiDiscardLabel.setIcon(new ImageIcon(aiCard.front));
         if (playerCard.getRank().compareTo(aiCard.getRank()) > 0) {
             // player card has a higher rank than ai card
@@ -270,6 +308,14 @@ public class War {
             if (ai.handSize() == 0) {
                 blankLabel1.setText("Game Over/nYou win!");
                 gameOver = true;
+                
+                // TODO check highscore
+                if (scores.isHighScore(playCount)) {
+                    String initials = getInitials(frame);
+                    HighScore score = new HighScore(initials, playCount);
+                    scores.add(score);
+                }
+                
             } else {
                 blankLabel1.setText("You won this fight!");
             }
@@ -342,5 +388,106 @@ public class War {
                 "The player with the higher card wins. " + "\nIn the event of a tie, each player offers "
                         + "\nthe top 3 cards of their decks, and " + "\nthen the player with the highest "
                         + "\n4th card wins the whole pile.");
+    } // end method
+
+    /**
+     * Shows the high scores in a dialog box.
+     */
+    private void highScores() {
+        JOptionPane.showMessageDialog(frame, scores);
+    }
+
+    /**
+     * Saves the state of the game to a file.
+     */
+    public void saveGame() {
+        System.out.println("Saving Game");
+        try (FileOutputStream filestream = new FileOutputStream("War.ser");
+                ObjectOutputStream os = new ObjectOutputStream(filestream);) {
+            os.writeObject(panel);
+            os.writeObject(ai);
+            os.writeObject(player);
+            os.writeObject(aiDiscardLabel);
+            os.writeObject(playerDiscardLabel);
+            os.writeObject(handSizeAI);
+            os.writeObject(handSizePlayer);
+            os.writeBoolean(gameOver);
+            os.writeInt(playCount);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Game Saved");
+    } // end method
+
+    /**
+     * Loads the game state from a file.
+     */
+    public void loadGame() {
+        // TODO fix saving  Button doesn't work!
+        System.out.println("Loading Game");
+        frame.remove(panel);
+        frame.remove(ai);
+        frame.remove(player);
+        frame.remove(aiDiscardLabel);
+        frame.remove(playerDiscardLabel);
+        frame.remove(handSizeAI);
+        frame.remove(handSizePlayer);
+        // if (handTwoInPlay) {
+        // remove(playerSplitHand);
+        // lblValue2.setVisible(false);
+        // handTwoInPlay = false;
+        // arrow.setLocation(ARROW_X, ARROW_Y);
+        // arrow.setVisible(false);
+        // }
+        System.out.println("removed player/dealer");
+        frame.revalidate();
+        frame.repaint();
+        try (FileInputStream filestream = new FileInputStream("War.ser");
+                ObjectInputStream os = new ObjectInputStream(filestream);) {
+            panel = (JPanel) os.readObject();
+            ai = (Hand) os.readObject();
+            player = (Hand) os.readObject();
+            aiDiscardLabel = (JLabel) os.readObject();
+            playerDiscardLabel = (JLabel) os.readObject();
+            handSizeAI = (JLabel) os.readObject();
+            handSizePlayer = (JLabel) os.readObject();
+            gameOver = os.readBoolean();
+            playCount = os.readInt();
+
+            System.out.println("loaded: " + "\n gameOver " + gameOver + "\n playCount      " + playCount + "\n"
+                    + handSizeAI.getText() + handSizePlayer.getText());
+
+            frame.add(panel);
+//            frame.add(ai);
+//            frame.add(player);
+//            frame.add(aiDiscardLabel);
+//            frame.add(playerDiscardLabel);
+//            frame.add(handSizeAI);
+//            frame.add(handSizePlayer);
+            // if (handOneInPlay || handTwoInPlay) {
+            // deal.setVisible(false);
+            // bettingPanel.setVisible(false);
+            // hit.setVisible(true);
+            // stand.setVisible(true);
+            // }
+            // if (isSplittable()) {
+            // pnlButton.add(jbSplit);
+            // System.out.println("adding split button");
+            // jbSplit.setVisible(true);
+            // } else {
+            // jbSplit.setVisible(false);
+            // }
+            // if (wasSplit) {
+            // playerSplitHand.setBounds(HAND_X, HAND_Y + HAND_SPACING +
+            // SPLIT_HAND_OFFSET, CARD_WIDTH, CARD_HEIGHT);
+            // add(playerSplitHand);
+            // jbSplit.setVisible(false);
+            // arrow.setVisible(true);
+            // }
+            // updateRemain();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Game Loaded");
     } // end method
 } // end class
