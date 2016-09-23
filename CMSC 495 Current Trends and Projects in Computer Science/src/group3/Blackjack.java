@@ -43,7 +43,7 @@ import java.awt.event.WindowEvent;
  * @version 1.0
  * @since Sep 5, 2016
  */
-public class Blackjack extends JPanel {
+public class Blackjack extends JPanel implements Game {
     /**
      * The size of the panel that holds the betting buttons.
      */
@@ -200,10 +200,6 @@ public class Blackjack extends JPanel {
      * The width of a card.
      */
     private static final int CARD_WIDTH = 72;
-    /**
-     * The maximum length of the initials for a high score.
-     */
-    private static final int INITIAL_LENGTH = 3;
     /**
      * The threshold below which a reshuffle is initiated.
      */
@@ -393,67 +389,10 @@ public class Blackjack extends JPanel {
         playerSplitHand = new Hand();
         lblValue1 = new JLabel("Value:");
         lblValue2 = new JLabel("Value: ");
-        String path = System.getProperty("user.home");
-        path += File.separator + "CGS";
-        File customDir = new File(path);
-        File scoreFile = new File(customDir, "BlackJack.score");
-        if (customDir.exists()) {
-            System.out.println(customDir + " already exists");
-            // load a score file
-
-            if (scoreFile.exists()) {
-                System.out.println(scoreFile + " already exists");
-                loadHighScores(scoreFile);
-            } else {
-                // create new scorefile
-                System.out.println(scoreFile + " created");
-                scores = new HighScores();
-                saveHighScores(scoreFile);
-            }
-
-        } else if (customDir.mkdirs()) {
-            System.out.println(customDir + " was created");
-            System.out.println(scoreFile + " created");
-            // Make a blank score file
-            scores = new HighScores();
-            saveHighScores(scoreFile);
-        } else {
-            System.out.println(customDir + " was not created");
-            // throw an error, why can't we access the user dir?
-        }
+        scores = loadOrCreateScores("Blackjack");
 
         createGUI();
     } // end constructor
-
-    /**
-     * Saves the high scores to a given file.
-     *
-     * @param scoreFile
-     *            The file to save scores to
-     */
-    private void saveHighScores(final File scoreFile) {
-        try (FileOutputStream filestream = new FileOutputStream(scoreFile);
-                ObjectOutputStream os = new ObjectOutputStream(filestream);) {
-            os.writeObject(scores);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Loads the high scores from a given file.
-     *
-     * @param scoreFile
-     *            The file to laod scores from
-     */
-    private void loadHighScores(final File scoreFile) {
-        try (FileInputStream filestream = new FileInputStream(scoreFile);
-                ObjectInputStream os = new ObjectInputStream(filestream);) {
-            scores = (HighScores) os.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Starts the gameplay.
@@ -784,11 +723,7 @@ public class Blackjack extends JPanel {
             System.out.println("Checking for a high score");
 
             if (scores.isHighScore(playerCash)) {
-                String initials = "";
-                while (initials == null || initials.length() > INITIAL_LENGTH || initials.length() == 0) {
-                    initials = JOptionPane.showInputDialog(this, "Enter Your Initials:\nMax of three characters",
-                            "New High Score", JOptionPane.INFORMATION_MESSAGE);
-                }
+                String initials = getInitials(this);
                 HighScore score = new HighScore(initials, (int) playerCash);
                 scores.add(score);
             }
@@ -1005,7 +940,7 @@ public class Blackjack extends JPanel {
                 path += File.separator + "CGS";
                 File customDir = new File(path);
                 File scoreFile = new File(customDir, "BlackJack.score");
-                saveHighScores(scoreFile);
+                saveHighScores(scoreFile, scores);
                 System.out.println("Frame is closing");
             }
         });
@@ -1228,7 +1163,7 @@ public class Blackjack extends JPanel {
     /**
      * Saves the state of the game to a file.
      */
-    private void saveGame() {
+    public void saveGame() {
 
         try (FileOutputStream filestream = new FileOutputStream("BlackJack.ser");
                 ObjectOutputStream os = new ObjectOutputStream(filestream);) {
@@ -1255,7 +1190,7 @@ public class Blackjack extends JPanel {
     /**
      * Loads the game state from a file.
      */
-    private void loadGame() {
+    public void loadGame() {
         remove(player);
         remove(dealer);
         remove(lblValue1);
