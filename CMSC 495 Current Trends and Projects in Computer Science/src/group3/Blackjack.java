@@ -195,11 +195,11 @@ public class Blackjack extends JPanel implements Game {
     /**
      * The height of a card.
      */
-    private static final int CARD_HEIGHT = 96;
+    private static final int CARD_HEIGHT = Card.CARD_HEIGHT;
     /**
      * The width of a card.
      */
-    private static final int CARD_WIDTH = 72;
+    private static final int CARD_WIDTH = Card.CARD_WIDTH;
     /**
      * The threshold below which a reshuffle is initiated.
      */
