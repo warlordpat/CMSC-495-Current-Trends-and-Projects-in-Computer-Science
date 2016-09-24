@@ -1,10 +1,10 @@
-// File: Pot.java
+// File: Bet.java
 // Author: Patrick Smith
 // Date: Sep 18, 2016
 // Course: CMSC 495
-// Assignment: TODO
+// Assignment: Final Project, Group 3
 // Platform: Win10 x64 Java build 1.8.0_102
-// Purpose: TODO
+// Purpose: Holds a bet for betting games.
 package group3;
 
 /**
@@ -14,26 +14,34 @@ package group3;
  */
 public class Bet {
 
+    /**
+     * The amount of money currently in the bet.
+     */
     private int bet;
-    @SuppressWarnings("unused")
-    private double pays;
 
     /**
-     * 
+     * Creates a new empty bet.
      */
     public Bet() {
         bet = 0;
-        pays = 3.0/2.0;
     }
 
     /**
-     * @return the money
+     * Gets the money in the current bet.
+     *
+     * @return the money the money in the bet
      */
-    public int getMoney() {
+    public final int getMoney() {
         return bet;
     }
 
-    public void add(int bet) {
+    /**
+     * Adds money to the current bet.
+     *
+     * @param bet
+     *            the amount of bet to add to the current bet
+     */
+    public final void add(final int bet) {
         if (bet > 0) {
             this.bet += bet;
         } else {
@@ -41,7 +49,14 @@ public class Bet {
         }
     }
 
-    public double payout(double payoutRatio) {
+    /**
+     * Calculates how much the bet earned the player based on the payout ratio.
+     *
+     * @param payoutRatio
+     *            the ration of bet to payout
+     * @return the payout from the bet
+     */
+    public final double payout(final double payoutRatio) {
         double payout = bet * payoutRatio;
         bet = 0;
         return payout;
