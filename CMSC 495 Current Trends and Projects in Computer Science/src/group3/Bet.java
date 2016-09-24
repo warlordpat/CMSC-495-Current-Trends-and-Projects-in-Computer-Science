@@ -61,5 +61,4 @@ public class Bet {
         bet = 0;
         return payout;
     }
-
 }
