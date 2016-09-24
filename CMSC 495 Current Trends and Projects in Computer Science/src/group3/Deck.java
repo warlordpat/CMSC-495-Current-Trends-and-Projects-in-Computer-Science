@@ -7,7 +7,6 @@
 // Purpose: implements a graphical Deck for card games.
 package group3;
 
-//TODO Remove Magic Numbers
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -29,6 +28,11 @@ import javax.swing.JLabel;
  */
 public class Deck extends JLabel {
 
+    /**
+     * The constant alpha to be multiplied with the alpha of the source. alpha
+     * must be a floating point number in the inclusive range [0.0, 1.0].
+     */
+    private static final float ALPHA = 0.05F;
     /**
      * Generated serial ID.
      */
@@ -68,7 +72,8 @@ public class Deck extends JLabel {
 
         // load card backs from Cards class to reduce image loading error
         // surface.
-        cardBack = new Card(Rank.ACE, Suit.CLUB).getBacks().getSubimage(72, 0, 72, 96);
+        cardBack = new Card(Rank.ACE, Suit.CLUB).getBacks().getSubimage(Card.CARD_WIDTH, 0, Card.CARD_WIDTH,
+                Card.CARD_HEIGHT);
     } // end method
 
     /**
@@ -168,8 +173,8 @@ public class Deck extends JLabel {
             g.drawImage(cardBack, 0, 0, null);
         } else {
             g.setColor(Color.WHITE);
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.05F));
-            g.fillRect(0, 0, 79, 123);
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ALPHA));
+            g.fillRect(0, 0, Card.CARD_WIDTH, Card.CARD_HEIGHT);
         } // end else
         g.dispose();
     } // end method
