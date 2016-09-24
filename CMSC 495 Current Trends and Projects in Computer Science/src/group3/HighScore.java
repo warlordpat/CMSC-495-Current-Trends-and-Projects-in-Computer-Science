@@ -4,14 +4,14 @@
 // Course: CMSC 495
 // Assignment: TODO
 // Platform: Win10 x64 Java build 1.8.0_102
-// Purpose: TODO
+// Purpose: Represents an individual high score with score and initials.
 package group3;
 
 import java.io.Serializable;
 
 /**
  * Holds a High score.
- * 
+ *
  * @author Patrick Smith
  * @version 1.0
  * @since Sep 14, 2016
@@ -19,11 +19,11 @@ import java.io.Serializable;
 public class HighScore implements Comparable<HighScore>, Serializable {
 
     /**
-     * 
+     * The serial number for serialization.
      */
     private static final long serialVersionUID = 490653992209453033L;
     /**
-     * The score
+     * The score.
      */
     private final double score;
     /**
@@ -39,7 +39,7 @@ public class HighScore implements Comparable<HighScore>, Serializable {
      * @param score
      *            the score
      */
-    public HighScore(String initials, double score) {
+    public HighScore(final String initials, final double score) {
         this.initials = initials;
         this.score = score;
     } // end constructor
@@ -47,19 +47,19 @@ public class HighScore implements Comparable<HighScore>, Serializable {
     /**
      * @return the score
      */
-    public double getScore() {
+    public final double getScore() {
         return score;
     } // end method
 
     /**
      * @return the initials
      */
-    public String getInitials() {
+    public final String getInitials() {
         return initials;
     } // end method
 
     @Override
-    public int compareTo(HighScore h) {
+    public final int compareTo(final HighScore h) {
         if (this.score < h.score) {
             return -1;
         } else if (this.score > h.score) {
@@ -71,7 +71,7 @@ public class HighScore implements Comparable<HighScore>, Serializable {
     } // end method
 
     @Override
-    public String toString() {
+    public final String toString() {
         return initials + ", " + score;
     } // end method
 } // end class
