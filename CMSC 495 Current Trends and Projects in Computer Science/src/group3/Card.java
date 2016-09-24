@@ -1,12 +1,19 @@
+// File: Card.java
+// Author: Patrick Smith
+// Date: Sep 5, 2016
+// Course: CMSC 495
+// Assignment: Final Project, Group 3
+// Platform: Win10 x64 Java build 1.8.0_102
+// Purpose: implements a graphical Card to use in the CGS.
 package group3;
 
+//TODO Remove Magic Numbers
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
@@ -15,7 +22,7 @@ import javax.swing.JComponent;
  * displayed directly to the screen. It offers the ability to query its suit,
  * rank, and allows the user to flip the card over. Card images are loaded from
  * a sprite map statically to save memory and speed up card creation.
- * 
+ *
  * @author Patrick Smith
  * @version 1.1
  * @since Sep 5, 2016
@@ -26,14 +33,6 @@ public class Card extends JComponent {
      * Generated serial ID.
      */
     private static final long serialVersionUID = -2835610009194889206L;
-//    /**
-//     * Statically load the cards, so the card sprite map is only in memory once.
-//     */
-//    transient private BufferedImage cards = readImage("images/cards_2.png");
-//    /**
-//     * Statically load the backs, so the back is only in memory once.
-//     */
-//    transient private BufferedImage cardBacks = readImage("images/card_backs.png");
 
     /**
      * Loads a sprite map statically to reduce memory usage of the cards.
@@ -42,8 +41,8 @@ public class Card extends JComponent {
      *            the location to load the picture
      * @return the BufferedImage of the picture
      */
-    static BufferedImage readImage(String location) {
-//        System.out.println("Loading in image from Card Class!");
+    static BufferedImage readImage(final String location) {
+        // System.out.println("Loading in image from Card Class!");
         try {
             return ImageIO.read(Card.class.getClassLoader().getResource(location));
         } catch (IOException e) {
@@ -55,10 +54,10 @@ public class Card extends JComponent {
 
     /**
      * Gets a reference to the card Back sprite map.
-     * 
+     *
      * @return the image of card backs.
      */
-    public BufferedImage getBacks() {
+    public final BufferedImage getBacks() {
         return readImage("images/card_backs.png");
     } // end method
 
@@ -92,13 +91,13 @@ public class Card extends JComponent {
     /**
      * Creates a Card of the given rank and suit and loads the image for the
      * card.
-     * 
+     *
      * @param rank
      *            the rank of the Card
      * @param suit
      *            the suit of the Card
      */
-    public Card(Rank rank, Suit suit) {
+    public Card(final Rank rank, final Suit suit) {
         this.rank = rank;
         this.suit = suit;
         // System.out.println("loading " + rank.ordinal() * 72 + ", " +
@@ -111,26 +110,26 @@ public class Card extends JComponent {
 
     /**
      * Gets the suit of the card.
-     * 
+     *
      * @return the suit
      */
-    public Suit getSuit() {
+    public final Suit getSuit() {
         return suit;
     } // end method
 
     /**
      * Gets the rank of the card.
-     * 
+     *
      * @return the rank
      */
-    public Rank getRank() {
+    public final Rank getRank() {
         return rank;
     } // end method
 
     /**
      * Flips the card over on screen.
      */
-    void flip() {
+    final void flip() {
         if (faceUp) {
             currentImage = back;
         } else {
@@ -147,19 +146,43 @@ public class Card extends JComponent {
         repaint(); // update the screen
     } // end method
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
+    /**
+     * Serializes the Card.
+     *
+     * See readObject() and writeObject() in JComponent for more information
+     * about serialization in Swing.
+     *
+     * @param out
+     *            the <code>ObjectOutputStream</code> in which to write
+     * @throws IOException
+     *             if I/O errors occur while writing to the OutputStream
+     */
+    private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
-//        ImageIO.write(cards, "png", out); 
-//        ImageIO.write(cardBacks, "png", out);
-//        ImageIO.write(back, "png", out);
-//        ImageIO.write(front, "png", out);
-//        ImageIO.write(currentImage, "png", out);
+        // ImageIO.write(cards, "png", out);
+        // ImageIO.write(cardBacks, "png", out);
+        // ImageIO.write(back, "png", out);
+        // ImageIO.write(front, "png", out);
+        // ImageIO.write(currentImage, "png", out);
     } // end method
-    
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+
+    /**
+     * Reads back in the Card from serialization.
+     *
+     * See readObject() and writeObject() in JComponent for more information
+     * about serialization in Swing.
+     *
+     * @param in
+     *            the <code>ObjectInputStream</code> from which to read
+     * @throws IOException
+     *             if an I/O error occurs
+     * @throws ClassNotFoundException
+     *             if the class of a serialized object could not be found
+     */
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-//        cards = ImageIO.read(in);
-//        cardBacks = ImageIO.read(in);
+        // cards = ImageIO.read(in);
+        // cardBacks = ImageIO.read(in);
         back = getBacks().getSubimage(72, 0, 72, 96);
         front = readImage("images/cards_2.png").getSubimage(rank.ordinal() * 72, suit.ordinal() * 96, 72, 96);
         if (faceUp) {
@@ -167,16 +190,17 @@ public class Card extends JComponent {
         } else {
             currentImage = back;
         }
-        
-//        currentImage = ImageIO.read(in);
+
+        // currentImage = ImageIO.read(in);
     } // end method
-    
+
     /*
-     * (non-Javadoc)
-     * 
+     * @ (non-Javadoc)
+     *
      * @see javax.swing.JComponent#getPreferredSize()
      */
-    public Dimension getPreferredSize() {
+    @Override
+    public final Dimension getPreferredSize() {
         if (currentImage == null) {
             return new Dimension(72, 96);
         } else {
@@ -186,19 +210,21 @@ public class Card extends JComponent {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
-    public String toString() {
+    @Override
+    public final String toString() {
         return "" + rank + suit;
     } // end method
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
      */
-    protected void paintComponent(Graphics graphics) {
+    @Override
+    protected final void paintComponent(final Graphics graphics) {
         super.paintComponents(graphics);
         Graphics g = graphics.create();
         g.drawImage(currentImage, 0, 0, null);
