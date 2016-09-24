@@ -6,6 +6,7 @@
 // Platform: Win10 x64 Java build 1.8.0_102
 // Purpose: implements a graphical Hand for card games.
 package group3;
+
 // TODO Remove Magic Numbers
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -60,11 +61,6 @@ public class Hand extends JLabel {
      * A List of the Cards in the Hand.
      */
     private List<Card> cards;
-    /**
-     * The image of the back of the card
-     */
-    // @SuppressWarnings("unused")
-    // private BufferedImage cardBack;
 
     /**
      * Creates a new, empty Hand. The Hand has the ability to hold Cards, and
@@ -155,7 +151,7 @@ public class Hand extends JLabel {
     } // end method
 
     /**
-     * Converts a hand to a String representation.
+     * Converts a Hand to a String representation.
      *
      * @see java.lang.Object#toString()
      * @return A String representation of a Hand
@@ -241,7 +237,8 @@ public class Hand extends JLabel {
      * Draws the hand based on the size of the Hand.
      *
      * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
-     * @param graphics the Graphics object to protect
+     * @param graphics
+     *            the Graphics object to protect
      */
     protected final void paintComponent(final Graphics graphics) {
         Graphics2D g = (Graphics2D) graphics.create();
