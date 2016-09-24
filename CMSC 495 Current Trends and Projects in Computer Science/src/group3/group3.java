@@ -10,6 +10,7 @@ import javax.swing.border.*;
 
 public class group3 {
 
+    public static final boolean DEBUGGING = false;
     Blackjack bj;
      ThirtyOne thirtyone = new ThirtyOne();
     War war = new War();
