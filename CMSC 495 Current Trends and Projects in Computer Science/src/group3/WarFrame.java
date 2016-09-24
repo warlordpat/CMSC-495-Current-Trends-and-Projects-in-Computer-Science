@@ -154,6 +154,12 @@ public class WarFrame extends JFrame {
      */
     final boolean setupGUI(final Hand player, final Hand ai, final int warLevel) {
         boolean whoWon;
+        // check for win conditions
+        if (player.handSize() == 0) {
+            return false;
+        } else if (ai.handSize() == 0) {
+            return true;
+        }
         int warSize = 4;
         if (player.handSize() < 4) {
             // not enough cards
@@ -165,12 +171,16 @@ public class WarFrame extends JFrame {
         }
         Card[] playerWar = new Card[warSize];
         for (int i = 0; i < playerWar.length; i++) {
-            System.out.println("Removing player card");
+            if (group3.DEBUGGING) {
+                System.out.println("Removing player card");
+            }
             playerWar[i] = player.removeCard();
         } // end for
         Card[] aiWar = new Card[warSize];
         for (int i = 0; i < aiWar.length; i++) {
-            System.out.println("Removing ai card");
+            if (group3.DEBUGGING) {
+                System.out.println("Removing ai card");
+            }
             aiWar[i] = ai.removeCard();
         } // end for
         levelNum.setText(Integer.toString(warLevel));
@@ -187,6 +197,8 @@ public class WarFrame extends JFrame {
                 break;
             case 3:
                 breakPlayerLabel.setIcon(new ImageIcon(playerWar[i].front));
+                break;
+            default:
                 break;
             }
         }
@@ -205,6 +217,8 @@ public class WarFrame extends JFrame {
                 break;
             case 3:
                 breakAILabel.setIcon(icon);
+                break;
+            default:
                 break;
             }
         }
@@ -225,8 +239,10 @@ public class WarFrame extends JFrame {
             returnCardsTo(ai, playerWar, aiWar);
             whoWon = false;
         } else {
-            // double war!
-            System.out.println("double war");
+         // double war!
+            if (group3.DEBUGGING) {
+                System.out.println("double war");
+            }
             whoWon = setupGUI(player, ai, warLevel + 1);
             if (whoWon) {
                 returnCardsTo(player, playerWar, aiWar);
