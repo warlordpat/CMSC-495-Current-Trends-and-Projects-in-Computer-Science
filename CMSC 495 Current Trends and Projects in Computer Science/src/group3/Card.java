@@ -7,7 +7,7 @@
 // Purpose: implements a graphical Card to use in the CGS.
 package group3;
 
-//TODO Remove Magic Numbers
+//TODO Hide fields?
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -30,9 +30,21 @@ import javax.swing.JComponent;
 public class Card extends JComponent {
 
     /**
+     * Amount of time to pause between card movements, in ms.
+     */
+    private static final int PAUSE_TIME = 100;
+    /**
      * Generated serial ID.
      */
     private static final long serialVersionUID = -2835610009194889206L;
+    /**
+     * The height of a card, 96 px.
+     */
+    public static final int CARD_HEIGHT = 96;
+    /**
+     * The width of a card, 72 px.
+     */
+    public static final int CARD_WIDTH = 72;
 
     /**
      * Loads a sprite map statically to reduce memory usage of the cards.
@@ -102,8 +114,9 @@ public class Card extends JComponent {
         this.suit = suit;
         // System.out.println("loading " + rank.ordinal() * 72 + ", " +
         // suit.ordinal() * 96 + "");
-        back = getBacks().getSubimage(72, 0, 72, 96);
-        front = readImage("images/cards_2.png").getSubimage(rank.ordinal() * 72, suit.ordinal() * 96, 72, 96);
+        back = getBacks().getSubimage(CARD_WIDTH, 0, CARD_WIDTH, CARD_HEIGHT);
+        front = readImage("images/cards_2.png").getSubimage(rank.ordinal() * CARD_WIDTH, suit.ordinal() * CARD_HEIGHT,
+                CARD_WIDTH, CARD_HEIGHT);
         currentImage = back;
         faceUp = false;
     } // end constructor
@@ -138,7 +151,7 @@ public class Card extends JComponent {
         // System.out.println("currentImage: " + currentImage.getWidth() + ", "
         // + currentImage.getHeight());
         try {
-            Thread.sleep(100); // pause so you can see the flip
+            Thread.sleep(PAUSE_TIME); // pause so you can see the flip
         } catch (InterruptedException e) {
             e.printStackTrace();
         } // end catch
@@ -183,8 +196,9 @@ public class Card extends JComponent {
         in.defaultReadObject();
         // cards = ImageIO.read(in);
         // cardBacks = ImageIO.read(in);
-        back = getBacks().getSubimage(72, 0, 72, 96);
-        front = readImage("images/cards_2.png").getSubimage(rank.ordinal() * 72, suit.ordinal() * 96, 72, 96);
+        back = getBacks().getSubimage(CARD_WIDTH, 0, CARD_WIDTH, CARD_HEIGHT);
+        front = readImage("images/cards_2.png").getSubimage(rank.ordinal() * CARD_WIDTH, suit.ordinal() * CARD_HEIGHT,
+                CARD_WIDTH, CARD_HEIGHT);
         if (faceUp) {
             currentImage = front;
         } else {
@@ -202,7 +216,7 @@ public class Card extends JComponent {
     @Override
     public final Dimension getPreferredSize() {
         if (currentImage == null) {
-            return new Dimension(72, 96);
+            return new Dimension(CARD_WIDTH, CARD_HEIGHT);
         } else {
             return new Dimension(currentImage.getWidth(null), currentImage.getHeight(null));
         }
