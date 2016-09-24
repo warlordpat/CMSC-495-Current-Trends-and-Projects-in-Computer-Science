@@ -7,7 +7,6 @@
 // Purpose: implements a graphical Hand for card games.
 package group3;
 
-// TODO Remove Magic Numbers
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -30,7 +29,23 @@ import javax.swing.JLabel;
  * @since Sep 5, 2016
  */
 public class Hand extends JLabel {
-
+    /**
+     * The spacing between cards.
+     */
+    private static final int SPACER = 3;
+    /**
+     * The constant alpha to be multiplied with the alpha of the source. alpha
+     * must be a floating point number in the inclusive range [0.0, 1.0].
+     */
+    private static final float ALPHA = 0.05F;
+    /**
+     * The high value of an Ace.
+     */
+    private static final int ACE_10_VALUE = 10;
+    /**
+     * The score that represents the max in Blackjack.
+     */
+    private static final int BLACKJACK = 21;
     /**
      * Generated serial ID.
      */
@@ -74,7 +89,7 @@ public class Hand extends JLabel {
         // load card backs from Cards class to reduce image loading error
         // surface.
         // cardBack = Card.getBacks().getSubimage(72, 0, 72, 96);
-        this.setPreferredSize(new Dimension(72, 96));
+        this.setPreferredSize(new Dimension(Card.CARD_WIDTH, Card.CARD_HEIGHT));
     } // end constructor
 
     /**
@@ -85,7 +100,7 @@ public class Hand extends JLabel {
      */
     final void addCard(final Card card) {
         // moves the card to the proper offset in the hand
-        card.setBounds(cards.size() * 75, 0, 72, 96);
+        card.setBounds(cards.size() * (Card.CARD_WIDTH + SPACER), 0, Card.CARD_WIDTH, Card.CARD_HEIGHT);
         cards.add(card); // add the card to the Hand's List
         add(card, 0); // add the card to the hand JLabel
         // System.out.println("card added to hand and label");
@@ -99,14 +114,15 @@ public class Hand extends JLabel {
     private void resize() {
         int index = 0;
         for (Card card : cards) {
-            card.setBounds(index * 75, 0, 72, 96);
+            card.setBounds(index * (Card.CARD_WIDTH + SPACER), 0, Card.CARD_WIDTH, Card.CARD_HEIGHT);
             index++;
         }
         if (cards.size() != 0) {
             // resize the hand JComponent to the size of the hand
-            setSize(3 * cards.size() + cards.size() * 72, 96);
+            setSize((SPACER * cards.size()) + (cards.size() * Card.CARD_WIDTH), Card.CARD_HEIGHT);
         } else {
-            setSize(72, 96); // default size of a single card.
+            setSize(Card.CARD_WIDTH, Card.CARD_HEIGHT); // default size of a
+                                                        // single card.
         }
     }
 
@@ -132,8 +148,8 @@ public class Hand extends JLabel {
         if (!hasAce) {
             return sum;
         } else {
-            if (sum + 10 <= 21) {
-                return sum + 10;
+            if (sum + ACE_10_VALUE <= BLACKJACK) {
+                return sum + ACE_10_VALUE;
             } else {
                 return sum;
             }
@@ -147,7 +163,7 @@ public class Hand extends JLabel {
      */
     final boolean isBusted() {
         System.out.println("scoring hand");
-        return !(scoreHand() <= 21);
+        return !(scoreHand() <= BLACKJACK);
     } // end method
 
     /**
@@ -230,7 +246,7 @@ public class Hand extends JLabel {
      * @return true, if the hand has a value of 21 and only two cards
      */
     public final boolean isBlackjack() {
-        return handSize() == 2 && scoreHand() == 21;
+        return handSize() == 2 && scoreHand() == BLACKJACK;
     }
 
     /**
@@ -243,8 +259,8 @@ public class Hand extends JLabel {
     protected final void paintComponent(final Graphics graphics) {
         Graphics2D g = (Graphics2D) graphics.create();
         g.setColor(Color.WHITE);
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.05F));
-        g.fillRect(0, 0, handSize() * 72, 96);
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ALPHA));
+        g.fillRect(0, 0, handSize() * Card.CARD_WIDTH, Card.CARD_HEIGHT);
         g.dispose();
     } // end method
 
