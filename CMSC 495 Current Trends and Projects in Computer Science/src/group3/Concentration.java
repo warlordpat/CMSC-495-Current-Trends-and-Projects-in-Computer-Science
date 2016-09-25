@@ -92,7 +92,7 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
         saveFile = new File(customDir, "HighLow.ser");
 
         scores = loadOrCreateScores("Concentration");
-
+        setVisible(false);
         createGUI();
     }
 
@@ -115,6 +115,7 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
      */
     public final void begin() {
         newGame();
+        setVisible(true);
     }
 
     public static void main(String[] args) {
@@ -234,8 +235,6 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
         Font f = new Font("Arial", Font.PLAIN, 22);
         scoreLabel.setFont(f);
         scorePanel.add(scoreLabel);
-
-        setVisible(true);
         setSize(900, 900);
         setResizable(false);
         addWindowListener(new WindowAdapter() {
