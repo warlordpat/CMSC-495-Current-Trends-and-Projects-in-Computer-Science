@@ -16,3 +16,5 @@ src/images/
 .classpath
 .project
 .settings/
+/BlackJack.ser
+/War.ser
