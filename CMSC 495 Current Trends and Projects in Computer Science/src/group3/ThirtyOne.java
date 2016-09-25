@@ -15,8 +15,8 @@ import javax.swing.*;
 import java.awt.event.*;
 
 /**
- * ThirtyOne implements a graphical game of Thirty-One. The game includes
- * the ability to 
+ * ThirtyOne implements a graphical game of Thirty-One. The game includes the
+ * ability to
  */
 public class ThirtyOne extends JPanel {
     /**
@@ -74,7 +74,7 @@ public class ThirtyOne extends JPanel {
     /**
      * The cards in the AI's hand
      */
-    private Card aiCard1, aiCard2, aiCard3;
+    private Card aiCard1, aiCard2, aiCard3, aiCard4;
     /**
      * The cards in the center
      */
@@ -178,7 +178,7 @@ public class ThirtyOne extends JPanel {
     /**
      * ThirtyOne frame
      */
-    private JFrame frame; 
+    private JFrame frame;
     /**
      * Integer to represent the player's current score
      */
@@ -203,13 +203,14 @@ public class ThirtyOne extends JPanel {
      * Panel for splitting splitPaneHorizontal and dialPanel
      */
     private JSplitPane splitBottom;
+
     /**
      * Constructs a new ThirtyOne game.
      */
     public ThirtyOne() {
         deck = new Deck();
         AI = new Hand();
-        player = new Hand();        
+        player = new Hand();
         playerScore = 0;
         String path = System.getProperty("user.home");
         path += File.separator + "CGS";
@@ -226,18 +227,20 @@ public class ThirtyOne extends JPanel {
                 // create new scorefile
                 System.out.println(scoreFile + " created");
                 scores = new HighScores();
-                saveHighScores(scoreFile);
+                saveHighScores(scoreFile, scores);
             }
 
         } else if (customDir.mkdirs()) {
             System.out.println(customDir + " was created");
             System.out.println(scoreFile + " created");
             // Make a blank score file
-            scores = new HighScores();
-            saveHighScores(scoreFile);
+            saveHighScores(scoreFile, scores);
         } else {
             System.out.println(customDir + " was not created");
             // throw an error, why can't we access the user dir?
+        }
+        if (group3.DEBUGGING) {
+            System.out.println("Scores: " + scores);
         }
     } // end constructor
 
@@ -247,10 +250,10 @@ public class ThirtyOne extends JPanel {
      * @param scoreFile
      *            The file to save scores to
      */
-    private void saveHighScores(final File scoreFile) {
+    private void saveHighScores(final File scoreFile, HighScores score) {
         try (FileOutputStream filestream = new FileOutputStream(scoreFile);
                 ObjectOutputStream os = new ObjectOutputStream(filestream);) {
-            os.writeObject(scores);
+            os.writeObject(score);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -284,9 +287,8 @@ public class ThirtyOne extends JPanel {
      * Creates a new game session.
      */
     final void newGame() {
-        remove(deck);
-        remove(AI);
-        remove(player);
+        AI.removeAll();
+        player.removeAll();
         deck = new Deck();
         AI = new Hand();
         player = new Hand();
@@ -308,8 +310,9 @@ public class ThirtyOne extends JPanel {
      * Resets the game state for a new hand.
      */
     private void reset() {
-        
+
     } // end method
+
     /**
      * Creates a new initial BlackJack GUI.
      */
@@ -329,8 +332,29 @@ public class ThirtyOne extends JPanel {
                 path += File.separator + "CGS";
                 File customDir = new File(path);
                 File scoreFile = new File(customDir, "ThirtyOne.score");
-                saveHighScores(scoreFile);
-                System.out.println("Frame is closing");
+                saveHighScores(scoreFile, scores);
+                if (group3.DEBUGGING) {
+                    System.out.println("Frame is closing");
+                    System.out.println("Scores: " + scores);
+                }
+            }
+            
+            /* (non-Javadoc)
+             * @see java.awt.event.WindowAdapter#windowClosed(java.awt.event.WindowEvent)
+             */
+            @Override
+            public void windowClosed(WindowEvent e) {
+                // TODO Auto-generated method stub
+                super.windowClosed(e);
+                String path = System.getProperty("user.home");
+                path += File.separator + "CGS";
+                File customDir = new File(path);
+                File scoreFile = new File(customDir, "ThirtyOne.score");
+                saveHighScores(scoreFile, scores);
+                if (group3.DEBUGGING) {
+                    System.out.println("Frame is closing");
+                    System.out.println("Scores: " + scores);
+                }
             }
         });
         createMenu(frame);
@@ -340,6 +364,7 @@ public class ThirtyOne extends JPanel {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
+
     /**
      * Creates the PlayerPanel and adds the player's hand
      */
@@ -363,11 +388,13 @@ public class ThirtyOne extends JPanel {
         jbPlayerCard4 = new JButton();
         jbPlayerCard4.setSize(CARD_WIDTH, CARD_HEIGHT);
         jbPlayerCard4.setVisible(false);
+        PlayerPanel.setBackground(CARD_TABLE_GREEN);
         PlayerPanel.add(jbPlayerCard1);
         PlayerPanel.add(jbPlayerCard2);
         PlayerPanel.add(jbPlayerCard3);
         PlayerPanel.add(jbPlayerCard4);
     }
+
     /**
      * Creates the CenterPanel and adds the center cards
      */
@@ -376,6 +403,7 @@ public class ThirtyOne extends JPanel {
         aiCard1 = deck.deal();
         aiCard2 = deck.deal();
         aiCard3 = deck.deal();
+        ai31 = 0;
         ai31 += values.get(aiCard1.getRank());
         ai31 += values.get(aiCard2.getRank());
         ai31 += values.get(aiCard3.getRank());
@@ -406,27 +434,31 @@ public class ThirtyOne extends JPanel {
             CenterPanel.add(jbCenterCard3);
         }
         /**
-         * AI goes first, picks the highest card. Add the
-         * two remaining center cards to the center
+         * AI goes first, picks the highest card. Add the two remaining center
+         * cards to the center
          */
         else {
             if (iCard1 > iCard2) {
                 if (iCard1 > iCard3) {
                     ai31 += values.get(centerCard1.getRank());
+                    aiCard4 = centerCard1;
                     CenterPanel.add(jbCenterCard2);
                     CenterPanel.add(jbCenterCard3);
                 } else {
                     ai31 += values.get(centerCard3.getRank());
+                    aiCard4 = centerCard3;
                     CenterPanel.add(jbCenterCard1);
                     CenterPanel.add(jbCenterCard2);
                 }
             } else {
                 if (iCard2 > iCard3) {
                     ai31 += values.get(centerCard2.getRank());
+                    aiCard4 = centerCard2;
                     CenterPanel.add(jbCenterCard1);
                     CenterPanel.add(jbCenterCard3);
                 } else {
                     ai31 += values.get(centerCard3.getRank());
+                    aiCard4 = centerCard3;
                     CenterPanel.add(jbCenterCard1);
                     CenterPanel.add(jbCenterCard2);
                 }
@@ -477,45 +509,55 @@ public class ThirtyOne extends JPanel {
             }
         });
     }
+
     /**
-     * Creates the dialPanel, which houses all of the radio buttons
-     * to choose whether a suit is positive or negative
+     * Creates the dialPanel, which houses all of the radio buttons to choose
+     * whether a suit is positive or negative
      */
     private void createDialPanel() {
-        dialPanel = new JPanel(new GridLayout(0,3));
+        dialPanel = new JPanel(new GridLayout(0, 3));
+        dialPanel.setBackground(new Color(102, 153, 255));
         JLabel jlSpade = new JLabel("Spade");
         JRadioButton spadePos = new JRadioButton("Positive");
+        spadePos.setOpaque(false);
         spadePos.setSelected(true);
         JRadioButton spadeNeg = new JRadioButton("Negative");
+        spadeNeg.setOpaque(false);
         spadeNeg.setSelected(true);
         ButtonGroup spadeGroup = new ButtonGroup();
         spadeGroup.add(spadePos);
         spadeGroup.add(spadeNeg);
         JLabel jlHeart = new JLabel("Heart");
         JRadioButton heartPos = new JRadioButton("Positive");
+        heartPos.setOpaque(false);
         heartPos.setSelected(true);
         JRadioButton heartNeg = new JRadioButton("Negative");
+        heartNeg.setOpaque(false);
         heartNeg.setSelected(true);
         ButtonGroup heartGroup = new ButtonGroup();
         heartGroup.add(heartPos);
         heartGroup.add(heartNeg);
         JLabel jlClub = new JLabel("Club");
         JRadioButton clubPos = new JRadioButton("Positive");
+        clubPos.setOpaque(false);
         clubPos.setSelected(true);
         JRadioButton clubNeg = new JRadioButton("Negative");
+        clubNeg.setOpaque(false);
         clubNeg.setSelected(true);
         ButtonGroup clubGroup = new ButtonGroup();
         clubGroup.add(clubPos);
         clubGroup.add(clubNeg);
         JLabel jlDiamond = new JLabel("Diamond");
         JRadioButton diamondPos = new JRadioButton("Positive");
+        diamondPos.setOpaque(false);
         diamondPos.setSelected(true);
         JRadioButton diamondNeg = new JRadioButton("Negative");
+        diamondNeg.setOpaque(false);
         diamondNeg.setSelected(true);
         ButtonGroup diamondGroup = new ButtonGroup();
         diamondGroup.add(diamondPos);
         diamondGroup.add(diamondNeg);
-        JButton jbCalculate = new JButton ("Calculate");
+        JButton jbCalculate = new JButton("Calculate");
         dialPanel.add(jlSpade);
         dialPanel.add(spadePos);
         dialPanel.add(spadeNeg);
@@ -529,45 +571,39 @@ public class ThirtyOne extends JPanel {
         dialPanel.add(diamondPos);
         dialPanel.add(diamondNeg);
         dialPanel.add(jbCalculate);
-        if (spadePos.isSelected())
-        {
+        JLabel blank = new JLabel();
+        blank.setVisible(false);
+        JLabel jlscore = new JLabel("Score : " + playerScore);
+        dialPanel.add(blank);
+        dialPanel.add(jlscore);
+        if (spadePos.isSelected()) {
             bSpade = true;
-        }
-        else
-        {
+        } else {
             bSpade = false;
         }
-        if (heartPos.isSelected())
-        {
+        if (heartPos.isSelected()) {
             bHeart = true;
-        }
-        else
-        {
+        } else {
             bHeart = false;
         }
-        if (clubPos.isSelected())
-        {
+        if (clubPos.isSelected()) {
             bClub = true;
-        }
-        else
-        {
+        } else {
             bClub = false;
         }
-        if (diamondPos.isSelected())
-        {
+        if (diamondPos.isSelected()) {
             bDiamond = true;
-        }
-        else
-        {
+        } else {
             bDiamond = false;
         }
         jbCalculate.addActionListener(ae -> {
             results();
         });
     }
+
     /**
-     * Creates the JSplitPane between the CenterPanel and the PlayerPanel
-     * and the JSplitPane between the original split and the dialPanel
+     * Creates the JSplitPane between the CenterPanel and the PlayerPanel and
+     * the JSplitPane between the original split and the dialPanel
      */
     private void createSplit() {
         splitPaneHorizontal = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -580,6 +616,7 @@ public class ThirtyOne extends JPanel {
         splitBottom.setTopComponent(splitPaneHorizontal);
         splitBottom.setBottomComponent(dialPanel);
     }
+
     /**
      * Creates the menu and adds it to a menu.
      *
@@ -642,7 +679,8 @@ public class ThirtyOne extends JPanel {
      * Shows the game play directions to the user.
      */
     private void directions() {
-        JOptionPane.showMessageDialog(null, "The goal of the game is to get the closest to 31. Whichever player is closer wins. Click one of the center cards to add it to your hand.");
+        JOptionPane.showMessageDialog(null,
+                "The goal of the game is to get the closest to 31. Whichever player is closer wins. Click one of the center cards to add it to your hand.");
     }
 
     /**
@@ -650,19 +688,32 @@ public class ThirtyOne extends JPanel {
      */
     private void saveGame() {
 
-        try (FileOutputStream filestream = new FileOutputStream("BlackJack.ser");
+        try (FileOutputStream filestream = new FileOutputStream("ThirtyOne.ser");
                 ObjectOutputStream os = new ObjectOutputStream(filestream);) {
             os.writeObject(deck);
             os.writeObject(AI);
             os.writeObject(player);
+            os.writeObject(playerCard1);
+            os.writeObject(playerCard2);
+            os.writeObject(playerCard3);
             os.writeObject(centerCard1);
             os.writeObject(centerCard2);
             os.writeObject(centerCard3);
+            os.writeObject(aiCard1);
+            os.writeObject(aiCard2);
+            os.writeObject(aiCard3);
             os.writeInt(iTurn);
+            if (iTurn == 2) {
+                os.writeObject(aiCard4);
+            }
             os.writeBoolean(bSpade);
             os.writeBoolean(bHeart);
             os.writeBoolean(bClub);
             os.writeBoolean(bDiamond);
+            os.writeInt(player31);
+            os.writeInt(ai31);
+            os.writeInt(playerAbs);
+            os.writeInt(aiAbs);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -673,22 +724,38 @@ public class ThirtyOne extends JPanel {
      * Loads the game state from a file.
      */
     private void loadGame() {
-        remove(player);
-        remove(AI);
         remove(deck);
+        remove(AI);
+        remove(player);
+        remove(playerCard1);
+        remove(playerCard2);
+        remove(playerCard3);
         remove(centerCard1);
         remove(centerCard2);
         remove(centerCard3);
-        remove(iTurn);
-        System.out.println("removed player/AI");
+        remove(aiCard1);
+        remove(aiCard2);
+        remove(aiCard3);
+        if (iTurn == 2) {
+            remove(aiCard4);
+        }
         try (FileInputStream filestream = new FileInputStream("ThirtyOne.ser");
                 ObjectInputStream os = new ObjectInputStream(filestream);) {
             deck = (Deck) os.readObject();
             AI = (Hand) os.readObject();
             player = (Hand) os.readObject();
+            playerCard1 = (Card) os.readObject();
+            playerCard2 = (Card) os.readObject();
+            playerCard3 = (Card) os.readObject();
             centerCard1 = (Card) os.readObject();
             centerCard2 = (Card) os.readObject();
             centerCard3 = (Card) os.readObject();
+            aiCard1 = (Card) os.readObject();
+            aiCard2 = (Card) os.readObject();
+            aiCard3 = (Card) os.readObject();
+            if (iTurn == 2) {
+                aiCard4 = (Card) os.readObject();
+            }
             iTurn = os.readInt();
             bSpade = os.readBoolean();
             if (bSpade) {
@@ -714,16 +781,30 @@ public class ThirtyOne extends JPanel {
             } else {
                 diamondNeg.setSelected(true);
             }
+            player31 = os.readInt();
+            ai31 = os.readInt();
+            playerAbs = os.readInt();
+            aiAbs = os.readInt();
+            add(deck);
             add(AI);
             add(player);
+            add(playerCard1);
+            add(playerCard2);
+            add(playerCard3);
+            add(playerCard4);
             add(centerCard1);
             add(centerCard2);
-            add(centerCard3);            
+            add(centerCard3);
+            add(aiCard1);
+            add(aiCard2);
+            add(aiCard3);
+            add(aiCard4);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
     } // end method
+
     /**
      * Calculates the totals for both players
      */
@@ -743,159 +824,111 @@ public class ThirtyOne extends JPanel {
         values.put(Rank.JACK, 10);
         values.put(Rank.QUEEN, 10);
         values.put(Rank.KING, 10);
-        System.out.println(playerCard1.getRank());
-        System.out.println(playerCard2.getRank());
-        System.out.println(playerCard3.getRank());
-        System.out.println(playerCard4.getRank());
-        if (bSpade == true)
-        {
-            if (playerCard1.getSuit() == Suit.SPADE)
-            {
+        if (bSpade == true) {
+            if (playerCard1.getSuit() == Suit.SPADE) {
                 player31 += iPlayer1;
             }
-            if (playerCard2.getSuit() == Suit.SPADE)
-            {
+            if (playerCard2.getSuit() == Suit.SPADE) {
                 player31 += iPlayer2;
             }
-            if (playerCard3.getSuit() == Suit.SPADE)
-            {
+            if (playerCard3.getSuit() == Suit.SPADE) {
                 player31 += iPlayer3;
             }
-            if (playerCard4.getSuit() == Suit.SPADE)
-            {
+            if (playerCard4.getSuit() == Suit.SPADE) {
                 player31 += iPlayer4;
             }
-        }
-        else
-        {
-            if (playerCard1.getSuit() == Suit.SPADE)
-            {
+        } else {
+            if (playerCard1.getSuit() == Suit.SPADE) {
                 player31 -= iPlayer1;
             }
-            if (playerCard2.getSuit() == Suit.SPADE)
-            {
+            if (playerCard2.getSuit() == Suit.SPADE) {
                 player31 -= iPlayer2;
             }
-            if (playerCard3.getSuit() == Suit.SPADE)
-            {
+            if (playerCard3.getSuit() == Suit.SPADE) {
                 player31 -= iPlayer3;
             }
-            if (playerCard4.getSuit() == Suit.SPADE)
-            {
+            if (playerCard4.getSuit() == Suit.SPADE) {
                 player31 -= iPlayer4;
             }
         }
-        if (bHeart == true)
-        {
-            if (playerCard1.getSuit() == Suit.HEART)
-            {
+        if (bHeart == true) {
+            if (playerCard1.getSuit() == Suit.HEART) {
                 player31 += iPlayer1;
             }
-            if (playerCard2.getSuit() == Suit.HEART)
-            {
+            if (playerCard2.getSuit() == Suit.HEART) {
                 player31 += iPlayer2;
             }
-            if (playerCard3.getSuit() == Suit.HEART)
-            {
+            if (playerCard3.getSuit() == Suit.HEART) {
                 player31 += iPlayer3;
             }
-            if (playerCard4.getSuit() == Suit.HEART)
-            {
+            if (playerCard4.getSuit() == Suit.HEART) {
                 player31 += iPlayer4;
             }
-        }
-        else
-        {
-            if (playerCard1.getSuit() == Suit.HEART)
-            {
+        } else {
+            if (playerCard1.getSuit() == Suit.HEART) {
                 player31 -= iPlayer1;
             }
-            if (playerCard2.getSuit() == Suit.HEART)
-            {
+            if (playerCard2.getSuit() == Suit.HEART) {
                 player31 -= iPlayer2;
             }
-            if (playerCard3.getSuit() == Suit.HEART)
-            {
+            if (playerCard3.getSuit() == Suit.HEART) {
                 player31 -= iPlayer3;
             }
-            if (playerCard4.getSuit() == Suit.HEART)
-            {
+            if (playerCard4.getSuit() == Suit.HEART) {
                 player31 -= iPlayer4;
             }
         }
-        if (bClub == true)
-        {
-            if (playerCard1.getSuit() == Suit.CLUB)
-            {
+        if (bClub == true) {
+            if (playerCard1.getSuit() == Suit.CLUB) {
                 player31 += iPlayer1;
             }
-            if (playerCard2.getSuit() == Suit.CLUB)
-            {
+            if (playerCard2.getSuit() == Suit.CLUB) {
                 player31 += iPlayer2;
             }
-            if (playerCard3.getSuit() == Suit.CLUB)
-            {
+            if (playerCard3.getSuit() == Suit.CLUB) {
                 player31 += iPlayer3;
             }
-            if (playerCard4.getSuit() == Suit.CLUB)
-            {
+            if (playerCard4.getSuit() == Suit.CLUB) {
                 player31 += iPlayer4;
             }
-        }
-        else
-        {
-            if (playerCard1.getSuit() == Suit.CLUB)
-            {
+        } else {
+            if (playerCard1.getSuit() == Suit.CLUB) {
                 player31 -= iPlayer1;
             }
-            if (playerCard2.getSuit() == Suit.CLUB)
-            {
+            if (playerCard2.getSuit() == Suit.CLUB) {
                 player31 -= iPlayer2;
             }
-            if (playerCard3.getSuit() == Suit.CLUB)
-            {
+            if (playerCard3.getSuit() == Suit.CLUB) {
                 player31 -= iPlayer3;
             }
-            if (playerCard4.getSuit() == Suit.CLUB)
-            {
+            if (playerCard4.getSuit() == Suit.CLUB) {
                 player31 -= iPlayer4;
             }
         }
-        if (bDiamond == true)
-        {
-            if (playerCard1.getSuit() == Suit.DIAMOND)
-            {
+        if (bDiamond == true) {
+            if (playerCard1.getSuit() == Suit.DIAMOND) {
                 player31 += iPlayer1;
             }
-            if (playerCard2.getSuit() == Suit.DIAMOND)
-            {
+            if (playerCard2.getSuit() == Suit.DIAMOND) {
                 player31 += iPlayer2;
             }
-            if (playerCard3.getSuit() == Suit.DIAMOND)
-            {
+            if (playerCard3.getSuit() == Suit.DIAMOND) {
                 player31 += iPlayer3;
             }
-            if (playerCard4.getSuit() == Suit.DIAMOND)
-            {
+            if (playerCard4.getSuit() == Suit.DIAMOND) {
                 player31 += iPlayer4;
             }
-        }
-        else
-        {
-            if (playerCard1.getSuit() == Suit.DIAMOND)
-            {
+        } else {
+            if (playerCard1.getSuit() == Suit.DIAMOND) {
                 player31 -= iPlayer1;
             }
-            if (playerCard2.getSuit() == Suit.DIAMOND)
-            {
+            if (playerCard2.getSuit() == Suit.DIAMOND) {
                 player31 -= iPlayer2;
             }
-            if (playerCard3.getSuit() == Suit.DIAMOND)
-            {
+            if (playerCard3.getSuit() == Suit.DIAMOND) {
                 player31 -= iPlayer3;
             }
-            if (playerCard4.getSuit() == Suit.DIAMOND)
-            {
+            if (playerCard4.getSuit() == Suit.DIAMOND) {
                 player31 -= iPlayer4;
             }
         }
@@ -904,80 +937,86 @@ public class ThirtyOne extends JPanel {
         aiAbs = 31 - ai31;
         aiAbs = Math.abs(aiAbs);
         if (playerAbs < aiAbs) {
-                    playerScore += 100;
-                    Object[] options = { "Yes", "No" };
-                    int n = JOptionPane.showOptionDialog(frame,
-                            ("You win " + player31 + " to " + ai31 + "!\nWould you like to play again?"),
-                            "You Win!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[1]);
-                    if (n == JOptionPane.YES_OPTION) {
-                        frame.dispose();
-                        deck = new Deck();
-                        deck.shuffle();
-                        begin();
-                    } else {
-                        if (scores.isHighScore(playerScore)) {
-                            String initials = "";
-                            while (initials == null || initials.length() > INITIAL_LENGTH || initials.length() == 0) {
-                                initials = JOptionPane.showInputDialog(this, "Enter Your Initials:\nMax of three characters",
-                                        "New High Score", JOptionPane.INFORMATION_MESSAGE);
-                            }
-                            HighScore score = new HighScore(initials, (int) playerScore);
-                            scores.add(score);
-                        }
-                        frame.dispose();
+            playerScore += 100;
+            Object[] options = { "Yes", "No" };
+            int n = JOptionPane.showOptionDialog(frame,
+                    ("You win " + player31 + " to " + ai31 + "!\nWould you like to play again?"), "You Win!",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+            if (n == JOptionPane.YES_OPTION) {
+                frame.dispose();
+                AI.removeAll();
+                player.removeAll();
+                deck = new Deck();
+                deck.shuffle();
+                begin();
+            } else {
+                if (scores.isHighScore(playerScore)) {
+                    String initials = "";
+                    while (initials == null || initials.length() > INITIAL_LENGTH || initials.length() == 0) {
+                        initials = JOptionPane.showInputDialog(this, "Enter Your Initials:\nMax of three characters",
+                                "New High Score", JOptionPane.INFORMATION_MESSAGE);
                     }
-                } else if (playerAbs == aiAbs) {
-                    playerScore += 50;
-                    Object[] options = { "Yes", "No" };
-                    int n = JOptionPane.showOptionDialog(frame,
-                            ("You tied at " + player31 + " to " + ai31
-                                    + "!\nWould you like to play again?"),
-                            "You Tie", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[1]);
-                    if (n == JOptionPane.YES_OPTION) {
-                        frame.dispose();
-                        deck = new Deck();
-                        deck.shuffle();
-                        begin();
-                    } else {
-                        if (scores.isHighScore(playerScore)) {
-                            String initials = "";
-                            while (initials == null || initials.length() > INITIAL_LENGTH || initials.length() == 0) {
-                                initials = JOptionPane.showInputDialog(this, "Enter Your Initials:\nMax of three characters",
-                                        "New High Score", JOptionPane.INFORMATION_MESSAGE);
-                            }
-                            HighScore score = new HighScore(initials, (int) playerScore);
-                            scores.add(score);
-                        }
-                        frame.dispose();
-                    }
-                } else {
-                    Object[] options = { "Yes", "No" };
-                    int n = JOptionPane.showOptionDialog(frame,
-                            ("You lose " + player31 + " to " + ai31 + "!\nWould you like to play again?"),
-                            "You Lose", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[1]);
-                    if (n == JOptionPane.YES_OPTION) {
-                        AI.removeAll();
-                        player.removeAll();
-                        deck = new Deck();
-                        deck.shuffle();
-                        begin();
-                    } else {
-                        if (scores.isHighScore(playerScore)) {
-                            String initials = "";
-                            while (initials == null || initials.length() > INITIAL_LENGTH || initials.length() == 0) {
-                                initials = JOptionPane.showInputDialog(this, "Enter Your Initials:\nMax of three characters",
-                                        "New High Score", JOptionPane.INFORMATION_MESSAGE);
-                            }
-                            HighScore score = new HighScore(initials, (int) playerScore);
-                            scores.add(score);
-                        }
-                        frame.dispose();
+                    HighScore score = new HighScore(initials, (int) playerScore);
+                    scores.add(score);
+                    if (group3.DEBUGGING) {
+                        System.out.println("Scores: " + scores);
                     }
                 }
+                System.out.println(frame.getWindowListeners()[0]);
+                frame.dispose();
+            }
+        } else if (playerAbs == aiAbs) {
+            playerScore += 50;
+            Object[] options = { "Yes", "No" };
+            int n = JOptionPane.showOptionDialog(frame,
+                    ("You tied at " + player31 + " to " + ai31 + "!\nWould you like to play again?"), "You Tie",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+            if (n == JOptionPane.YES_OPTION) {
+                frame.dispose();
+                AI.removeAll();
+                player.removeAll();
+                deck = new Deck();
+                deck.shuffle();
+                begin();
+            } else {
+                if (scores.isHighScore(playerScore)) {
+                    String initials = "";
+                    while (initials == null || initials.length() > INITIAL_LENGTH || initials.length() == 0) {
+                        initials = JOptionPane.showInputDialog(this, "Enter Your Initials:\nMax of three characters",
+                                "New High Score", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    HighScore score = new HighScore(initials, (int) playerScore);
+                    scores.add(score);
+                }
+                frame.dispose();
+            }
+        } else {
+            Object[] options = { "Yes", "No" };
+            int n = JOptionPane.showOptionDialog(frame,
+                    ("You lose " + player31 + " to " + ai31 + "!\nWould you like to play again?"), "You Lose",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+            if (n == JOptionPane.YES_OPTION) {
+                frame.dispose();
+                AI.removeAll();
+                player.removeAll();
+                deck = new Deck();
+                deck.shuffle();
+                begin();
+            } else {
+                if (scores.isHighScore(playerScore)) {
+                    String initials = "";
+                    while (initials == null || initials.length() > INITIAL_LENGTH || initials.length() == 0) {
+                        initials = JOptionPane.showInputDialog(this, "Enter Your Initials:\nMax of three characters",
+                                "New High Score", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    HighScore score = new HighScore(initials, (int) playerScore);
+                    scores.add(score);
+                }
+                frame.dispose();
+            }
+        }
     }
+
     /**
      * Runs a test of BlackJack by itself.
      *
@@ -985,5 +1024,7 @@ public class ThirtyOne extends JPanel {
      *            input parameters, not used
      */
     public static void main(final String[] args) {
+        ThirtyOne thirtyone = new ThirtyOne();
+        thirtyone.begin();
     } // end method
 } // end class
