@@ -30,6 +30,11 @@ import javax.swing.JComponent;
 public class Card extends JComponent {
 
     /**
+     * The maximum length of a Card String representation. Used to pad toString
+     * output to line up names when printed to the console.
+     */
+    private static final int MAX_LEN = 10;
+    /**
      * Amount of time to pause between card movements, in ms.
      */
     private static final int PAUSE_TIME = 100;
@@ -223,13 +228,22 @@ public class Card extends JComponent {
     } // end method
 
     /*
-     * (non-Javadoc)
+     * (non-Javadoc) Pads the output to the max Card string length for
+     * view-ability.
      *
      * @see java.lang.Object#toString()
      */
     @Override
     public final String toString() {
-        return "" + rank + suit;
+        String temp = "" + rank + suit;
+        int len = temp.length();
+        if (len < MAX_LEN) {
+            int pad = MAX_LEN - len;
+            for (int i = 0; i < pad; i++) {
+                temp += " ";
+            } // end for
+        } // end if
+        return temp;
     } // end method
 
     /*
