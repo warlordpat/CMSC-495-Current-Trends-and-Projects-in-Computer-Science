@@ -269,7 +269,9 @@ public class HighLow extends JFrame implements Game {
             public void windowClosing(final WindowEvent e) {
                 // write out high scores here
                 saveHighScores(scoreFile, scores);
-                System.out.println("Frame is closing");
+                if (group3.DEBUGGING) {
+                    System.out.println("Frame is closing");
+                }
             }
         });
     }
