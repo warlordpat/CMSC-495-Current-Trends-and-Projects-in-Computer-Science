@@ -32,6 +32,10 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
+/**
+ *
+ * @author thegi
+ */
 public class Concentration extends JFrame implements MouseListener, ActionListener {
 
     int test = 0;
