@@ -9,6 +9,7 @@ package group3;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -64,6 +65,8 @@ public class Deck extends JLabel {
 
         rand = new Random();
         cards = new ArrayList<>();
+        setPreferredSize(new Dimension(Card.CARD_WIDTH, Card.CARD_HEIGHT));
+        setMinimumSize(getPreferredSize());
         for (Suit suit : Suit.values()) {
             for (Rank rank : Rank.values()) {
                 cards.add(new Card(rank, suit));
