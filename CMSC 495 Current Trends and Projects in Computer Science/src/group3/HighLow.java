@@ -1,261 +1,441 @@
+// File: HighLow.java
+// Author: Patrick Smith
+// Author: Christy Gilliland
+// Date: Sep 5, 2016
+// Course: CMSC 495
+// Assignment: Final Project, Group 3
+// Platform: Win10 x64 Java build 1.8.0_102
+// Purpose: Implements the High Low guessing game.
+
 package group3;
 
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.net.URL;
-import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
+ * Implements the High Low guessing game.
  *
+ * @author Patrick Smith
  * @author thegi
+ * @version 1.0
+ * @since Sep 5, 2016
  */
-public class HighLow extends JFrame implements ActionListener {
+public class HighLow extends JFrame implements Game {
+    /**
+     * The space between the rows and columns in the grid.
+     */
+    private static final int GAPS = 8;
+    /**
+     * The number of columns in the grid.
+     */
+    private static final int COLS = 4;
+    /**
+     * Default generated serial number ID.
+     */
+    private static final long serialVersionUID = 8210919514573153701L;
+    /**
+     * The minimum screen height.
+     */
+    private static final int SCREEN_Y = 600;
+    /**
+     * The minimum screen width.
+     */
+    private static final int SCREEN_X = 800;
+    /**
+     * Font size of the smaller text.
+     */
+    private static final int SMALL_FONT_SIZE = 24;
+    /**
+     * Font size of the normal text.
+     */
+    private static final int NORMAL_FONT_SIZE = 29;
+    /**
+     * Font size of the larger text.
+     */
+    private static final int LARGE_FONT_SIZE = 34;
+    /**
+     * The game score. A point is awarded for each correct guess.
+     */
+    private int score;
+    /**
+     * The current Card on the discard pile.
+     */
+    private Card upCard;
+    /**
+     * The Hand that holds the discard pile.
+     */
+    private Hand discard;
+    /**
+     * Shows the current score.
+     */
+    private JLabel scoreCtLabel;
+    /**
+     * The current deck in play.
+     */
+    private Deck deck;
+    /**
+     * The JPanel that holds the currently displayed Card.
+     */
+    private JPanel cardPnl;
+    /**
+     * The HighLow high scores.
+     */
+    private HighScores scores;
+    /**
+     * True, if the game is over.
+     */
+    private boolean gameOver;
+    /**
+     * The file location to save the game.
+     */
+    private File saveFile;
+    /**
+     * The file location to save the high scores.
+     */
+    private File scoreFile;
 
-    URL imageURL = this.getClass().getClassLoader().getResource("images/cardBack.png");
-    ImageIcon cardBacks = new ImageIcon(imageURL);
-    static ImageIcon[] cards;
-    static int[] refArray = new int [52];
-    static int score;
-    static int index = 0;   
-    JPanel panel = new JPanel(new GridLayout(0, 4, 8, 8));
-    JLabel upCard;
-    JLabel scoreCtLabel = new JLabel("", JLabel.LEFT);    
-    
+    /**
+     * Creates a new HighLow game window and game.
+     */
     public HighLow() {
-
-    }
-    
-    public void begin() {
-        
+        super("High or Low!");
+        scoreCtLabel = new JLabel("", JLabel.LEFT);
+        score = 0;
+        gameOver = false;
+        String path = System.getProperty("user.home");
+        path += File.separator + "CGS";
+        File customDir = new File(path);
+        scoreFile = new File(customDir, "HighLow.score");
+        saveFile = new File(customDir, "HighLow.ser");
+        deck = new Deck();
+        deck.setMinimumSize(deck.getPreferredSize());
+        discard = new Hand();
+        scores = loadOrCreateScores("HighLow");
+        upCard = dealFlipped();
+        discard.addCard(upCard);
+        if (group3.DEBUGGING) {
+            System.out.println(deck);
+            System.out.println(upCard);
+        }
         createGUI();
-        createRefArray();
-        
     }
 
-    public static void main(String[] args) {
-        
-        new HighLow();
-        
+    /**
+     * Starts the gameplay.
+     */
+    public final void begin() {
+        newGame();
     }
 
-    public static void createRefArray() {
-        
-        String refPath = cards[0].toString();
-        String filePath = refPath.substring(0,refPath.lastIndexOf("/"));
-        
-        for (int ref2 = 0; ref2 < 52; ref2++) {
-            
-            for (int ref = 1; ref <= 52; ref ++) {
-             
-                if (cards[ref2].toString().equals(filePath + "/" + ref + ".png")) {
-                 
-                    if (ref == 1 || ref == 14 || ref == 27 || ref == 40) { 
-                    
-                        refArray[ref2] = 1;
-                 
-                    }
-                
-                    if (ref == 2 || ref == 15 || ref == 28 || ref == 41) { 
-
-                        refArray[ref2] = 2;
-
-                    }
-
-                    if (ref == 3 || ref == 16 || ref == 29 || ref == 42) { 
-
-                        refArray[ref2] = 3;
-
-                    }
-
-                    if (ref == 4 || ref == 17 || ref == 30 || ref == 43) { 
-
-                        refArray[ref2] = 4;
-
-                    }
-
-                    if (ref == 5 || ref == 18 || ref == 31 || ref == 44) { 
-
-                        refArray[ref2] = 5;
-
-                    }     
-
-                    if (ref == 6 || ref == 19 || ref == 32 || ref == 45) { 
-
-                        refArray[ref2] = 6;
-
-                    }                 
-
-                    if (ref == 7 || ref == 20 || ref == 33 || ref == 46) { 
-
-                        refArray[ref2] = 7;
-
-                    } 
-
-                    if (ref == 8 || ref == 21 || ref == 34 || ref == 47) { 
-
-                        refArray[ref2] = 8;
-
-                    }
-
-                    if (ref == 9 || ref == 22 || ref == 35 || ref == 48) { 
-
-                        refArray[ref2] = 9;
-
-                    }
-
-                    if (ref == 10 || ref == 23 || ref == 36 || ref == 49) { 
-
-                        refArray[ref2] = 10;
-
-                    }  
-
-                    if (ref == 11 || ref == 24 || ref == 37 || ref == 50) { 
-
-                        refArray[ref2] = 11;
-
-                    }
-
-                    if (ref == 12 || ref == 25 || ref == 38 || ref == 51) { 
-
-                        refArray[ref2] = 12;
-
-                    }
-
-                    if (ref == 13 || ref == 26 || ref == 39 || ref == 52) { 
-
-                        refArray[ref2] = 13;                
-
-                    }
-                }
-            }
-        }  
+    /**
+     * Creates a new game session.
+     */
+    private void newGame() {
+        gameOver = false;
+        deck = new Deck();
+        deck.shuffle();
+        setVisible(true);
     }
-    
-    public void actionPerformed(ActionEvent e) {
-        
-        if (index < 51) {
-                      
-            switch (e.getActionCommand()) {
-                case "New Game":
-                    break;
-                case "Higher!":
-                    index += 1;
-                    upCard.setIcon(cards[index]);
-                    if (refArray[index] == refArray[index - 1]) {
-                    
-                        score += 1;
-                        scoreCtLabel.setText(String.valueOf(score));
-                        
-                    
-                    }
-                    else if (refArray[index] > refArray[index - 1]) {
 
-                        score += 1;
-                        scoreCtLabel.setText(String.valueOf(score));
-
-                    }
-                    else if (refArray[index] < refArray[index - 1]){
-
-                    }
-                    break;
-                case "Lower!":
-                    index += 1;
-                    upCard.setIcon(cards[index]);
-                    if (refArray[index] == refArray[index - 1]) {
-
-                        score += 1;
-                        scoreCtLabel.setText(String.valueOf(score));
-
-                    }
-                    else if (refArray[index] < refArray[index - 1]) {
-
-                        score += 1;
-                        scoreCtLabel.setText(String.valueOf(score));
-
-                    }
-                    else if (refArray[index] > refArray[index - 1]){
-
-                    }
-                    break;
-            }                 
-       }       
+    /**
+     * Runs a test of HighLow by itself.
+     *
+     * @param args
+     *            input parameters, not used
+     */
+    public static void main(final String[] args) {
+        HighLow test = new HighLow();
+        test.begin();
     }
-    
+
+    /**
+     * Deals a Card and flips it over.
+     *
+     * @return The face up card
+     */
+    private Card dealFlipped() {
+        Card temp = deck.deal();
+        temp.flip();
+        return temp;
+    }
+
+    /**
+     * Creates a new initial BlackJack GUI.
+     */
     private void createGUI() {
-        
-        score  = 0;
-        cards  = new ImageIcon[52];
-        
-        for (int j = 1; j <= 52; j++) {
+        setPreferredSize(new Dimension(SCREEN_X, SCREEN_Y));
+        setResizable(false);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-            int position = 0;
-            do {
-                position = (int)(Math.random()*52);
-            }
-            while (cards[position] != null);
-                            
-            URL cardURL = this.getClass().getClassLoader().getResource("images/" + j + ".png");
-            cards[position] = new ImageIcon(cardURL);
-            
-        }  
-         upCard = new JLabel(cards[0]);
+        createMenu(this);
 
-        JFrame frame = new JFrame("High or Low!");
-        frame.setVisible(true);
-        frame.setSize(900, 900);
-        frame.setResizable(false);
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu ("Menu");
-        menuBar.add(menu);
-        JMenuItem menuItem = new JMenuItem("New Game");
-        JMenuItem menuItem1 = new JMenuItem("High Scores");
-        JMenuItem menuItem2 = new JMenuItem("Return to main menu");
-        menuItem.addActionListener(this);
-        menuItem1.addActionListener(this);
-        menuItem2.addActionListener(this);
-        menu.add(menuItem);
-        menu.add(menuItem1);
-        menu.add(menuItem2);
-
-        JLabel backLabel = new JLabel(cardBacks);
         JLabel highLabel = new JLabel("HIGHER", JLabel.CENTER);
-        highLabel.setFont(new Font("Courier Bold", Font.BOLD, 34));
+        highLabel.setFont(new Font("Courier Bold", Font.BOLD, LARGE_FONT_SIZE));
+
         JLabel lowLabel = new JLabel("LOWER", JLabel.CENTER);
-        lowLabel.setFont(new Font("Courier Bold", Font.BOLD, 24));
+        lowLabel.setFont(new Font("Courier Bold", Font.BOLD, SMALL_FONT_SIZE));
+
         JLabel orLabel = new JLabel("OR", JLabel.CENTER);
-        orLabel.setFont(new Font("Courier Bold", Font.BOLD, 29));
+        orLabel.setFont(new Font("Courier Bold", Font.BOLD, NORMAL_FONT_SIZE));
+
         JLabel blankLabel = new JLabel(" ? ", JLabel.CENTER);
-        blankLabel.setFont(new Font("Courier Bold", Font.BOLD, 29));
+        blankLabel.setFont(new Font("Courier Bold", Font.BOLD, NORMAL_FONT_SIZE));
         JLabel blankLabel1 = new JLabel(" ");
+
         JLabel scoreLabel = new JLabel("SCORE: ", JLabel.RIGHT);
-        scoreLabel.setFont(new Font("Courier Bold", Font.BOLD, 24));
+        scoreLabel.setFont(new Font("Courier Bold", Font.BOLD, SMALL_FONT_SIZE));
+
         JButton highButton = new JButton("Higher!");
-        highButton.setFont(new Font("Courier Bold", Font.BOLD, 24));
-        highButton.addActionListener((ActionListener) this);
+        highButton.setFont(new Font("Courier Bold", Font.BOLD, SMALL_FONT_SIZE));
+        highButton.addActionListener(al -> {
+            if (checkGameOverConditions()) {
+                return;
+            }
+            Rank previousRank = dealNextCard();
+            if (upCard.getRank().ordinal() > previousRank.ordinal()) {
+                score += 1;
+                scoreCtLabel.setText(String.valueOf(score));
+            }
+            if (group3.DEBUGGING) {
+                System.out.println("finished Higher button processing");
+            }
+        });
+
         JButton lowButton = new JButton("Lower!");
-        lowButton.setFont(new Font("Courier Bold", Font.BOLD, 24));
-        scoreCtLabel.setFont(new Font("Courier Bold", Font.BOLD, 24));
+        lowButton.setFont(new Font("Courier Bold", Font.BOLD, SMALL_FONT_SIZE));
+        lowButton.addActionListener(al -> {
+            if (checkGameOverConditions()) {
+                return;
+            }
+            Rank previousRank = dealNextCard();
+            if (upCard.getRank().ordinal() < previousRank.ordinal()) {
+                score += 1;
+                scoreCtLabel.setText(String.valueOf(score));
+            }
+            if (group3.DEBUGGING) {
+                System.out.println("finished Lower button processing");
+            }
+        });
+
+        scoreCtLabel.setFont(new Font("Courier Bold", Font.BOLD, SMALL_FONT_SIZE));
         scoreCtLabel.setText(String.valueOf(score));
-        lowButton.addActionListener((ActionListener) this);
-        upCard.setIcon(cards[0]);
+
+        JPanel panel;
+        panel = new JPanel(new GridLayout(0, COLS, GAPS, GAPS));
         panel.add(highLabel);
         panel.add(orLabel);
         panel.add(lowLabel);
         panel.add(blankLabel);
         panel.add(lowButton);
-        panel.add(backLabel);
-        panel.add(upCard);
+
+        JPanel deckPnl = new JPanel();
+        deckPnl.setLayout(new GridBagLayout());
+        deckPnl.add(deck);
+
+        cardPnl = new JPanel();
+        cardPnl.setLayout(new GridBagLayout());
+        cardPnl.add(upCard);
+
+        panel.add(deckPnl);
+        panel.add(cardPnl);
         panel.add(highButton);
         panel.add(blankLabel1);
         panel.add(scoreLabel);
         panel.add(scoreCtLabel);
-        frame.setJMenuBar(menuBar);
-        frame.add(panel);
-        frame.pack();
-                
+
+        getContentPane().add(panel);
+        pack();
+        addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(final WindowEvent e) {
+                // write out high scores here
+                saveHighScores(scoreFile, scores);
+                System.out.println("Frame is closing");
+            }
+        });
     }
-    
-}
+
+    /**
+     * Checks for win/loss conditions and displays the appropriate messages.
+     *
+     * @return True, if the game is over
+     */
+    private boolean checkGameOverConditions() {
+        if (gameOver) {
+            return true;
+        }
+        if (deck.deckSize() == 0) {
+            gameOver = true;
+            if (scores.isHighScore(score)) {
+                String initials = getInitials(this);
+                HighScore highScore = new HighScore(initials, score);
+                scores.add(highScore);
+            }
+            // display game over
+            return true;
+        }
+        return false;
+    } // end method
+
+    /**
+     * Deals the next Card to the discard spot.
+     *
+     * @return the Rank of the previous Card
+     */
+    private Rank dealNextCard() {
+        Rank previousRank = upCard.getRank();
+        upCard = dealFlipped();
+        discard.addCard(upCard);
+
+        cardPnl.removeAll();
+        cardPnl.add(upCard);
+        cardPnl.revalidate();
+        cardPnl.repaint();
+        if (group3.DEBUGGING) {
+            System.out.println("Card: " + upCard + " remaining deck: " + deck.deckSize());
+        }
+        return previousRank;
+    }
+
+    /**
+     * Creates the menu and adds it to a menu.
+     *
+     * @param frame
+     *            the frame the menu is added to
+     */
+    private void createMenu(final JFrame frame) {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu = new JMenu("Menu");
+        menuBar.add(menu);
+        JMenuItem menuItem = new JMenuItem("New Game");
+        menu.add(menuItem);
+        menuItem.addActionListener(ae -> {
+            newGame();
+            reset();
+        });
+
+        JMenuItem mntmSaveGame = new JMenuItem("Save Game");
+        menu.add(mntmSaveGame);
+        mntmSaveGame.addActionListener(ae -> {
+            saveGame();
+        });
+
+        JMenuItem mntmLoadGame = new JMenuItem("Load Game");
+        menu.add(mntmLoadGame);
+        mntmLoadGame.addActionListener(ae -> {
+            loadGame();
+        });
+
+        JMenuItem menuItem1 = new JMenuItem("High Scores");
+        menu.add(menuItem1);
+        menuItem1.addActionListener(ae -> {
+            highScores();
+        });
+
+        JMenuItem mntmReturnToMain = new JMenuItem("Return to main menu");
+        menu.add(mntmReturnToMain);
+        mntmReturnToMain.addActionListener(ae -> {
+            dispose();
+        });
+
+        frame.setJMenuBar(menuBar);
+    }
+
+    /**
+     * Shows the high scores in a dialog box.
+     */
+    private void highScores() {
+        JOptionPane.showMessageDialog(this, scores);
+    }
+
+    /**
+     * Resets the game state for a new deck.
+     */
+    private void reset() {
+        score = 0;
+        scoreCtLabel.setText(String.valueOf(score));
+        discard = new Hand();
+        dealNextCard();
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see group3.Game#loadGame()
+     */
+    @Override
+    public final void loadGame() {
+        if (group3.DEBUGGING) {
+            System.out.println("Loading Game");
+        }
+        try (FileInputStream filestream = new FileInputStream(saveFile);
+                ObjectInputStream os = new ObjectInputStream(filestream);) {
+            upCard = (Card) os.readObject();
+            discard = (Hand) os.readObject();
+            deck = (Deck) os.readObject();
+            gameOver = os.readBoolean();
+            score = os.readInt();
+
+            if (group3.DEBUGGING) {
+                System.out.println("loaded: " + "\n gameOver " + gameOver + "\n score   " + score + "\n discard pile "
+                        + discard + "\n Deck " + deck + "\n displayed card: " + upCard);
+            }
+            cardPnl.removeAll();
+            cardPnl.add(upCard);
+            cardPnl.revalidate();
+            cardPnl.repaint();
+            scoreCtLabel.setText(String.valueOf(score));
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (group3.DEBUGGING) {
+            System.out.println("Game Loaded");
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see group3.Game#saveGame()
+     */
+    @Override
+    public final void saveGame() {
+        if (group3.DEBUGGING) {
+            System.out.println("Saving Game");
+        }
+        try (FileOutputStream filestream = new FileOutputStream(saveFile);
+                ObjectOutputStream os = new ObjectOutputStream(filestream);) {
+            os.writeObject(upCard);
+            os.writeObject(discard);
+            os.writeObject(deck);
+            os.writeBoolean(gameOver);
+            os.writeInt(score);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (group3.DEBUGGING) {
+            System.out.println("Game Saved" + "\nsaved: " + "\n gameOver " + gameOver + "\n score   " + score
+                    + "\n discard pile " + discard + "\n Deck " + deck + "\n displayed card: " + upCard);
+        }
+    }
+} // end class
