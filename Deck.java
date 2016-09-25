@@ -1,7 +1,15 @@
+// File: Deck.java
+// Author: Patrick Smith
+// Date: Sep 5, 2016
+// Course: CMSC 495
+// Assignment: Final Project, Group 3
+// Platform: Win10 x64 Java build 1.8.0_102
+// Purpose: implements a graphical Deck for card games.
 package group3;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -21,6 +29,11 @@ import javax.swing.JLabel;
  */
 public class Deck extends JLabel {
 
+    /**
+     * The constant alpha to be multiplied with the alpha of the source. alpha
+     * must be a floating point number in the inclusive range [0.0, 1.0].
+     */
+    private static final float ALPHA = 0.05F;
     /**
      * Generated serial ID.
      */
@@ -42,18 +55,9 @@ public class Deck extends JLabel {
      */
     private Random rand;
     /**
-     * The image of the back of the card
+     * The image of the back of the card.
      */
-    transient private BufferedImage cardBack;
-
-    // below fields will be removed once games convert to functionality in the
-    // Hand class.
-//    static ImageIcon[] cardIcon = new ImageIcon[52];
-//    static int[] refArray = new int[52];
-//    private ArrayList<Integer> playerHand = new ArrayList<>();
-//    private ArrayList<Integer> aiHand = new ArrayList<>();
-//    private ArrayList<ImageIcon> playerCards = new ArrayList<>();
-//    private ArrayList<ImageIcon> AICards = new ArrayList<>();
+    private transient BufferedImage cardBack;
 
     /**
      * Generate a new full, un-shuffled deck. Loads a card back to represent the
@@ -65,6 +69,8 @@ public class Deck extends JLabel {
 
         rand = new Random();
         cards = new ArrayList<>();
+        setPreferredSize(new Dimension(Card.CARD_WIDTH, Card.CARD_HEIGHT));
+        setMinimumSize(getPreferredSize());
         for (Suit suit : Suit.values()) {
             for (Rank rank : Rank.values()) {
                 cards.add(new Card(rank, suit));
@@ -73,25 +79,51 @@ public class Deck extends JLabel {
 
         // load card backs from Cards class to reduce image loading error
         // surface.
-        cardBack = new Card(Rank.ACE, Suit.CLUB).getBacks().getSubimage(72, 0, 72, 96);
+        cardBack = new Card(Rank.ACE, Suit.CLUB).getBacks().getSubimage(Card.CARD_WIDTH, 0, Card.CARD_WIDTH,
+                Card.CARD_HEIGHT);
     } // end method
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
+    /**
+     * Serializes the Deck.
+     *
+     * See readObject() and writeObject() in JComponent for more information
+     * about serialization in Swing.
+     *
+     * @param out
+     *            the <code>ObjectOutputStream</code> in which to write
+     * @throws IOException
+     *             if I/O errors occur while writing to the OutputStream
+     */
+    private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
         ImageIO.write(cardBack, "png", out);
     } // end method
-    
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+
+    /**
+     * Reads back in the Deck from serialization.
+     *
+     * See readObject() and writeObject() in JComponent for more information
+     * about serialization in Swing.
+     *
+     * @param in
+     *            the <code>ObjectInputStream</code> from which to read
+     * @throws IOException
+     *             if an I/O error occurs
+     * @throws ClassNotFoundException
+     *             if the class of a serialized object could not be found
+     */
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         cardBack = ImageIO.read(in);
     } // end method
-    
-    
+
     /**
      * Shuffles the deck randomly.
      */
-    void shuffle() {
-        System.out.println("Starting shuffle");
+    final void shuffle() {
+        if (group3.DEBUGGING) {
+            System.out.println("Starting shuffle");
+        }
         List<Card> temp = cards;
         cards = new ArrayList<>();
         // Randomly draws a card out of the deck until the temp deck is empty
@@ -101,9 +133,11 @@ public class Deck extends JLabel {
             Card randomCard = temp.remove(random);
             cards.add(randomCard);
         } // end while
-        System.out.println("end of good shuffle");
-        
-    }
+        if (group3.DEBUGGING) {
+            System.out.println("end of good shuffle");
+            System.out.println("shuffle complete");
+        }
+    } // end method
     /**
      * Deals the deck for Concentration. Only requires 30 cards
      */
@@ -143,13 +177,11 @@ public class Deck extends JLabel {
        
     /**
      * Deals a card from the deck.
-     * 
+     *
      * @return a Card from the top of the deck
      */
-    Card deal() {
-        
+    final Card deal() {
         return cards.remove(0);
-        
     } // end method
     
     /**
@@ -164,48 +196,39 @@ public class Deck extends JLabel {
     } // end method
     
     /**
-//     * Returns a card image of the card at the given array location.
-//     * 
-//     * @param index
-//     *            the array index
-//     * @return an image of the card at that index
-//     */
-//    @Deprecated
-//    ImageIcon returnCard(int index) {
-//        return cardIcon[index];
-//    }
-
-    /*
-     * (non-Javadoc)
-     * 
+     * Converts a Deck to a String representation.
+     *
      * @see java.lang.Object#toString()
+     * @return A String representation of a Deck
      */
-    public String toString() {
+    public final String toString() {
         return cards.toString();
     } // end method
 
     /**
      * Checks the current size of the deck.
-     * 
+     *
      * @return the current size of the deck
      */
-    public int deckSize() {
+    public final int deckSize() {
         return cards.size();
     } // end method
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
+     * Draws the hand based on the size of the Hand.
+     *
      * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
+     * @param graphics
+     *            the Graphics object to protect
      */
-    protected void paintComponent(Graphics graphics) {
+    protected final void paintComponent(final Graphics graphics) {
         Graphics2D g = (Graphics2D) graphics.create();
         if (!isEmpty) {
             g.drawImage(cardBack, 0, 0, null);
         } else {
             g.setColor(Color.WHITE);
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.05F));
-            g.fillRect(0, 0, 79, 123);
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ALPHA));
+            g.fillRect(0, 0, Card.CARD_WIDTH, Card.CARD_HEIGHT);
         } // end else
         g.dispose();
     } // end method

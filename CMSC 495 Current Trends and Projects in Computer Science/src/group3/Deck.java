@@ -43,6 +43,10 @@ public class Deck extends JLabel {
      */
     private List<Card> cards;
     /**
+     * The Cards held in the Concentration deck.
+     */
+    private ArrayList<Card> concentrationCards;
+    /**
      * True if the deck is empty.
      */
     private boolean isEmpty;
@@ -134,7 +138,43 @@ public class Deck extends JLabel {
             System.out.println("shuffle complete");
         }
     } // end method
+    /**
+     * Deals the deck for Concentration. Only requires 30 cards
+     */
+    void ConcentrationShuffle() {
+        
+        // Contains 52 cards
+        List<Card> temp = cards;
+        //cards = new ArrayList<>();
+        concentrationCards = new ArrayList<>();
+        // Contains 30 cards
+        ArrayList<Card> temp30 = new ArrayList<>();
+        int i = 0;
+        // Draws 15 cards in order, twice
+        for (int j = 20; j < 35; j++) {
+                
+            temp30.add(i, temp.get(j));
+            temp30.add((i + 1), temp.get(j));
+            i += 2;
+        }
+        
+        do {            
+            int position = 0;
+            position = (int) (Math.random() * 30);
 
+            if (temp30.get(position) != null) {                
+                concentrationCards.add(temp30.get(position));
+                temp30.set(position, null);                
+            }
+        } while (concentrationCards.size() <30);
+    }
+       
+    Card cardFlip(int i) {
+        
+        return cards.get(i);
+        
+    }
+       
     /**
      * Deals a card from the deck.
      *
@@ -143,7 +183,18 @@ public class Deck extends JLabel {
     final Card deal() {
         return cards.remove(0);
     } // end method
+    
+    /**
+     * Gets a card from the deck without removing it
+     * 
+     * @return a Card from the top of the deck
+     */
+    Card concentrationDeal(int i) {
 
+        return concentrationCards.get(i);
+        
+    } // end method
+    
     /**
      * Converts a Deck to a String representation.
      *
