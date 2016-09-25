@@ -45,7 +45,7 @@ public class Deck extends JLabel {
     /**
      * The Cards held in the Concentration deck.
      */
-    private ArrayList<Card> concentrationCards;
+    ArrayList<Card> concentrationCards;
     /**
      * True if the deck is empty.
      */
