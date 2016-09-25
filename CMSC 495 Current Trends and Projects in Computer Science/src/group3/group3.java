@@ -1,3 +1,11 @@
+// File: group3.java
+// Author: Patrick Smith
+//         Alex Birch
+// Date: Sep 5, 2016
+// Course: CMSC 495
+// Assignment: Final Project, Group 3
+// Platform: Win10 x64 Java build 1.8.0_102
+// Purpose: implements a main menu for a CGS.
 package group3;
 
 import java.awt.*;
@@ -10,7 +18,7 @@ import javax.swing.border.*;
 
 public class group3 {
 
-    public static final boolean DEBUGGING = false;
+    public static final boolean DEBUGGING = true;
     Blackjack bj;
      ThirtyOne thirtyone = new ThirtyOne();
     War war = new War();
