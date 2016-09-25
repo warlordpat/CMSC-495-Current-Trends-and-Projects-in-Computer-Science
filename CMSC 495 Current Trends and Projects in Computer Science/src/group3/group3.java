@@ -20,10 +20,10 @@ public class group3 {
 
     public static final boolean DEBUGGING = true;
     Blackjack bj;
-     ThirtyOne thirtyone = new ThirtyOne();
-    War war = new War();
-    Concentration concentration = new Concentration();
-    HighLow highLow = new HighLow();
+     ThirtyOne thirtyone;
+    War war;
+    Concentration concentration;
+    HighLow highLow;
 
     public group3() {
         gui();
@@ -78,7 +78,7 @@ public class group3 {
         });
         jbConcentration.addActionListener(ae -> {
             concentration = new Concentration();
-            concentration.createGUI();
+            concentration.begin();
         });
         TopPanel.add(jbWar, BorderLayout.LINE_START);
         TopPanel.add(jbConcentration, BorderLayout.CENTER);
