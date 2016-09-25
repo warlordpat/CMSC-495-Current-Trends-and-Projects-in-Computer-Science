@@ -8,6 +8,7 @@
 
 package group3;
 
+//TODO Remove Magic Numbers
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import javax.swing.ImageIcon;
@@ -239,7 +240,7 @@ public class WarFrame extends JFrame {
             returnCardsTo(ai, playerWar, aiWar);
             whoWon = false;
         } else {
-         // double war!
+            // double war!
             if (group3.DEBUGGING) {
                 System.out.println("double war");
             }
