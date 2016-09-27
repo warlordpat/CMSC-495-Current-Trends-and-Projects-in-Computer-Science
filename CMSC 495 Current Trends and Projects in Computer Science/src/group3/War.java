@@ -365,8 +365,8 @@ public class War implements Game {
     public final void battle() {
         Card playerCard = player.removeCard();
         Card aiCard = ai.removeCard();
-        playerDiscardLabel.setIcon(new ImageIcon(playerCard.front));
-        aiDiscardLabel.setIcon(new ImageIcon(aiCard.front));
+        playerDiscardLabel.setIcon(new ImageIcon(playerCard.getFront()));
+        aiDiscardLabel.setIcon(new ImageIcon(aiCard.getFront()));
         if (playerCard.getRank().compareTo(aiCard.getRank()) > 0) {
             // player card has a higher rank than ai card
             player.addCard(playerCard);
@@ -427,13 +427,13 @@ public class War implements Game {
      * @return True, if the player won the war
      */
     private boolean war() {
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             System.out.println("Starting hands: player: " + player.handSize() + " ai: " + ai.handSize());
         }
         blankLabel1.setText("WAR!");
         blankLabel1.setHorizontalAlignment(SwingConstants.CENTER);
         boolean whoWon = warFrame.setupGUI(player, ai, 1);
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             System.out.println("Ending hands: player: " + player.handSize() + " ai: " + ai.handSize());
         }
         return whoWon;
@@ -469,7 +469,7 @@ public class War implements Game {
      * Saves the state of the game to a file.
      */
     public final void saveGame() {
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             System.out.println("Saving Game");
         }
         try (FileOutputStream filestream = new FileOutputStream("War.ser");
@@ -486,7 +486,7 @@ public class War implements Game {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             String playerDisplayCard;
             String aiDisplayCard;
             if (blankLabel1.getText().startsWith("You won")) {
@@ -509,7 +509,7 @@ public class War implements Game {
      */
     public final void loadGame() {
         // check if war output matters (it doesn't)
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             System.out.println("Loading Game");
         }
         gameBoard.remove(playerDiscardLabel);
@@ -522,7 +522,7 @@ public class War implements Game {
         JLayeredPane layeredPaneAI = (JLayeredPane) handSizeAI.getParent();
         layeredPaneAI.remove(handSizeAI);
 
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             System.out.println("removed player/dealer");
         }
         frame.revalidate();
@@ -539,7 +539,7 @@ public class War implements Game {
             gameOver = os.readBoolean();
             playCount = os.readInt();
 
-            if (group3.DEBUGGING) {
+            if (MainCGS.DEBUGGING) {
                 String playerDisplayCard;
                 String aiDisplayCard;
                 if (blankLabel1.getText().startsWith("You won")) {
@@ -565,7 +565,7 @@ public class War implements Game {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             System.out.println("Game Loaded");
         }
     } // end method

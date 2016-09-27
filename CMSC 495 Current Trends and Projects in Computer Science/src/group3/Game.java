@@ -41,17 +41,17 @@ public interface Game {
         File scoreFile = new File(customDir, name + ".score");
         if (customDir.exists()) {
             // load a score file
-            if (group3.DEBUGGING) {
+            if (MainCGS.DEBUGGING) {
                 System.out.println(customDir + " already exists");
             }
             if (scoreFile.exists()) {
-                if (group3.DEBUGGING) {
+                if (MainCGS.DEBUGGING) {
                     System.out.println(scoreFile + " already exists");
                 }
                 return loadHighScores(scoreFile);
             } else {
                 // create new scorefile
-                if (group3.DEBUGGING) {
+                if (MainCGS.DEBUGGING) {
                     System.out.println(scoreFile + " created");
                 }
                 HighScores scores = new HighScores();
@@ -60,7 +60,7 @@ public interface Game {
             }
 
         } else if (customDir.mkdirs()) {
-            if (group3.DEBUGGING) {
+            if (MainCGS.DEBUGGING) {
                 System.out.println(customDir + " was created");
                 System.out.println(scoreFile + " created");
             }
@@ -69,7 +69,7 @@ public interface Game {
             saveHighScores(scoreFile, scores);
             return scores;
         } else {
-            if (group3.DEBUGGING) {
+            if (MainCGS.DEBUGGING) {
                 System.out.println(customDir + " was not created");
             }
             // throw an error, why can't we access the user dir?

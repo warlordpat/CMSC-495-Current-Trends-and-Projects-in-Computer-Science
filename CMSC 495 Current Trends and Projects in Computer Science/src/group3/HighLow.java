@@ -131,7 +131,7 @@ public class HighLow extends JFrame implements Game {
         scores = loadOrCreateScores("HighLow");
         upCard = dealFlipped();
         discard.addCard(upCard);
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             System.out.println(deck);
             System.out.println(upCard);
         }
@@ -214,7 +214,7 @@ public class HighLow extends JFrame implements Game {
                 score += 1;
                 scoreCtLabel.setText(String.valueOf(score));
             }
-            if (group3.DEBUGGING) {
+            if (MainCGS.DEBUGGING) {
                 System.out.println("finished Higher button processing");
             }
         });
@@ -230,7 +230,7 @@ public class HighLow extends JFrame implements Game {
                 score += 1;
                 scoreCtLabel.setText(String.valueOf(score));
             }
-            if (group3.DEBUGGING) {
+            if (MainCGS.DEBUGGING) {
                 System.out.println("finished Lower button processing");
             }
         });
@@ -269,7 +269,7 @@ public class HighLow extends JFrame implements Game {
             public void windowClosing(final WindowEvent e) {
                 // write out high scores here
                 saveHighScores(scoreFile, scores);
-                if (group3.DEBUGGING) {
+                if (MainCGS.DEBUGGING) {
                     System.out.println("Frame is closing");
                 }
             }
@@ -312,7 +312,7 @@ public class HighLow extends JFrame implements Game {
         cardPnl.add(upCard);
         cardPnl.revalidate();
         cardPnl.repaint();
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             System.out.println("Card: " + upCard + " remaining deck: " + deck.deckSize());
         }
         return previousRank;
@@ -386,7 +386,7 @@ public class HighLow extends JFrame implements Game {
      */
     @Override
     public final void loadGame() {
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             System.out.println("Loading Game");
         }
         try (FileInputStream filestream = new FileInputStream(saveFile);
@@ -397,7 +397,7 @@ public class HighLow extends JFrame implements Game {
             gameOver = os.readBoolean();
             score = os.readInt();
 
-            if (group3.DEBUGGING) {
+            if (MainCGS.DEBUGGING) {
                 System.out.println("loaded: " + "\n gameOver " + gameOver + "\n score   " + score + "\n discard pile "
                         + discard + "\n Deck " + deck + "\n displayed card: " + upCard);
             }
@@ -410,7 +410,7 @@ public class HighLow extends JFrame implements Game {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             System.out.println("Game Loaded");
         }
     }
@@ -422,7 +422,7 @@ public class HighLow extends JFrame implements Game {
      */
     @Override
     public final void saveGame() {
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             System.out.println("Saving Game");
         }
         try (FileOutputStream filestream = new FileOutputStream(saveFile);
@@ -435,7 +435,7 @@ public class HighLow extends JFrame implements Game {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             System.out.println("Game Saved" + "\nsaved: " + "\n gameOver " + gameOver + "\n score   " + score
                     + "\n discard pile " + discard + "\n Deck " + deck + "\n displayed card: " + upCard);
         }

@@ -121,7 +121,7 @@ public class Deck extends JLabel {
      * Shuffles the deck randomly.
      */
     final void shuffle() {
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             System.out.println("Starting shuffle");
         }
         List<Card> temp = cards;
@@ -133,7 +133,7 @@ public class Deck extends JLabel {
             Card randomCard = temp.remove(random);
             cards.add(randomCard);
         } // end while
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             System.out.println("end of good shuffle");
             System.out.println("shuffle complete");
         }
