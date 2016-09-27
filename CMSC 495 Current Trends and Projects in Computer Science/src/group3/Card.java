@@ -89,21 +89,21 @@ public class Card extends JComponent {
     /**
      * If the card is face up or face down.
      */
-    boolean faceUp;
+    private boolean faceUp;
     // URL imageURL;
     // ImageIcon cardBacks;
     /**
      * The image of the back of the card.
      */
-    transient BufferedImage back;
+    private transient BufferedImage back;
     /**
      * The image of the front of the card.
      */
-    transient BufferedImage front;
+    private transient BufferedImage front;
     /**
      * The image currently displayed on screen.
      */
-    transient BufferedImage currentImage;
+    private transient BufferedImage currentImage;
 
     /**
      * Creates a Card of the given rank and suit and loads the image for the
@@ -258,4 +258,21 @@ public class Card extends JComponent {
         g.drawImage(currentImage, 0, 0, null);
         g.dispose();
     } // end method
+
+    /**
+     * Gets a BufferedImage of the Card back.
+     *
+     * @return The Card back
+     */
+    public BufferedImage getBack() {
+        return back;
+    }
+
+    /**
+     * Gets a BufferedImage of the Card front.
+     * @return The Card front
+     */
+    public BufferedImage getFront() {
+        return front;
+    }
 } // end class
