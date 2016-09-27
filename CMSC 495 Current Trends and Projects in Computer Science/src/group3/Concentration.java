@@ -107,11 +107,11 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
      * Creates a new game session.
      */
     final void newGame() {
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             System.out.println("Creating new Game");
         }
         deck.ConcentrationShuffle();
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             System.out.println("Concentration deck after shuffle: " + deck.concentrationCards);
         }
         createReferenceArray();
@@ -164,10 +164,10 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
                     matches += 1;
                 } else {
                     temp = deck.concentrationDeal(selectedCard);
-                    cardLabels[selectedCard].setIcon(new ImageIcon(temp.back));
+                    cardLabels[selectedCard].setIcon(new ImageIcon(temp.getBack()));
 
                     temp = deck.concentrationDeal(secondSelectedCard);
-                    cardLabels[secondSelectedCard].setIcon(new ImageIcon(temp.back));
+                    cardLabels[secondSelectedCard].setIcon(new ImageIcon(temp.getBack()));
                 }
                 test = 0;
             } else {
@@ -180,10 +180,10 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
                     }
 
                     temp = deck.concentrationDeal(selectedCard);
-                    cardLabels[selectedCard].setIcon(new ImageIcon(temp.back));
+                    cardLabels[selectedCard].setIcon(new ImageIcon(temp.getBack()));
 
                     temp = deck.concentrationDeal(secondSelectedCard);
-                    cardLabels[secondSelectedCard].setIcon(new ImageIcon(temp.back));
+                    cardLabels[secondSelectedCard].setIcon(new ImageIcon(temp.getBack()));
 
                     test = 0;
                 });
@@ -196,8 +196,8 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
     }
 
     public void gameWon() {
-        scoreLabel.setText("Congratulations!  You finished this game in " + (((timeEnd - timeStart) + elapsedTime) / 1000)
-                + " seconds and " + attempts + " attempts!");
+        scoreLabel.setText("Congratulations!  You finished this game in "
+                + (((timeEnd - timeStart) + elapsedTime) / 1000) + " seconds and " + attempts + " attempts!");
         if (scores.isHighScore(attempts)) {
             String initials = "";
             while (initials == null || initials.length() > INITIAL_LENGTH || initials.length() == 0) {
@@ -210,10 +210,10 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
     }
 
     public void createReferenceArray() {
-        
+
         visibleBooleanLabels = new Boolean[30];
-        
-        if (group3.DEBUGGING) {
+
+        if (MainCGS.DEBUGGING) {
             System.out.println("Components on panel before new game: " + panel.getComponentCount());
         }
         scoreLabel.setText(null);
@@ -225,7 +225,7 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
 
             temp = deck.concentrationDeal(i);
             temp.setSize(CARD_WIDTH, CARD_HEIGHT);
-            cardLabel.setIcon(new ImageIcon(temp.back));
+            cardLabel.setIcon(new ImageIcon(temp.getBack()));
             cardLabel.setHorizontalAlignment(SwingConstants.CENTER);
             cardLabel.setVerticalAlignment(SwingConstants.CENTER);
             cardLabel.addMouseListener(this);
@@ -233,12 +233,12 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
             visibleBooleanLabels[i] = true;
             panel.add(cardLabels[i]);
         }
-        
+
         scorePanel.revalidate();
         scorePanel.repaint();
         panel.revalidate();
         panel.repaint();
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             System.out.println("Components on panel after new game: " + panel.getComponentCount());
         }
     }
@@ -252,7 +252,7 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
 
         Font f = new Font("Arial", Font.PLAIN, 22);
         scoreLabel.setFont(f);
-        //scorePanel.add(scoreLabel);
+        // scorePanel.add(scoreLabel);
         setSize(900, 900);
         setResizable(false);
         addWindowListener(new WindowAdapter() {
@@ -260,7 +260,7 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
             public void windowClosing(final WindowEvent e) {
                 // write out high scores here
                 saveHighScores(scoreFile, scores);
-                if (group3.DEBUGGING) {
+                if (MainCGS.DEBUGGING) {
                     System.out.println("Frame is closing");
                 }
             }
@@ -309,7 +309,7 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
         JMenuItem mntmHowToPlay = new JMenuItem("How to Play");
         mnMenu.add(mntmHowToPlay);
         mntmHowToPlay.addActionListener(ae -> {
-        directions();
+            directions();
         });
 
         JMenuItem mntmHighScores = new JMenuItem("High Scores");
@@ -350,13 +350,13 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if (group3.DEBUGGING) {
+        if (MainCGS.DEBUGGING) {
             System.out.println("Who initiated the MouseEvent: " + e.getComponent());
         }
         index = Arrays.asList(cardLabels).indexOf(e.getSource());
         System.out.println(index);
         temp = deck.concentrationDeal(index);
-        cardLabels[index].setIcon(new ImageIcon(temp.front));
+        cardLabels[index].setIcon(new ImageIcon(temp.getFront()));
         t.start();
         t.stop();
         checkForMatch();
@@ -380,13 +380,12 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
     }
 
     /**
-     * Loads the game state from a file.
-     * (non-Javadoc)
+     * Loads the game state from a file. (non-Javadoc)
      * 
-     * @see group3.Game#loadGame()
+     * @see Game#loadGame()
      */
     @Override
- public void loadGame() {
+    public void loadGame() {
         scoreLabel.setText(null);
         scorePanel.removeAll();
         panel.removeAll();
@@ -407,22 +406,23 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
             firstCard = os.readBoolean();
             scoreLabel = (JLabel) os.readObject();
             temp = (Card) os.readObject();
-
+            System.out.println("booleans: " + Arrays.toString(visibleBooleanLabels));
             for (int i = 0; i < 30; i++) {
                 JLabel cardLabel = new JLabel();
 
                 temp = deck.concentrationDeal(i);
                 temp.setSize(CARD_WIDTH, CARD_HEIGHT);
-                if (visibleBooleanLabels[i] = false) {
-                    cardLabel.setIcon(new ImageIcon(temp.front));
+                if (visibleBooleanLabels[i] == false) {
+                    System.out.println("adding front: " + temp);
+                    cardLabel.setIcon(new ImageIcon(temp.getFront()));
                     cardLabel.setEnabled(false);
                 } else {
-                    cardLabel.setIcon(new ImageIcon(temp.back));      
+                    cardLabel.setIcon(new ImageIcon(temp.getBack()));
                 }
-                
+
                 cardLabel.setHorizontalAlignment(SwingConstants.CENTER);
                 cardLabel.setVerticalAlignment(SwingConstants.CENTER);
-                cardLabel.addMouseListener(this);                                
+                cardLabel.addMouseListener(this);
                 cardLabels[i] = cardLabel;
                 panel.add(cardLabels[i]);
             }
@@ -442,37 +442,32 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
         }
 
     } // end method
+
     /**
      * Shows the game play directions to the user.
      */
     private void directions() {
-        JOptionPane.showMessageDialog(null, "Concentration is played with 30 cards (15 pairs). To play, click on any two cards."
-                + "  If the two cards match, they will be highlighted in gray.  If they do not, they will flip back over. "
-                + "  Continue until you have matched all 15 pairs."
-                + "  See if you can beat your high score by matching all pairs in the least number of moves!");
+        JOptionPane.showMessageDialog(null,
+                "Concentration is played with 30 cards (15 pairs). To play, click on any two cards."
+                        + "  If the two cards match, they will be highlighted in gray.  If they do not, they will flip back over. "
+                        + "  Continue until you have matched all 15 pairs."
+                        + "  See if you can beat your high score by matching all pairs in the least number of moves!");
     }
 
     /**
-     * Saves the state of the game to a file.
-     * (non-Javadoc)
+     * Saves the state of the game to a file. (non-Javadoc)
      * 
-     * @see group3.Game#saveGame()
+     * @see Game#saveGame()
      */
     @Override
     public void saveGame() {
-        
+
         try (FileOutputStream filestream = new FileOutputStream("Concentration.ser");
                 ObjectOutputStream os = new ObjectOutputStream(filestream);) {
             os.writeObject(deck);
 
-            
             os.writeObject(visibleBooleanLabels);
-//            os.writeObject(cardLabels);
-//            for (int i = 0; i < 30; i++) {
-//                
-//                os.writeObject(cardLabels[i]);
-//                
-//            }
+            // os.writeObject(cardLabels);
             os.writeInt(test);
             os.writeInt(selectedCard);
             os.writeInt(secondSelectedCard);
@@ -484,7 +479,7 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
             os.writeBoolean(firstCard);
             os.writeObject(scoreLabel);
             os.writeObject(temp);
-            //os.writeObject(t);
+            // os.writeObject(t);
         } catch (IOException e) {
             e.printStackTrace();
         }
