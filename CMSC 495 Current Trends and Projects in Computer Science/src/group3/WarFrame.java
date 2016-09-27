@@ -8,7 +8,6 @@
 
 package group3;
 
-//TODO Remove Magic Numbers
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import javax.swing.ImageIcon;
@@ -28,27 +27,81 @@ import java.awt.FlowLayout;
  */
 public class WarFrame extends JFrame {
     /**
+     * Status panel spacing.
+     */
+    private static final int GAP = 5;
+    /**
+     * The normal number of cards needed for a war.
+     */
+    private static final int WAR_SIZE = 4;
+    /**
+     * The horizontal spacing to center the status message.
+     */
+    private static final int H_SPACE = 190;
+    /**
+     * The number of columns in the GUI.
+     */
+    private static final int COLS = 8;
+    /**
+     * The horizontal gap space in the GUI.
+     */
+    private static final int HGAP = 15;
+    /**
      * Serial number required for serialization.
      */
     private static final long serialVersionUID = -6059721339041100139L;
+    /**
+     * War status display field 1.
+     */
     private JLabel warLabel1;
+    /**
+     * War status display field 2.
+     */
     private JLabel warLabel2;
+    /**
+     * War status display field 3.
+     */
     private JLabel warLabel3;
+    /**
+     * War status display field 4.
+     */
     private JLabel warLabel4;
-    private JPanel warPanel;
+    /**
+     * The first player War card (W).
+     */
     private JLabel warPlayerLabel1;
+    /**
+     * The second player War card (A).
+     */
     private JLabel warPlayerLabel2;
+    /**
+     * The third player War card (R).
+     */
     private JLabel warPlayerLabel3;
+    /**
+     * The last player War card (Draw/Break Card).
+     */
     private JLabel breakPlayerLabel;
+    /**
+     * The first AI War card (W).
+     */
     private JLabel warAILabel1;
+    /**
+     * The second AI War card (A).
+     */
     private JLabel warAILabel2;
+    /**
+     * The third AI War card (R).
+     */
     private JLabel warAILabel3;
+    /**
+     * The last AI War card (Draw/Break Card).
+     */
     private JLabel breakAILabel;
-    private JPanel topPanel;
-    private JPanel statusPanel;
-    private JLabel level;
+    /**
+     * Displays the number of consecutive wars.
+     */
     private JLabel levelNum;
-    private JLabel spacer;
 
     /**
      * Creates a new GUI to display the results of a War.
@@ -58,12 +111,12 @@ public class WarFrame extends JFrame {
      */
     public WarFrame(final String title) {
         super(title);
-        warPanel = new JPanel(new GridLayout(0, 8, 15, 0));
-        Dimension cardSize = new Dimension(72, 96);
+        JPanel warPanel = new JPanel(new GridLayout(0, COLS, HGAP, 0));
+        Dimension cardSize = new Dimension(Card.CARD_WIDTH, Card.CARD_HEIGHT);
 
-        topPanel = new JPanel();
+        JPanel topPanel = new JPanel();
         getContentPane().add(topPanel, BorderLayout.NORTH);
-        topPanel.setLayout(new GridLayout(0, 8, 15, 0));
+        topPanel.setLayout(new GridLayout(0, COLS, HGAP, 0));
 
         JLabel p1Label = new JLabel("W", SwingConstants.CENTER);
         topPanel.add(p1Label);
@@ -109,19 +162,19 @@ public class WarFrame extends JFrame {
         warPanel.add(warAILabel1);
         getContentPane().add(warPanel);
 
-        statusPanel = new JPanel();
+        JPanel statusPanel = new JPanel();
         getContentPane().add(statusPanel, BorderLayout.SOUTH);
-        statusPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        statusPanel.setLayout(new FlowLayout(FlowLayout.LEFT, GAP, GAP));
 
-        level = new JLabel("War ");
+        JLabel level = new JLabel("War ");
         level.setHorizontalAlignment(SwingConstants.RIGHT);
         statusPanel.add(level);
 
         levelNum = new JLabel("");
         statusPanel.add(levelNum);
 
-        spacer = new JLabel("");
-        spacer.setPreferredSize(new Dimension(190, 0));
+        JLabel spacer = new JLabel("");
+        spacer.setPreferredSize(new Dimension(H_SPACE, 0));
         statusPanel.add(spacer);
         warLabel1 = new JLabel(" ");
         warLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -161,25 +214,25 @@ public class WarFrame extends JFrame {
         } else if (ai.handSize() == 0) {
             return true;
         }
-        int warSize = 4;
-        if (player.handSize() < 4) {
+        int warSize = WAR_SIZE;
+        if (player.handSize() < WAR_SIZE) {
             // not enough cards
             warSize = player.handSize();
         }
-        if (ai.handSize() < 4) {
+        if (ai.handSize() < WAR_SIZE) {
             // not enough cards
             warSize = ai.handSize();
         }
         Card[] playerWar = new Card[warSize];
         for (int i = 0; i < playerWar.length; i++) {
-            if (group3.DEBUGGING) {
+            if (MainCGS.DEBUGGING) {
                 System.out.println("Removing player card");
             }
             playerWar[i] = player.removeCard();
         } // end for
         Card[] aiWar = new Card[warSize];
         for (int i = 0; i < aiWar.length; i++) {
-            if (group3.DEBUGGING) {
+            if (MainCGS.DEBUGGING) {
                 System.out.println("Removing ai card");
             }
             aiWar[i] = ai.removeCard();
@@ -188,16 +241,16 @@ public class WarFrame extends JFrame {
         for (int i = 0; i < playerWar.length; i++) {
             switch (i) {
             case 0:
-                warPlayerLabel1.setIcon(new ImageIcon(playerWar[i].front));
+                warPlayerLabel1.setIcon(new ImageIcon(playerWar[i].getFront()));
                 break;
             case 1:
-                warPlayerLabel2.setIcon(new ImageIcon(playerWar[i].front));
+                warPlayerLabel2.setIcon(new ImageIcon(playerWar[i].getFront()));
                 break;
             case 2:
-                warPlayerLabel3.setIcon(new ImageIcon(playerWar[i].front));
+                warPlayerLabel3.setIcon(new ImageIcon(playerWar[i].getFront()));
                 break;
             case 3:
-                breakPlayerLabel.setIcon(new ImageIcon(playerWar[i].front));
+                breakPlayerLabel.setIcon(new ImageIcon(playerWar[i].getFront()));
                 break;
             default:
                 break;
@@ -205,7 +258,7 @@ public class WarFrame extends JFrame {
         }
 
         for (int i = 0; i < aiWar.length; i++) {
-            ImageIcon icon = new ImageIcon(aiWar[i].front);
+            ImageIcon icon = new ImageIcon(aiWar[i].getFront());
             switch (i) {
             case 0:
                 warAILabel1.setIcon(icon);
@@ -241,7 +294,7 @@ public class WarFrame extends JFrame {
             whoWon = false;
         } else {
             // double war!
-            if (group3.DEBUGGING) {
+            if (MainCGS.DEBUGGING) {
                 System.out.println("double war");
             }
             whoWon = setupGUI(player, ai, warLevel + 1);
