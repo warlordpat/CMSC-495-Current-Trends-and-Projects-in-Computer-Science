@@ -37,6 +37,7 @@ public class ThirtyOne extends JPanel implements Game {
     private int player31;
     private int ai31;
     private int iTurn;
+    private Random rand = new Random();
     private HighScores scores;
     private JLabel jlPlayer;
     private JLabel jlCenter;
@@ -45,8 +46,23 @@ public class ThirtyOne extends JPanel implements Game {
     private JButton jbCenterCard1, jbCenterCard2, jbCenterCard3;
     private int playerScore;
     private JFrame frame;
-    private JPanel CenterPanel;
-    private JPanel PlayerPanel;
+    private static Map<Rank, Integer> values = new HashMap<>();
+    // Statically assigns the default Rank values.
+    static {
+        values.put(Rank.ACE, 1);
+        values.put(Rank.TWO, 2);
+        values.put(Rank.THREE, 3);
+        values.put(Rank.FOUR, 4);
+        values.put(Rank.FIVE, 5);
+        values.put(Rank.SIX, 6);
+        values.put(Rank.SEVEN, 7);
+        values.put(Rank.EIGHT, 8);
+        values.put(Rank.NINE, 9);
+        values.put(Rank.TEN, 10);
+        values.put(Rank.JACK, 10);
+        values.put(Rank.QUEEN, 10);
+        values.put(Rank.KING, 10);
+    }
     public ThirtyOne() {
         deck = new Deck();
         AI = new Hand();
@@ -56,6 +72,7 @@ public class ThirtyOne extends JPanel implements Game {
         iTurn = 0;
         jlPlayer = new JLabel("Player's Hand");
         jlCenter = new JLabel("Center Cards");
+        jlPlayerCard4 = null;
         jlPlayerScore = new JLabel("Player's Score: " + playerScore);
         playerScore = 0;
         scores = loadOrCreateScores("ThirtyOne");
@@ -172,18 +189,39 @@ public class ThirtyOne extends JPanel implements Game {
         centerCard1 = deck.deal();
         centerCard2 = deck.deal();
         centerCard3 = deck.deal();
-        centerCardImage1 = new ImageIcon(centerCard1.getFront());
-//        centerCardImage2 = new ImageIcon(centerCard2.front);
-        centerCardImage3 = new ImageIcon(centerCard3.getFront());
-        playerCardImage1 = new ImageIcon(playerCard1.getFront());
-        playerCardImage2 = new ImageIcon(playerCard2.getFront());
-        playerCardImage3 = new ImageIcon(playerCard3.getFront());
-        jbCenterCard1 = new JButton(centerCardImage1);
+        jbCenterCard1 = new JButton(new ImageIcon(centerCard1.getFront()));
         jbCenterCard2 = new JButton(new ImageIcon(centerCard2.getFront()));
-        jbCenterCard3 = new JButton(centerCardImage3);
-        jlPlayerCard1 = new JLabel(playerCardImage1);
-        jlPlayerCard2 = new JLabel(playerCardImage2);
-        jlPlayerCard3 = new JLabel(playerCardImage3);
+        jbCenterCard3 = new JButton(new ImageIcon(centerCard3.getFront()));
+        iTurn = rand.nextInt(2)+1;
+        if (iTurn == 1)
+        {
+            if (values.get(centerCard1.getRank()) > values.get(centerCard2.getRank()))
+            {
+                if (values.get(centerCard1.getRank()) > values.get(centerCard3.getRank()))
+                {
+                    AI.addCard(centerCard1);
+                    jbCenterCard1.setVisible(false);
+                }
+                else
+                {
+                    AI.addCard(centerCard3);
+                    jbCenterCard3.setVisible(false);
+                }
+            }
+            else
+            {
+                if (values.get(centerCard2.getRank()) > values.get(centerCard3.getRank()))
+                {
+                    AI.addCard(centerCard2);
+                    jbCenterCard2.setVisible(false);
+                }
+                else
+                {
+                    AI.addCard(centerCard3);
+                    jbCenterCard3.setVisible(false);
+                }
+            }
+        }
         jbCenterCard1.setBounds(150, 100, CARD_WIDTH, CARD_HEIGHT);
         add(jbCenterCard1);
         jbCenterCard2.setBounds(250, 100, CARD_WIDTH, CARD_HEIGHT);
@@ -195,12 +233,6 @@ public class ThirtyOne extends JPanel implements Game {
         jlPlayer.setFont(new Font("Tahoma", Font.PLAIN, 16));
         jlPlayer.setSize(jlPlayer.getPreferredSize());
         add(jlPlayer);
-//        jlPlayerCard1.setBounds(150, 300, CARD_WIDTH, CARD_HEIGHT);
-//        add(jlPlayerCard1);
-//        jlPlayerCard2.setBounds(250, 300, CARD_WIDTH, CARD_HEIGHT);
-//        add(jlPlayerCard2);
-//        jlPlayerCard3.setBounds(350, 300, CARD_WIDTH, CARD_HEIGHT);
-//        add(jlPlayerCard3);
         player.setLocation(150,  300);
         add(player);
         jlPlayerScore.setLocation(450, 450);
@@ -215,23 +247,10 @@ public class ThirtyOne extends JPanel implements Game {
         jbCenterCard1.addActionListener(ae -> {
             if (player.handSize() < 4) {
                 player.addCard(centerCard1);
-                System.out.println(player.getCard(0));
-                System.out.println(player.getCard(1));
-                System.out.println(player.getCard(2));
-                System.out.println(player.getCard(3));
-                playerCard4 = centerCard1;
-                jlPlayerCard4 = new JLabel(centerCardImage1);
-                remove(jlPlayerCard1);
-                remove(jlPlayerCard2);
-                remove(jlPlayerCard3);
-                jlPlayerCard1.setBounds(75, 300, CARD_WIDTH, CARD_HEIGHT);
-                add(jlPlayerCard1);
-                jlPlayerCard2.setBounds(175, 300, CARD_WIDTH, CARD_HEIGHT);
-                add(jlPlayerCard2);
-                jlPlayerCard3.setBounds(275, 300, CARD_WIDTH, CARD_HEIGHT);
-                add(jlPlayerCard3);
-                jlPlayerCard4.setBounds(375, 300, CARD_WIDTH, CARD_HEIGHT);
-                add(jlPlayerCard4);
+                centerCard1.flip();
+                jbCenterCard1.setVisible(false);
+                revalidate();
+                repaint();
                 results();
             }
         });
@@ -240,23 +259,6 @@ public class ThirtyOne extends JPanel implements Game {
                 player.addCard(centerCard2);
                 centerCard2.flip();
                 jbCenterCard2.setVisible(false);
-                System.out.println(player.getCard(0));
-                System.out.println(player.getCard(1));
-                System.out.println(player.getCard(2));
-                System.out.println(player.getCard(3));
-                playerCard4 = centerCard2;
-                jlPlayerCard4 = new JLabel(centerCardImage2);
-//                remove(jlPlayerCard1);
-//                remove(jlPlayerCard2);
-//                remove(jlPlayerCard3);
-//                jlPlayerCard1.setBounds(75, 300, CARD_WIDTH, CARD_HEIGHT);
-//                add(jlPlayerCard1);
-//                jlPlayerCard2.setBounds(175, 300, CARD_WIDTH, CARD_HEIGHT);
-//                add(jlPlayerCard2);
-//                jlPlayerCard3.setBounds(275, 300, CARD_WIDTH, CARD_HEIGHT);
-//                add(jlPlayerCard3);
-//                jlPlayerCard4.setBounds(375, 300, CARD_WIDTH, CARD_HEIGHT);
-//                add(jlPlayerCard4);
                 revalidate();
                 repaint();
                 results();
@@ -265,23 +267,10 @@ public class ThirtyOne extends JPanel implements Game {
         jbCenterCard3.addActionListener(ae -> {
             if (player.handSize() < 4) {
                 player.addCard(centerCard3);
-                System.out.println(player.getCard(0));
-                System.out.println(player.getCard(1));
-                System.out.println(player.getCard(2));
-                System.out.println(player.getCard(3));
-                playerCard4 = centerCard3;
-                jlPlayerCard4 = new JLabel(centerCardImage1);
-                remove(jlPlayerCard1);
-                remove(jlPlayerCard2);
-                remove(jlPlayerCard3);
-                jlPlayerCard1.setBounds(75, 300, CARD_WIDTH, CARD_HEIGHT);
-                add(jlPlayerCard1);
-                jlPlayerCard2.setBounds(175, 300, CARD_WIDTH, CARD_HEIGHT);
-                add(jlPlayerCard2);
-                jlPlayerCard3.setBounds(275, 300, CARD_WIDTH, CARD_HEIGHT);
-                add(jlPlayerCard3);
-                jlPlayerCard4.setBounds(375, 300, CARD_WIDTH, CARD_HEIGHT);
-                add(jlPlayerCard4);
+                centerCard3.flip();
+                jbCenterCard3.setVisible(false);
+                revalidate();
+                repaint();
                 results();
             }
         });
@@ -327,22 +316,29 @@ public class ThirtyOne extends JPanel implements Game {
             add(jbCenterCard2);
             add(jbCenterCard3);
             add(player);
+            revalidate();
+            repaint();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
     private void reset() {
+        remove(deck);
+        remove(AI);
+        remove(player);
+        remove(centerCard1);
+        remove(centerCard2);
+        remove(centerCard3);
         remove(jbCenterCard1);
         remove(jbCenterCard2);
         remove(jbCenterCard3);
-        remove(jlPlayerCard1);
-        remove(jlPlayerCard2);
-        remove(jlPlayerCard3);
-        remove(jlPlayerCard4);
-        remove(player);
         remove(jlPlayerScore);
+        deck = new Deck();
+        AI = new Hand();
+        player = new Hand();
         jlPlayerScore = new JLabel("Player's Score: " + playerScore);
         add(jlPlayerScore);
+        newGame();
         setCards();
         cardButtons();
         revalidate();
@@ -375,10 +371,37 @@ public class ThirtyOne extends JPanel implements Game {
         else if (player31 == ai31)
         {
             playerScore += 50;
+            Object[] options = { "Yes", "No" };
+                    int n = JOptionPane.showOptionDialog(frame,
+                            ("You tie " + player.total() + " to " + AI.total() + "!\nWould you like to play again?"),
+                            "You tie", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+                            options[1]);
+                    if (n == JOptionPane.YES_OPTION) {
+                        reset();
+                    } else {
+                        if (scores.isHighScore(playerScore)) {
+                        String initials = getInitials(this);
+                        HighScore score = new HighScore(initials, (int) playerScore);
+                        scores.add(score);
+            }
+                    }
         }
         else
         {
-            //You lose
+            Object[] options = { "Yes", "No" };
+                    int n = JOptionPane.showOptionDialog(frame,
+                            ("You lose " + player.total() + " to " + AI.total() + "!\nWould you like to play again?"),
+                            "You lose", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+                            options[1]);
+                    if (n == JOptionPane.YES_OPTION) {
+                        reset();
+                    } else {
+                        if (scores.isHighScore(playerScore)) {
+                        String initials = getInitials(this);
+                        HighScore score = new HighScore(initials, (int) playerScore);
+                        scores.add(score);
+            }
+                    }
         }
     }
     public static void main(final String[] args) {
