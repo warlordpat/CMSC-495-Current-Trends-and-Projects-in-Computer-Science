@@ -14,7 +14,6 @@ import java.util.*;
 import javax.swing.*;
 import java.awt.event.*;
 
-
 public class ThirtyOne extends JPanel implements Game {
     private static final Color CARD_TABLE_GREEN = new Color(7, 99, 36);
     private static final Color LABEL_BLUE_GREY = new Color(40, 55, 67);
@@ -22,7 +21,7 @@ public class ThirtyOne extends JPanel implements Game {
     private int SCREEN_Y = 600;
     private int HAND_X = 200;
     private int HAND_Y = 200;
-    private int CARD_HEIGHT = 96; 
+    private int CARD_HEIGHT = 96;
     private int CARD_WIDTH = 72;
     private static final int INITIAL_LENGTH = 3;
     private static final long serialVersionUID = 510809952979347694L;
@@ -63,6 +62,7 @@ public class ThirtyOne extends JPanel implements Game {
         values.put(Rank.QUEEN, 10);
         values.put(Rank.KING, 10);
     }
+
     public ThirtyOne() {
         deck = new Deck();
         AI = new Hand();
@@ -78,13 +78,16 @@ public class ThirtyOne extends JPanel implements Game {
         scores = loadOrCreateScores("ThirtyOne");
         createGUI();
     }
+
     public final void begin() {
         System.out.println("beginning");
         newGame();
     }
+
     final void newGame() {
         deck.shuffle();
     }
+
     public final void createGUI() {
         frame = new JFrame("Thirty-One");
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -113,6 +116,7 @@ public class ThirtyOne extends JPanel implements Game {
         setCards();
         cardButtons();
     }
+
     private void createMenu(final JFrame theFrame) {
         JMenuBar menuBar = new JMenuBar();
         theFrame.setJMenuBar(menuBar);
@@ -149,12 +153,16 @@ public class ThirtyOne extends JPanel implements Game {
             theFrame.dispose();
         });
     }
+
     private void highScores() {
         JOptionPane.showMessageDialog(frame, scores);
     }
+
     private void directions() {
-        JOptionPane.showMessageDialog(null, "The objective of Thirty-One is to be the closer player to 31.\nEach player starts with 3 cards. They take turns adding 1 \ncard to their hands out of 3 from the center. The player \ncloser to 31 wins the game.");
-    } 
+        JOptionPane.showMessageDialog(null,
+                "The objective of Thirty-One is to be the closer player to 31.\nEach player starts with 3 cards. They take turns adding 1 \ncard to their hands out of 3 from the center. The player \ncloser to 31 wins the game.");
+    }
+
     private void setCards() {
         player.removeAll();
         AI.removeAll();
@@ -162,7 +170,8 @@ public class ThirtyOne extends JPanel implements Game {
             remove(jlPlayerCard1);
             remove(jlPlayerCard2);
             remove(jlPlayerCard3);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         setLayout(null);
         setBackground(CARD_TABLE_GREEN);
         jlCenter.setLocation(25, 25);
@@ -192,31 +201,21 @@ public class ThirtyOne extends JPanel implements Game {
         jbCenterCard1 = new JButton(new ImageIcon(centerCard1.getFront()));
         jbCenterCard2 = new JButton(new ImageIcon(centerCard2.getFront()));
         jbCenterCard3 = new JButton(new ImageIcon(centerCard3.getFront()));
-        iTurn = rand.nextInt(2)+1;
-        if (iTurn == 1)
-        {
-            if (values.get(centerCard1.getRank()) > values.get(centerCard2.getRank()))
-            {
-                if (values.get(centerCard1.getRank()) > values.get(centerCard3.getRank()))
-                {
+        iTurn = rand.nextInt(2) + 1;
+        if (iTurn == 1) {
+            if (values.get(centerCard1.getRank()) > values.get(centerCard2.getRank())) {
+                if (values.get(centerCard1.getRank()) > values.get(centerCard3.getRank())) {
                     AI.addCard(centerCard1);
                     jbCenterCard1.setVisible(false);
-                }
-                else
-                {
+                } else {
                     AI.addCard(centerCard3);
                     jbCenterCard3.setVisible(false);
                 }
-            }
-            else
-            {
-                if (values.get(centerCard2.getRank()) > values.get(centerCard3.getRank()))
-                {
+            } else {
+                if (values.get(centerCard2.getRank()) > values.get(centerCard3.getRank())) {
                     AI.addCard(centerCard2);
                     jbCenterCard2.setVisible(false);
-                }
-                else
-                {
+                } else {
                     AI.addCard(centerCard3);
                     jbCenterCard3.setVisible(false);
                 }
@@ -233,7 +232,7 @@ public class ThirtyOne extends JPanel implements Game {
         jlPlayer.setFont(new Font("Tahoma", Font.PLAIN, 16));
         jlPlayer.setSize(jlPlayer.getPreferredSize());
         add(jlPlayer);
-        player.setLocation(150,  300);
+        player.setLocation(150, 300);
         add(player);
         jlPlayerScore.setLocation(450, 450);
         jlPlayerScore.setForeground(LABEL_BLUE_GREY);
@@ -243,6 +242,7 @@ public class ThirtyOne extends JPanel implements Game {
         revalidate();
         repaint();
     }
+
     private void cardButtons() {
         jbCenterCard1.addActionListener(ae -> {
             if (player.handSize() < 4) {
@@ -275,7 +275,8 @@ public class ThirtyOne extends JPanel implements Game {
             }
         });
     }
-    public void saveGame() {
+
+    public final void saveGame() {
         System.out.println("Saving game");
         try (FileOutputStream fileStream = new FileOutputStream("ThirtyOne.ser");
                 ObjectOutputStream os = new ObjectOutputStream(fileStream);) {
@@ -290,7 +291,8 @@ public class ThirtyOne extends JPanel implements Game {
             e.printStackTrace();
         }
     }
-    public void loadGame() {
+
+    public final void loadGame() {
         System.out.println("Loading game");
         remove(deck);
         remove(AI);
@@ -322,6 +324,7 @@ public class ThirtyOne extends JPanel implements Game {
             e.printStackTrace();
         }
     }
+
     private void reset() {
         remove(deck);
         remove(AI);
@@ -344,66 +347,60 @@ public class ThirtyOne extends JPanel implements Game {
         revalidate();
         repaint();
     }
+
     private void results() {
         System.out.println(player.total());
         player31 = 31 - player.total();
         player31 = Math.abs(player31);
         ai31 = 31 - AI.total();
         ai31 = Math.abs(ai31);
-        if (player31 < ai31)
-        {
+        if (player31 < ai31) {
             playerScore += 100;
             Object[] options = { "Yes", "No" };
-                    int n = JOptionPane.showOptionDialog(frame,
-                            ("You win " + player.total() + " to " + AI.total() + "!\nWould you like to play again?"),
-                            "You Win!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[1]);
-                    if (n == JOptionPane.YES_OPTION) {
-                        reset();
-                    } else {
-                        if (scores.isHighScore(playerScore)) {
-                        String initials = getInitials(this);
-                        HighScore score = new HighScore(initials, (int) playerScore);
-                        scores.add(score);
+            int n = JOptionPane.showOptionDialog(frame,
+                    ("You win " + player.total() + " to " + AI.total() + "!\nWould you like to play again?"),
+                    "You Win!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+            if (n == JOptionPane.YES_OPTION) {
+                reset();
+            } else {
+                if (scores.isHighScore(playerScore)) {
+                    String initials = getInitials(this);
+                    HighScore score = new HighScore(initials, (int) playerScore);
+                    scores.add(score);
+                }
             }
-                    }
-        }
-        else if (player31 == ai31)
-        {
+        } else if (player31 == ai31) {
             playerScore += 50;
             Object[] options = { "Yes", "No" };
-                    int n = JOptionPane.showOptionDialog(frame,
-                            ("You tie " + player.total() + " to " + AI.total() + "!\nWould you like to play again?"),
-                            "You tie", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[1]);
-                    if (n == JOptionPane.YES_OPTION) {
-                        reset();
-                    } else {
-                        if (scores.isHighScore(playerScore)) {
-                        String initials = getInitials(this);
-                        HighScore score = new HighScore(initials, (int) playerScore);
-                        scores.add(score);
+            int n = JOptionPane.showOptionDialog(frame,
+                    ("You tie " + player.total() + " to " + AI.total() + "!\nWould you like to play again?"), "You tie",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+            if (n == JOptionPane.YES_OPTION) {
+                reset();
+            } else {
+                if (scores.isHighScore(playerScore)) {
+                    String initials = getInitials(this);
+                    HighScore score = new HighScore(initials, (int) playerScore);
+                    scores.add(score);
+                }
             }
-                    }
-        }
-        else
-        {
+        } else {
             Object[] options = { "Yes", "No" };
-                    int n = JOptionPane.showOptionDialog(frame,
-                            ("You lose " + player.total() + " to " + AI.total() + "!\nWould you like to play again?"),
-                            "You lose", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[1]);
-                    if (n == JOptionPane.YES_OPTION) {
-                        reset();
-                    } else {
-                        if (scores.isHighScore(playerScore)) {
-                        String initials = getInitials(this);
-                        HighScore score = new HighScore(initials, (int) playerScore);
-                        scores.add(score);
+            int n = JOptionPane.showOptionDialog(frame,
+                    ("You lose " + player.total() + " to " + AI.total() + "!\nWould you like to play again?"),
+                    "You lose", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+            if (n == JOptionPane.YES_OPTION) {
+                reset();
+            } else {
+                if (scores.isHighScore(playerScore)) {
+                    String initials = getInitials(this);
+                    HighScore score = new HighScore(initials, (int) playerScore);
+                    scores.add(score);
+                }
             }
-                    }
         }
     }
+
     public static void main(final String[] args) {
         ThirtyOne thirtyone = new ThirtyOne();
         thirtyone.begin();
