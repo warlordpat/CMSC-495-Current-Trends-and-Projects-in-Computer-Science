@@ -242,17 +242,15 @@ public class Hand extends JLabel {
      *
      * @return the Card removed from the Hand
      */
-    public final Card returnCard(Card card) {
+    public final void returnCard(Card card) {
         for (int iNum = 0; iNum < cards.size(); iNum++)
         {
             if (cards.get(iNum) == card)
             {
                 cards.remove(iNum);
                 resize();
-                return card;
             }
         }
-        return null;
     } // end method
 
     /**
