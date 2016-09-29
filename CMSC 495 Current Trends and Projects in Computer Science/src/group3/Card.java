@@ -117,6 +117,7 @@ public class Card extends JComponent {
     public Card(final Rank rank, final Suit suit) {
         this.rank = rank;
         this.suit = suit;
+        setSize(CARD_WIDTH, CARD_HEIGHT);
         // System.out.println("loading " + rank.ordinal() * 72 + ", " +
         // suit.ordinal() * 96 + "");
         back = getBacks().getSubimage(CARD_WIDTH, 0, CARD_WIDTH, CARD_HEIGHT);
@@ -260,6 +261,15 @@ public class Card extends JComponent {
     } // end method
 
     /**
+     * Find out if the Card is face up.
+     *
+     * @return true, if the Card is face up
+     */
+    public boolean isFaceUp() {
+        return faceUp;
+    }
+
+    /**
      * Gets a BufferedImage of the Card back.
      *
      * @return The Card back
@@ -270,6 +280,7 @@ public class Card extends JComponent {
 
     /**
      * Gets a BufferedImage of the Card front.
+     * 
      * @return The Card front
      */
     public BufferedImage getFront() {
