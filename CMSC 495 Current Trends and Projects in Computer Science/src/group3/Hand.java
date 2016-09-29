@@ -73,6 +73,28 @@ public class Hand extends JLabel {
         values.put(Rank.KING, 10);
     }
     /**
+     * Map that links Card Rank to values for this Hand. Probably should be
+     * overridden in a sub-class for each game that has different value
+     * assignments. Differs from values because Aces are worth 11.
+     */
+    private static Map<Rank, Integer> thirtyOneValues = new HashMap<>();
+    // Statically assigns the default Rank values.
+    static {
+        thirtyOneValues.put(Rank.TWO, 2);
+        thirtyOneValues.put(Rank.THREE, 3);
+        thirtyOneValues.put(Rank.FOUR, 4);
+        thirtyOneValues.put(Rank.FIVE, 5);
+        thirtyOneValues.put(Rank.SIX, 6);
+        thirtyOneValues.put(Rank.SEVEN, 7);
+        thirtyOneValues.put(Rank.EIGHT, 8);
+        thirtyOneValues.put(Rank.NINE, 9);
+        thirtyOneValues.put(Rank.TEN, 10);
+        thirtyOneValues.put(Rank.JACK, 10);
+        thirtyOneValues.put(Rank.QUEEN, 10);
+        thirtyOneValues.put(Rank.KING, 10);
+        thirtyOneValues.put(Rank.ACE, 11);
+    }
+    /**
      * A List of the Cards in the Hand.
      */
     private List<Card> cards;
@@ -215,6 +237,33 @@ public class Hand extends JLabel {
         return cards.size();
     } // end method
 
+    /**
+     * Removes a specific Card from the Hand and returns it to the caller.
+     *
+     * @return the Card removed from the Hand
+     */
+    public final void returnCard(Card card) {
+        for (int iNum = 0; iNum < cards.size(); iNum++)
+        {
+            if (cards.get(iNum) == card)
+            {
+                cards.remove(iNum);
+                resize();
+            }
+        }
+    } // end method
+
+    /**
+     * Returns the total of a hand with Aces worth 11
+     */
+    public final int thirtyOneTotal() {
+        int iTotal = 0;
+        for (Card card : cards) {
+            iTotal += thirtyOneValues.get(card.getRank());
+        }
+        return iTotal;
+    } // end method
+    
     /**
      * Totals the value of the cards in the Hand. More generic than current
      * scoreHand method.
