@@ -138,63 +138,64 @@ public class Deck extends JLabel {
             System.out.println("shuffle complete");
         }
     } // end method
+
     /**
      * Deals the deck for Concentration. Only requires 30 cards
      */
     void ConcentrationShuffle() {
-        
+
         // Contains 52 cards
         List<Card> temp = cards;
-        //cards = new ArrayList<>();
+        // cards = new ArrayList<>();
         concentrationCards = new ArrayList<>();
         // Contains 30 cards
         ArrayList<Card> temp30 = new ArrayList<>();
         int i = 0;
         // Draws 15 cards in order, twice
         for (int j = 20; j < 35; j++) {
-                
+
             temp30.add(i, temp.get(j));
             temp30.add((i + 1), temp.get(j));
             i += 2;
         }
-        
-        do {            
+
+        do {
             int position = 0;
             position = (int) (Math.random() * 30);
 
-            if (temp30.get(position) != null) {                
+            if (temp30.get(position) != null) {
                 concentrationCards.add(temp30.get(position));
-                temp30.set(position, null);                
+                temp30.set(position, null);
             }
-        } while (concentrationCards.size() <30);
+        } while (concentrationCards.size() < 30);
     }
-       
+
     Card cardFlip(int i) {
-        
         return cards.get(i);
-        
     }
-       
+
     /**
      * Deals a card from the deck.
      *
      * @return a Card from the top of the deck
      */
     final Card deal() {
+        if (cards.size() == 1) {
+            // we are about to remove the last card
+            isEmpty = true;
+        }
         return cards.remove(0);
     } // end method
-    
+
     /**
      * Gets a card from the deck without removing it
      * 
      * @return a Card from the top of the deck
      */
     Card concentrationDeal(int i) {
-
         return concentrationCards.get(i);
-        
     } // end method
-    
+
     /**
      * Converts a Deck to a String representation.
      *
@@ -232,4 +233,20 @@ public class Deck extends JLabel {
         } // end else
         g.dispose();
     } // end method
+
+    /**
+     * Adds cards back into the back of the deck.
+     *
+     * @param cards
+     *            An ArrayList of Cards
+     */
+    public void addCards(ArrayList<Card> addCards) {
+        if (addCards != null && addCards.size() > 0) {
+            isEmpty = false;
+        }
+        for (Card card : addCards) {
+            cards.add(card);
+        }
+
+    }
 } // end class
