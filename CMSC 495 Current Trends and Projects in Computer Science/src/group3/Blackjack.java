@@ -147,15 +147,15 @@ public class Blackjack extends JPanel implements Game {
     /**
      * The minimum screen height.
      */
-    private static final int SCREEN_Y = 600;
+    static final int SCREEN_Y = 600;
     /**
      * The minimum screen width.
      */
-    private static final int SCREEN_X = 800;
+    static final int SCREEN_X = 800;
     /**
      * A green color like a card table.
      */
-    private static final Color CARD_TABLE_GREEN = new Color(7, 99, 36);
+    static final Color CARD_TABLE_GREEN = new Color(7, 99, 36);
     /**
      * The threshold at which the dealer stands.
      */
