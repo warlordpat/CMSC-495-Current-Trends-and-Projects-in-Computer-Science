@@ -1,6 +1,6 @@
 // File: Concentration.java
 // Author: Christy Gilliland
-// Date: Sep 20, 2016
+// Date: Sep 28, 2016
 // Course: CMSC 495
 // Assignment: Final Project, Group 3
 // Platform: Win10 x64 Java build 1.8.0_91-b14
@@ -29,8 +29,7 @@ import java.util.Arrays;
 import javax.swing.*;
 
 /**
- *
- * @author thegi
+ * Concentration implements a graphical game of Concentration.
  */
 public class Concentration extends JFrame implements MouseListener, ActionListener, Game {
     /**
@@ -38,29 +37,93 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
      */
     private static final long serialVersionUID = -8467046280350561242L;
     /**
-     * The maximum length of the initials for a high score.
+     * The width of a card.
      */
-    private static final int INITIAL_LENGTH = 3;
-    private static final int CARD_WIDTH = 106;
+    private static final int CARD_WIDTH = Card.CARD_WIDTH;
+    /**
+     * The height of a card.
+     */
     private static final int CARD_HEIGHT = 144;
+    /**
+     * Possible values: 0, 1, 2. When = 2, checks for a match.
+     */
     int test;
+    /**
+     * The value of the first selected card.
+     */
     int selectedCard;
+    /**
+     * The value of the second selected card.
+     */
     int secondSelectedCard;
+    /**
+     * Used by MousePressed event to save the index of the selected card.
+     */
     int index;
+    /**
+     * The number of matches (out of 30) made so far.
+     */
     int matches;
+    /**
+     * The number of attempts. One attempt is defined as two flipped cards.
+     */
     int attempts;
+    /**
+     * The time the game was started. Used to display total time at the end of a
+     * game.
+     */
     long timeStart;
+    /**
+     * The time the game was finished. Used to display total time at the end of
+     * a game.
+     */
     long timeEnd;
+    /**
+     * Saves the elapsed time of a saved game so it can be added when game is
+     * resumed.
+     */
     long elapsedTime = 0;
+    /**
+     * Remains true until first pair is flipped, then is assigned false. When
+     * firstCard = false, the scorePanel becomes visible.
+     */
     boolean firstCard;
+    /**
+     * Container for deck.
+     */
     JPanel panel;
-    JPanel mainPanel;
+    /**
+     * Container for score labels.
+     */
     JPanel scorePanel;
+    /**
+     * Container to hold panel and scorePanel.
+     */
+    JPanel mainPanel;
+    /**
+     * Reference array for the cards dealt.
+     */
     JLabel[] cardLabels;
+    /**
+     * Used by the loadGame method to determine if a card had already been
+     * matched.
+     */
     Boolean[] visibleBooleanLabels;
+    /**
+     * The label to display # of attempts and final score.
+     */
     JLabel scoreLabel;
+    /**
+     * Temporary card object used to populate reference array.
+     */
     Card temp;
+    /**
+     * Used to control the delay before returning a card to face-down position.
+     */
     Timer t;
+    /**
+     * The Concentration High scores
+     */
     private HighScores scores;
     /**
      * The current deck in play.
@@ -75,8 +138,13 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
      */
     private File scoreFile;
 
+    /**
+     * Constructs a new Concentration game.
+     */
     public Concentration() {
+
         super("Concentration!");
+
         test = 0;
         selectedCard = 0;
         secondSelectedCard = 0;
@@ -85,11 +153,12 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
         attempts = 0;
         firstCard = true;
         deck = new Deck();
+        scoreLabel = new JLabel();
         panel = new JPanel();
         mainPanel = new JPanel();
         scorePanel = new JPanel();
         cardLabels = new JLabel[30];
-        scoreLabel = new JLabel();
+
         t = new Timer(2000, this);
 
         String path = System.getProperty("user.home");
@@ -107,48 +176,80 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
      * Creates a new game session.
      */
     final void newGame() {
+
+        deck.ConcentrationShuffle();
+        createReferenceArray();
+
         if (MainCGS.DEBUGGING) {
             System.out.println("Creating new Game");
         }
-        deck.ConcentrationShuffle();
+
         if (MainCGS.DEBUGGING) {
             System.out.println("Concentration deck after shuffle: " + deck.concentrationCards);
         }
-        createReferenceArray();
+
     }
 
     /**
      * Starts the game play.
      */
     public final void begin() {
+
         newGame();
         setVisible(true);
+
     }
 
+    /**
+     * Concentration main
+     * 
+     * @param args
+     *            input parameters, not used
+     * 
+     */
     public static void main(String[] args) {
+
         Concentration concentration = new Concentration();
         concentration.begin();
+
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
         t.start();
         t.stop();
+
     }
 
+    /**
+     * Saves the value of the selected card. If it is the second selected card,
+     * compares to see if it's a match. If it is, the cards are disabled. If
+     * they do not match, the cards are again placed facedown.
+     */
     public void checkForMatch() {
+
         if (firstCard == true) {
+
             timeStart = System.currentTimeMillis();
             firstCard = false;
+
         }
         if (test == 0) {
+
             selectedCard = index;
+
         } else {
+
             secondSelectedCard = index;
+
         }
+
         test += 1;
         if (test == 2) {
-            attempts += 1;
+
+            attempts += 1; // Every time 2 cards are selected, attempts is
+                           // increased by 1 for scoring purposes.
             scoreLabel.setText("Attempts: " + attempts);
 
             if (deck.concentrationDeal(secondSelectedCard).toString() == null
@@ -156,20 +257,29 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
                     : deck.concentrationDeal(secondSelectedCard).toString()
                             .equals(deck.concentrationDeal(selectedCard).toString())) {
 
-                if (selectedCard != secondSelectedCard) {
+                if (selectedCard != secondSelectedCard) { // checks to make sure
+                                                          // the user didn't
+                                                          // click the same card
+                                                          // twice.
+
                     cardLabels[selectedCard].setEnabled(false);
                     cardLabels[secondSelectedCard].setEnabled(false);
                     visibleBooleanLabels[selectedCard] = false;
                     visibleBooleanLabels[secondSelectedCard] = false;
                     matches += 1;
+
                 } else {
+
                     temp = deck.concentrationDeal(selectedCard);
                     cardLabels[selectedCard].setIcon(new ImageIcon(temp.getBack()));
 
                     temp = deck.concentrationDeal(secondSelectedCard);
                     cardLabels[secondSelectedCard].setIcon(new ImageIcon(temp.getBack()));
+
                 }
+
                 test = 0;
+
             } else {
                 // use lambda expression to create runnable to invoke later
                 SwingUtilities.invokeLater(() -> {
@@ -189,15 +299,23 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
                 });
             }
         }
-        if (matches == 15) {
+
+        if (matches == 15) { // 15 matches = end of game
+
             timeEnd = System.currentTimeMillis();
             gameWon();
+
         }
     }
 
+    /**
+     * Displays final score and time. Checks if new score is a high score.
+     */
     public void gameWon() {
+
         scoreLabel.setText("Congratulations!  You finished this game in "
                 + (((timeEnd - timeStart) + elapsedTime) / 1000) + " seconds and " + attempts + " attempts!");
+
         if (scores.isHighScore(attempts)) {
             String initials = "";
             while (initials == null || initials.length() > INITIAL_LENGTH || initials.length() == 0) {
@@ -209,18 +327,26 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
         }
     }
 
+    /**
+     * Stores the value for each card in an array based on their position on the
+     * board. Recreates the array for new games, but not for loaded games.
+     */
     public void createReferenceArray() {
 
         visibleBooleanLabels = new Boolean[30];
 
         if (MainCGS.DEBUGGING) {
+
             System.out.println("Components on panel before new game: " + panel.getComponentCount());
+
         }
         scoreLabel.setText(null);
         scorePanel.removeAll();
         scorePanel.add(scoreLabel);
         panel.removeAll();
+
         for (int i = 0; i < 30; i++) {
+
             JLabel cardLabel = new JLabel();
 
             temp = deck.concentrationDeal(i);
@@ -232,29 +358,34 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
             cardLabels[i] = cardLabel;
             visibleBooleanLabels[i] = true;
             panel.add(cardLabels[i]);
+
         }
 
         scorePanel.revalidate();
         scorePanel.repaint();
         panel.revalidate();
         panel.repaint();
+
         if (MainCGS.DEBUGGING) {
             System.out.println("Components on panel after new game: " + panel.getComponentCount());
         }
     }
 
+    /**
+     * Creates the primary GUI for Concentration.
+     */
     public final void createGUI() {
+
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        // deck.ConcentrationShuffle();
         panel.setLayout(new GridLayout(5, 6, 0, 0));
         panel.setPreferredSize(new Dimension(800, 700));
         scorePanel.setPreferredSize(new Dimension(800, 35));
 
         Font f = new Font("Arial", Font.PLAIN, 22);
         scoreLabel.setFont(f);
-        // scorePanel.add(scoreLabel);
         setSize(900, 900);
         setResizable(false);
+
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(final WindowEvent e) {
@@ -265,6 +396,7 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
                 }
             }
         });
+
         createMenu(this);
         mainPanel.add(scorePanel);
         mainPanel.add(panel);
@@ -326,10 +458,10 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
     }
 
     /**
-     * 
+     * Resets fields for a new game.
      */
     private void reset() {
-        // TODO Auto-generated method stub
+
         firstCard = true;
 
         test = 0;
@@ -339,6 +471,8 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
         matches = 0;
         attempts = 0;
 
+        JOptionPane.showMessageDialog(mainPanel, "A new game has been started.", "Concentration",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
@@ -348,13 +482,136 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
         JOptionPane.showMessageDialog(this, scores);
     }
 
+    /**
+     * Saves the state of the game to a file. (non-Javadoc)
+     * 
+     * @see group3.Game#saveGame()
+     */
+    @Override
+    public void saveGame() {
+
+        elapsedTime = (timeEnd - timeStart);
+
+        try (FileOutputStream filestream = new FileOutputStream("Concentration.ser");
+                ObjectOutputStream os = new ObjectOutputStream(filestream);) {
+            os.writeObject(deck);
+            os.writeObject(visibleBooleanLabels);
+            os.writeInt(test);
+            os.writeInt(selectedCard);
+            os.writeInt(secondSelectedCard);
+            os.writeInt(index);
+            os.writeInt(matches);
+            os.writeInt(attempts);
+            os.writeLong(elapsedTime);
+            os.writeBoolean(firstCard);
+            os.writeObject(scoreLabel);
+            os.writeObject(temp);
+
+            JOptionPane.showMessageDialog(mainPanel, "Your game has been saved.", "Concentration",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    } // end method
+
+    /**
+     * Loads the game state from a file. (non-Javadoc)
+     * 
+     * @see group3.Game#loadGame()
+     */
+    @Override
+    public void loadGame() {
+
+        scoreLabel.setText(null);
+        scorePanel.removeAll();
+        panel.removeAll();
+        mainPanel.removeAll();
+        revalidate();
+        repaint();
+
+        try (FileInputStream filestream = new FileInputStream("Concentration.ser");
+                ObjectInputStream os = new ObjectInputStream(filestream);) {
+
+            deck = (Deck) os.readObject();
+            visibleBooleanLabels = (Boolean[]) os.readObject();
+            test = (int) os.readInt();
+            selectedCard = (int) os.readInt();
+            secondSelectedCard = (int) os.readInt();
+            index = (int) os.readInt();
+            matches = (int) os.readInt();
+            attempts = (int) os.readInt();
+            elapsedTime = (long) os.readLong();
+            firstCard = os.readBoolean();
+            scoreLabel = (JLabel) os.readObject();
+            temp = (Card) os.readObject();
+            os.close();
+            // Rebuild the reference array from saved deck:
+            for (int i = 0; i < 30; i++) {
+                JLabel cardLabel = new JLabel();
+
+                temp = deck.concentrationDeal(i);
+                temp.setSize(CARD_WIDTH, CARD_HEIGHT);
+                if (visibleBooleanLabels[i] == false) {
+
+                    cardLabel.setIcon(new ImageIcon(temp.getFront()));
+                    cardLabel.setEnabled(false);
+
+                } else {
+
+                    cardLabel.setIcon(new ImageIcon(temp.getBack()));
+
+                }
+
+                cardLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                cardLabel.setVerticalAlignment(SwingConstants.CENTER);
+                cardLabel.addMouseListener(this);
+                cardLabels[i] = cardLabel;
+                panel.add(cardLabels[i]);
+            }
+
+            scorePanel.add(scoreLabel);
+            scorePanel.revalidate();
+            scorePanel.repaint();
+            panel.revalidate();
+            panel.repaint();
+            mainPanel.add(scorePanel);
+            mainPanel.add(panel);
+            mainPanel.revalidate();
+            mainPanel.repaint();
+            add(mainPanel);
+
+            JOptionPane.showMessageDialog(mainPanel, "Your game has been loaded.", "Concentration",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    } // end method
+
+    /**
+     * Shows the game play directions to the user.
+     */
+    private void directions() {
+        JOptionPane.showMessageDialog(mainPanel,
+                "Concentration is played with 30 cards (15 pairs). To play, click on any two cards."
+                        + "  If the two cards match, they will be highlighted in gray.  If they do not, they will flip back over. "
+                        + "  Continue until you have matched all 15 pairs."
+                        + "  See if you can beat your high score by matching all pairs in the least number of moves!",
+                "Concentration", JOptionPane.INFORMATION_MESSAGE);
+    }
+
     @Override
     public void mousePressed(MouseEvent e) {
+
         if (MainCGS.DEBUGGING) {
+
             System.out.println("Who initiated the MouseEvent: " + e.getComponent());
+
         }
+
         index = Arrays.asList(cardLabels).indexOf(e.getSource());
-        System.out.println(index);
         temp = deck.concentrationDeal(index);
         cardLabels[index].setIcon(new ImageIcon(temp.getFront()));
         t.start();
@@ -379,110 +636,4 @@ public class Concentration extends JFrame implements MouseListener, ActionListen
     public void mouseClicked(MouseEvent e) {
     }
 
-    /**
-     * Loads the game state from a file. (non-Javadoc)
-     * 
-     * @see Game#loadGame()
-     */
-    @Override
-    public void loadGame() {
-        scoreLabel.setText(null);
-        scorePanel.removeAll();
-        panel.removeAll();
-        mainPanel.removeAll();
-        revalidate();
-        repaint();
-        try (FileInputStream filestream = new FileInputStream("Concentration.ser");
-                ObjectInputStream os = new ObjectInputStream(filestream);) {
-            deck = (Deck) os.readObject();
-            visibleBooleanLabels = (Boolean[]) os.readObject();
-            test = (int) os.readInt();
-            selectedCard = (int) os.readInt();
-            secondSelectedCard = (int) os.readInt();
-            index = (int) os.readInt();
-            matches = (int) os.readInt();
-            attempts = (int) os.readInt();
-            elapsedTime = (long) os.readLong();
-            firstCard = os.readBoolean();
-            scoreLabel = (JLabel) os.readObject();
-            temp = (Card) os.readObject();
-            System.out.println("booleans: " + Arrays.toString(visibleBooleanLabels));
-            for (int i = 0; i < 30; i++) {
-                JLabel cardLabel = new JLabel();
-
-                temp = deck.concentrationDeal(i);
-                temp.setSize(CARD_WIDTH, CARD_HEIGHT);
-                if (visibleBooleanLabels[i] == false) {
-                    System.out.println("adding front: " + temp);
-                    cardLabel.setIcon(new ImageIcon(temp.getFront()));
-                    cardLabel.setEnabled(false);
-                } else {
-                    cardLabel.setIcon(new ImageIcon(temp.getBack()));
-                }
-
-                cardLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                cardLabel.setVerticalAlignment(SwingConstants.CENTER);
-                cardLabel.addMouseListener(this);
-                cardLabels[i] = cardLabel;
-                panel.add(cardLabels[i]);
-            }
-
-            scorePanel.add(scoreLabel);
-            scorePanel.revalidate();
-            scorePanel.repaint();
-            panel.revalidate();
-            panel.repaint();
-            mainPanel.add(scorePanel);
-            mainPanel.add(panel);
-            mainPanel.revalidate();
-            mainPanel.repaint();
-            add(mainPanel);
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-    } // end method
-
-    /**
-     * Shows the game play directions to the user.
-     */
-    private void directions() {
-        JOptionPane.showMessageDialog(null,
-                "Concentration is played with 30 cards (15 pairs). To play, click on any two cards."
-                        + "  If the two cards match, they will be highlighted in gray.  If they do not, they will flip back over. "
-                        + "  Continue until you have matched all 15 pairs."
-                        + "  See if you can beat your high score by matching all pairs in the least number of moves!");
-    }
-
-    /**
-     * Saves the state of the game to a file. (non-Javadoc)
-     * 
-     * @see Game#saveGame()
-     */
-    @Override
-    public void saveGame() {
-
-        try (FileOutputStream filestream = new FileOutputStream("Concentration.ser");
-                ObjectOutputStream os = new ObjectOutputStream(filestream);) {
-            os.writeObject(deck);
-
-            os.writeObject(visibleBooleanLabels);
-            // os.writeObject(cardLabels);
-            os.writeInt(test);
-            os.writeInt(selectedCard);
-            os.writeInt(secondSelectedCard);
-            os.writeInt(index);
-            os.writeInt(matches);
-            os.writeInt(attempts);
-            elapsedTime = (timeEnd - timeStart);
-            os.writeLong(elapsedTime);
-            os.writeBoolean(firstCard);
-            os.writeObject(scoreLabel);
-            os.writeObject(temp);
-            // os.writeObject(t);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    } // end method
 }
