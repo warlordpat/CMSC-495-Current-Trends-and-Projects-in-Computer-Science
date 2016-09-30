@@ -9,6 +9,7 @@
 
 package group3;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
@@ -38,7 +39,12 @@ import javax.swing.JPanel;
  * @version 1.0
  * @since Sep 5, 2016
  */
-public class HighLow extends JFrame implements Game {
+public class HighLow extends JFrame implements Game {    
+    /**
+     * Background color that is light and pleasant
+     **/
+    private static final Color GAME_TABLE_COLOR = new Color(215, 255, 215);
+    
     /**
      * The space between the rows and columns in the grid.
      */
@@ -240,6 +246,7 @@ public class HighLow extends JFrame implements Game {
 
         JPanel panel;
         panel = new JPanel(new GridLayout(0, COLS, GAPS, GAPS));
+        panel.setBackground(GAME_TABLE_COLOR);
         panel.add(highLabel);
         panel.add(orLabel);
         panel.add(lowLabel);
@@ -247,10 +254,12 @@ public class HighLow extends JFrame implements Game {
         panel.add(lowButton);
 
         JPanel deckPnl = new JPanel();
+        deckPnl.setBackground(GAME_TABLE_COLOR);
         deckPnl.setLayout(new GridBagLayout());
         deckPnl.add(deck);
 
         cardPnl = new JPanel();
+        cardPnl.setBackground(GAME_TABLE_COLOR);
         cardPnl.setLayout(new GridBagLayout());
         cardPnl.add(upCard);
 
