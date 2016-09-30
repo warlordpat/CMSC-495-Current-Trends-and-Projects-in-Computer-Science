@@ -2,7 +2,7 @@
 // Author: Patrick Smith
 // Date: Sep 27, 2016
 // Course: CMSC 495
-// Assignment: TODO
+// Assignment: Final Project, Group 3
 // Platform: Win10 x64 Java build 1.8.0_102
 // Purpose: TODO
 package group3;

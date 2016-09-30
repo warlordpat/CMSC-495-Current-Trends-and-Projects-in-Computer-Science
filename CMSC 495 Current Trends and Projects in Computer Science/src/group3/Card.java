@@ -265,7 +265,7 @@ public class Card extends JComponent {
      *
      * @return true, if the Card is face up
      */
-    public boolean isFaceUp() {
+    public final boolean isFaceUp() {
         return faceUp;
     }
 
@@ -274,16 +274,16 @@ public class Card extends JComponent {
      *
      * @return The Card back
      */
-    public BufferedImage getBack() {
+    public final BufferedImage getBack() {
         return back;
     }
 
     /**
      * Gets a BufferedImage of the Card front.
-     * 
+     *
      * @return The Card front
      */
-    public BufferedImage getFront() {
+    public final BufferedImage getFront() {
         return front;
     }
 } // end class

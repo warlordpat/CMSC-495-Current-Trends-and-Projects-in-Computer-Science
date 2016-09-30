@@ -175,7 +175,7 @@ public class ThirtyOne extends JPanel implements Game {
         playerHand = 0;
         scores = loadOrCreateScores("ThirtyOne");
         createGUI();
-    }// end constructor
+    } // end constructor
 
     /**
      * Starts the game play

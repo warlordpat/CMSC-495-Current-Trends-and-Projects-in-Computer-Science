@@ -2,9 +2,9 @@
 // Author: Patrick Smith
 // Date: Sep 23, 2016
 // Course: CMSC 495
-// Assignment: TODO
+// Assignment: Final Project, Group 3
 // Platform: Win10 x64 Java build 1.8.0_102
-// Purpose: TODO
+// Purpose: Interface that provides common Game methods used across all games.
 package group3;
 
 import java.awt.Component;
@@ -18,6 +18,8 @@ import java.io.ObjectOutputStream;
 import javax.swing.JOptionPane;
 
 /**
+ * The Game interface provides common Game methods used across all games.
+ *
  * @author Patrick Smith
  * @version 1.0
  * @since Sep 23, 2016
@@ -33,6 +35,7 @@ public interface Game {
      *
      * @param name
      *            The name of the game
+     * @return the loaded or created HighScores object
      */
     default HighScores loadOrCreateScores(String name) {
         String path = System.getProperty("user.home");
@@ -82,6 +85,8 @@ public interface Game {
      *
      * @param scoreFile
      *            The file to save scores to
+     * @param scores
+     *            the High scores to save
      */
     default void saveHighScores(final File scoreFile, HighScores scores) {
         try (FileOutputStream filestream = new FileOutputStream(scoreFile);
@@ -97,6 +102,7 @@ public interface Game {
      *
      * @param scoreFile
      *            The file to load scores from
+     * @return the loaded HighScores object
      */
     default HighScores loadHighScores(final File scoreFile) {
         try (FileInputStream filestream = new FileInputStream(scoreFile);
@@ -121,6 +127,8 @@ public interface Game {
     /**
      * Gets the player's initials for the high score records.
      *
+     * @param frame
+     *            the frame the input box will center on
      * @return the initials of the player
      */
     default String getInitials(Component frame) {
