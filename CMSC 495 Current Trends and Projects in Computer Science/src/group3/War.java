@@ -73,6 +73,7 @@ public class War implements Game {
     /**
      * How many times you went to war.
      */
+    @SuppressWarnings("unused")
     private int warIndex = 0;
     /**
      * The War high scores.
