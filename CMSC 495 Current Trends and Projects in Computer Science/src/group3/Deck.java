@@ -237,7 +237,7 @@ public class Deck extends JLabel {
     /**
      * Adds cards back into the back of the deck.
      *
-     * @param cards
+     * @param addCards
      *            An ArrayList of Cards
      */
     public void addCards(ArrayList<Card> addCards) {
