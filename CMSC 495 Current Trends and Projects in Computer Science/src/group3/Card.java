@@ -37,7 +37,7 @@ public class Card extends JComponent {
     /**
      * Amount of time to pause between card movements, in ms.
      */
-    private static final int PAUSE_TIME = 100;
+    private static final int PAUSE_TIME = 50;
     /**
      * Generated serial ID.
      */
