@@ -19,9 +19,13 @@ import java.util.ArrayList;
  * @since Sep 27, 2016
  */
 public class Waste extends SolitairePile {
+    /**
+     * Generated Serial ID.
+     */
+    private static final long serialVersionUID = 3046202092127038810L;
     public static final Color PLACEHOLDER_COLOR = Color.WHITE;
     public static final AlphaComposite PLACEHOLDER_ALPHA = AlphaComposite.getInstance(3, 0.05F);
-    private ArrayList<Card> cards = new ArrayList();
+    private ArrayList<Card> cards = new ArrayList<>();
     private Deck deck;
 
     /**
