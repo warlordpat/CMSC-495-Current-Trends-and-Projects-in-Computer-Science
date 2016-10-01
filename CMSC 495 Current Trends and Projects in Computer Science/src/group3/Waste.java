@@ -4,7 +4,7 @@
 // Course: CMSC 495
 // Assignment: Final Project, Group 3
 // Platform: Win10 x64 Java build 1.8.0_102
-// Purpose: TODO
+// Purpose: Implements a Waste or discard pile in Solitaire.
 package group3;
 
 import java.awt.AlphaComposite;
@@ -14,6 +14,8 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 /**
+ * Represents a Waste or discard pile in Solitaire.
+ *
  * @author Patrick Smith
  * @version 1.0
  * @since Sep 27, 2016
@@ -23,20 +25,34 @@ public class Waste extends SolitairePile {
      * Generated Serial ID.
      */
     private static final long serialVersionUID = 3046202092127038810L;
+    /**
+     * The Color of an empty Waste.
+     */
     public static final Color PLACEHOLDER_COLOR = Color.WHITE;
-    public static final AlphaComposite PLACEHOLDER_ALPHA = AlphaComposite.getInstance(3, 0.05F);
-    private ArrayList<Card> cards = new ArrayList<>();
-    private Deck deck;
+    /**
+     * Alpha Blending of 5% for the place holder color and background.
+     */
+    public static final AlphaComposite PLACEHOLDER_ALPHA =
+            AlphaComposite.getInstance(3, 0.05F);
+    /**
+     * The List of Cards in the Waste.
+     */
+    private ArrayList<Card> cards;
 
     /**
-     * 
+     * Creates a new, empty Waste.
      */
-    public Waste(Deck deck) {
-        this.deck = deck;
-
+    public Waste() {
+        cards = new ArrayList<>();
     }
 
-    protected void paintComponent(Graphics graphics) {
+    /*
+     * (non-Javadoc)
+     *
+     * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
+     */
+    @Override
+    protected final void paintComponent(final Graphics graphics) {
         Graphics2D g = (Graphics2D) graphics.create();
         g.setColor(PLACEHOLDER_COLOR);
         g.setComposite(PLACEHOLDER_ALPHA);
@@ -47,54 +63,21 @@ public class Waste extends SolitairePile {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see group3.SolitairePile#getTopCard()
      */
     @Override
-    public Card getTopCard() {
+    public final Card getTopCard() {
         return cards.get(cards.size() - 1);
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see group3.SolitairePile#addSingleCard(group3.Card)
-     */
-    @Override
-    public void addSingleCard(Card card) {
-        add(card, 0);
-        cards.add(card);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see group3.SolitairePile#removeSingleCard(group3.Card)
-     */
-    @Override
-    public void removeSingleCard(Card card) {
-        remove(card);
-        cards.remove(card);
-        repaint();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see group3.SolitairePile#isValidMove(group3.Card)
-     */
-    @Override
-    public boolean isValidMove(Card paramCard) {
-        return false;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
+     *
      * @see group3.SolitairePile#getAvailableCardsAt(group3.Card)
      */
     @Override
-    public ArrayList<Card> getAvailableCardsAt(Card card) {
+    public final ArrayList<Card> getAvailableCardsAt(final Card card) {
         ArrayList<Card> temp = new ArrayList<>();
         temp.add(card);
         return temp;
@@ -102,27 +85,66 @@ public class Waste extends SolitairePile {
 
     /*
      * (non-Javadoc)
-     * 
+     *
+     * @see group3.SolitairePile#addSingleCard(group3.Card)
+     */
+    @Override
+    public final void addSingleCard(final Card card) {
+        add(card, 0);
+        cards.add(card);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see group3.SolitairePile#removeSingleCard(group3.Card)
+     */
+    @Override
+    public final void removeSingleCard(final Card card) {
+        remove(card);
+        cards.remove(card);
+        repaint();
+    }
+
+    /*
+     * (non-Javadoc)
+     *
      * @see group3.SolitairePile#addCards(java.util.ArrayList)
      */
     @Override
-    public void addCards(ArrayList<Card> cards) {
+    public void addCards(final ArrayList<Card> theCards) {
         // TODO Auto-generated method stub
 
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see group3.SolitairePile#removeCards(java.util.ArrayList)
      */
     @Override
-    public void removeCards(ArrayList<Card> cards) {
+    public void removeCards(final ArrayList<Card> theCards) {
         // TODO Auto-generated method stub
 
     }
 
-    public void returnCards() {
+    /*
+     * (non-Javadoc)
+     *
+     * @see group3.SolitairePile#isValidMove(group3.Card)
+     */
+    @Override
+    public final boolean isValidMove(final Card paramCard) {
+        return false;
+    }
+
+    /**
+     * Returns all the Cards in the Waste back to the Deck.
+     *
+     * @param deck
+     *            the Deck to return the Cards to
+     */
+    public final void returnCards(final Deck deck) {
         removeAll();
         deck.addCards(cards);
         cards.clear();
