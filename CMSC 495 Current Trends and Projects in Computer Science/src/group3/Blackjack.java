@@ -398,7 +398,9 @@ public class Blackjack extends JPanel implements Game {
      * Starts the gameplay.
      */
     public final void begin() {
-        System.out.println("beginning");
+        if (MainCGS.DEBUGGING) {
+            System.out.println("beginning");
+        }
         newGame();
         // deal();
     }
@@ -945,7 +947,6 @@ public class Blackjack extends JPanel implements Game {
         frame.setPreferredSize(new Dimension(SCREEN_X, SCREEN_Y));
         frame.setResizable(false);
         frame.addWindowListener(new WindowAdapter() {
-
             @Override
             public void windowClosing(final WindowEvent e) {
                 // write out high scores here
@@ -954,7 +955,9 @@ public class Blackjack extends JPanel implements Game {
                 File customDir = new File(path);
                 File scoreFile = new File(customDir, "BlackJack.score");
                 saveHighScores(scoreFile, scores);
-                System.out.println("Frame is closing");
+                if (MainCGS.DEBUGGING) {
+                    System.out.println("Frame is closing");
+                }
             }
         });
         createMenu(frame);
