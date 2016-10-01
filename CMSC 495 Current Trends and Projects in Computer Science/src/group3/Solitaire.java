@@ -55,7 +55,7 @@ public class Solitaire extends JPanel implements Game {
     /**
      * Vertical Card spacing in Tableaus.
      */
-    private static final int CARD_SPACING = 25;
+    private static final int CARD_SPACING = Tableau.CARD_SPACING;
     /**
      * Horizontal spacing between Piles.
      */
@@ -196,7 +196,7 @@ public class Solitaire extends JPanel implements Game {
         deck.setBounds(DECK_X, TOP_ROW_Y, Card.CARD_WIDTH, Card.CARD_HEIGHT);
         add(deck);
         piles.clear();
-        waste = new Waste(deck);
+        waste = new Waste();
         waste.setBounds(DECK_X + WASTE_SPACE, TOP_ROW_Y, Card.CARD_WIDTH,
             Card.CARD_HEIGHT);
         waste.addMouseListener(mh);
@@ -215,7 +215,7 @@ public class Solitaire extends JPanel implements Game {
                     System.out.println("adding " + temp);
                     deck.repaint();
                 } else {
-                    waste.returnCards();
+                    waste.returnCards(deck);
                     deck.repaint();
                 }
             }
