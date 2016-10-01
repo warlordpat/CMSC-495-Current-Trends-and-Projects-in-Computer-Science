@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.JLabel;
 
 /**
@@ -122,7 +121,8 @@ public class Hand extends JLabel {
      */
     final void addCard(final Card card) {
         // moves the card to the proper offset in the hand
-        card.setBounds(cards.size() * (Card.CARD_WIDTH + SPACER), 0, Card.CARD_WIDTH, Card.CARD_HEIGHT);
+        card.setBounds(cards.size() * (Card.CARD_WIDTH + SPACER), 0,
+            Card.CARD_WIDTH, Card.CARD_HEIGHT);
         cards.add(card); // add the card to the Hand's List
         add(card, 0); // add the card to the hand JLabel
         // System.out.println("card added to hand and label");
@@ -136,12 +136,14 @@ public class Hand extends JLabel {
     private void resize() {
         int index = 0;
         for (Card card : cards) {
-            card.setBounds(index * (Card.CARD_WIDTH + SPACER), 0, Card.CARD_WIDTH, Card.CARD_HEIGHT);
+            card.setBounds(index * (Card.CARD_WIDTH + SPACER), 0,
+                Card.CARD_WIDTH, Card.CARD_HEIGHT);
             index++;
         }
         if (cards.size() != 0) {
             // resize the hand JComponent to the size of the hand
-            setSize((SPACER * cards.size()) + (cards.size() * Card.CARD_WIDTH), Card.CARD_HEIGHT);
+            setSize((SPACER * cards.size()) + (cards.size() * Card.CARD_WIDTH),
+                Card.CARD_HEIGHT);
         } else {
             setSize(Card.CARD_WIDTH, Card.CARD_HEIGHT); // default size of a
                                                         // single card.
@@ -240,13 +242,14 @@ public class Hand extends JLabel {
     /**
      * Removes a specific Card from the Hand and returns it to the caller.
      *
-     * @return the Card removed from the Hand
+     * @param card
+     *            the Card removed from the Hand
      */
     public final void returnCard(Card card) {
-        for (int iNum = 0; iNum < cards.size(); iNum++)
-        {
-            if (cards.get(iNum) == card)
-            {
+        // TODO fix this method,
+        // it will not work as expected due to == on object reference
+        for (int iNum = 0; iNum < cards.size(); iNum++) {
+            if (cards.get(iNum) == card) {
                 cards.remove(iNum);
                 resize();
             }
@@ -263,7 +266,7 @@ public class Hand extends JLabel {
         }
         return iTotal;
     } // end method
-    
+
     /**
      * Totals the value of the cards in the Hand. More generic than current
      * scoreHand method.
@@ -308,7 +311,8 @@ public class Hand extends JLabel {
     protected final void paintComponent(final Graphics graphics) {
         Graphics2D g = (Graphics2D) graphics.create();
         g.setColor(Color.WHITE);
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ALPHA));
+        g.setComposite(
+            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ALPHA));
         g.fillRect(0, 0, handSize() * Card.CARD_WIDTH, Card.CARD_HEIGHT);
         g.dispose();
     } // end method
