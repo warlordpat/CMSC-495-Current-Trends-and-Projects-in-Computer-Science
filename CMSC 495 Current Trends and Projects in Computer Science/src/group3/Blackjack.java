@@ -377,8 +377,8 @@ public class Blackjack extends JPanel implements Game {
                 yn = xn * sin + yn * cos + y1;
                 xn = x;
 
-                int[] xpoints = { x2, (int) xm, (int) xn };
-                int[] ypoints = { y2, (int) ym, (int) yn };
+                int[] xpoints = {x2, (int) xm, (int) xn };
+                int[] ypoints = {y2, (int) ym, (int) yn };
 
                 g.drawLine(x1, y1, x2, y2);
                 g.fillPolygon(xpoints, ypoints, xpoints.length);
@@ -470,7 +470,8 @@ public class Blackjack extends JPanel implements Game {
             add(dealer);
             // adds a new player hand to the GUI
             player = new Hand();
-            player.setBounds(HAND_X, DEALER_Y + HAND_SPACING, (2 * CARD_WIDTH), CARD_HEIGHT);
+            player.setBounds(HAND_X, DEALER_Y + HAND_SPACING, (2 * CARD_WIDTH),
+                CARD_HEIGHT);
             add(player);
 
             addCardFaceUp(player);
@@ -676,8 +677,10 @@ public class Blackjack extends JPanel implements Game {
         } else {
 
             boolean loseHandOne = dealer.scoreHand() >= player.scoreHand();
-            boolean loseHandTwo = dealer.scoreHand() >= playerSplitHand.scoreHand();
-            System.out.println("Hand one: " + loseHandOne + " Hand Two: " + loseHandTwo);
+            boolean loseHandTwo =
+                    dealer.scoreHand() >= playerSplitHand.scoreHand();
+            System.out.println(
+                "Hand one: " + loseHandOne + " Hand Two: " + loseHandTwo);
             if (dealer.isBusted()) {
 
                 answer = winQuestion();
@@ -741,8 +744,9 @@ public class Blackjack extends JPanel implements Game {
         } else {
             playerCash += playerBetHand1.payout(NORMAL_PAYOUT);
         }
-        return JOptionPane.showConfirmDialog(this, "You win this hand\nDeal again?", "Deal again?",
-                JOptionPane.YES_NO_OPTION);
+        return JOptionPane.showConfirmDialog(this,
+            "You win this hand\nDeal again?", "Deal again?",
+            JOptionPane.YES_NO_OPTION);
     }
 
     /**
@@ -761,7 +765,8 @@ public class Blackjack extends JPanel implements Game {
         } else {
             message = "You lose this hand\nDeal again?";
         }
-        return JOptionPane.showConfirmDialog(this, message, "Deal again?", JOptionPane.YES_NO_OPTION);
+        return JOptionPane.showConfirmDialog(this, message, "Deal again?",
+            JOptionPane.YES_NO_OPTION);
     }
 
     /**
@@ -799,7 +804,8 @@ public class Blackjack extends JPanel implements Game {
      * @return yes, if the players hand can be split
      */
     final boolean isSplittable() {
-        if (player.getCards().size() == 2 && player.getCard(0).getRank().equals(player.getCard(1).getRank())) {
+        if (player.getCards().size() == 2 && player.getCard(0).getRank()
+            .equals(player.getCard(1).getRank())) {
             return true;
         }
         return false;
@@ -814,7 +820,8 @@ public class Blackjack extends JPanel implements Game {
         handTwoInPlay = true;
         playerSplitHand.addCard(player.removeCard());
         // now add the new hand to the GUI
-        playerSplitHand.setBounds(HAND_X, HAND_Y + HAND_SPACING + SPLIT_HAND_OFFSET, CARD_WIDTH, CARD_HEIGHT);
+        playerSplitHand.setBounds(HAND_X,
+            HAND_Y + HAND_SPACING + SPLIT_HAND_OFFSET, CARD_WIDTH, CARD_HEIGHT);
         add(playerSplitHand);
         setComponentZOrder(playerSplitHand, 0);
         jbSplit.setVisible(false);
@@ -851,14 +858,16 @@ public class Blackjack extends JPanel implements Game {
         add(dealer);
         pnlButton.setBorder(null);
         pnlButton.setFocusable(false);
-        pnlButton.setBounds(DECK_X, PANEL_Y, BUTTON_SIZE, BET_BUTTONS * BUTTON_SIZE);
+        pnlButton.setBounds(DECK_X, PANEL_Y, BUTTON_SIZE,
+            BET_BUTTONS * BUTTON_SIZE);
         add(pnlButton);
         arrow.setLocation(ARROW_X, ARROW_Y);
         arrow.setSize(ARROW_WIDTH, 2 * ARROW_TIP_WIDTH);
         add(arrow);
 
         arrow.setVisible(false);
-        player.setBounds(HAND_X, DEALER_Y + HAND_SPACING, (2 * CARD_WIDTH), CARD_HEIGHT);
+        player.setBounds(HAND_X, DEALER_Y + HAND_SPACING, (2 * CARD_WIDTH),
+            CARD_HEIGHT);
         add(player);
 
         lblCash = new JLabel("$" + playerCash);
@@ -895,13 +904,17 @@ public class Blackjack extends JPanel implements Game {
         lblBet.setSize(lblBet.getPreferredSize());
         add(lblBet);
 
-        lblInstructions = new JLabel("<html>Place Your Bet!<br>Table minimum: $5</html>");
-        lblInstructions.setFont(new Font("Serif", Font.PLAIN, INSTRUCTIONS_FONT_SIZE));
+        lblInstructions =
+                new JLabel("<html>Place Your Bet!<br>Table minimum: $5</html>");
+        lblInstructions
+            .setFont(new Font("Serif", Font.PLAIN, INSTRUCTIONS_FONT_SIZE));
         lblInstructions.setLocation(INSTRUCTIONS_LOC);
         lblInstructions.setSize(lblInstructions.getPreferredSize());
         add(lblInstructions);
 
-        playerSplitHand.setBounds(HAND_X, DEALER_Y + HAND_SPACING + SPLIT_HAND_OFFSET, CARD_WIDTH, CARD_HEIGHT);
+        playerSplitHand.setBounds(HAND_X,
+            DEALER_Y + HAND_SPACING + SPLIT_HAND_OFFSET, CARD_WIDTH,
+            CARD_HEIGHT);
         add(playerSplitHand);
         lblValue1.setVisible(false);
         lblValue1.setFont(new Font("Courier Bold", Font.BOLD, FONT_SIZE));
@@ -1066,8 +1079,9 @@ public class Blackjack extends JPanel implements Game {
                 deal();
                 deal.setVisible(false);
             } else {
-                JOptionPane.showMessageDialog(this, "You must bet at lease the minimum bet!", "Must Bet",
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                    "You must bet at lease the minimum bet!", "Must Bet",
+                    JOptionPane.ERROR_MESSAGE);
             }
             System.out.println("finished deal button processing");
         });
@@ -1150,22 +1164,27 @@ public class Blackjack extends JPanel implements Game {
      * Shows the game play directions to the user.
      */
     private void directions() {
-        JOptionPane.showMessageDialog(null, "The objective of Blackjack is to beat the dealer."
-                + "  You can beat the dealer in one of the following ways:"
-                + "\n  Get 21 points on the first two cards (called a \"blackjack\" or \"natural\"),"
-                + " without a dealer blackjack" + "\n  Reach a final score higher than the dealer without exceeding 21"
-                + "\n  Let the dealer draw additional cards until his or her hand exceeds 21" + "\nThe dealer wins ties"
-                + "\nYou have the option to take an additional card \"hit\" or to not \"stand\""
-                + "\nIf your first two cards are the same rank, you can choose to split the hand"
-                + "\nSplit hands are played separately" + "\nFace cards count as ten, and Aces count as 11 or 1.");
+        JOptionPane.showMessageDialog(null,
+            "The objective of Blackjack is to beat the dealer."
+                    + "  You can beat the dealer in one of the following ways:"
+                    + "\n  Get 21 points on the first two cards (called a \"blackjack\" or \"natural\"),"
+                    + " without a dealer blackjack"
+                    + "\n  Reach a final score higher than the dealer without exceeding 21"
+                    + "\n  Let the dealer draw additional cards until his or her hand exceeds 21"
+                    + "\nThe dealer wins ties"
+                    + "\nYou have the option to take an additional card \"hit\" or to not \"stand\""
+                    + "\nIf your first two cards are the same rank, you can choose to split the hand"
+                    + "\nSplit hands are played separately"
+                    + "\nFace cards count as ten, and Aces count as 11 or 1.");
     }
 
     /**
      * Saves the state of the game to a file.
      */
-    public void saveGame() {
+    public final void saveGame() {
 
-        try (FileOutputStream filestream = new FileOutputStream("BlackJack.ser");
+        try (FileOutputStream filestream =
+                new FileOutputStream("BlackJack.ser");
                 ObjectOutputStream os = new ObjectOutputStream(filestream);) {
             os.writeObject(deck);
             os.writeObject(dealer);
@@ -1190,7 +1209,7 @@ public class Blackjack extends JPanel implements Game {
     /**
      * Loads the game state from a file.
      */
-    public void loadGame() {
+    public final void loadGame() {
         remove(player);
         remove(dealer);
         remove(lblValue1);
@@ -1226,9 +1245,10 @@ public class Blackjack extends JPanel implements Game {
             lblValue1 = (JLabel) os.readObject();
             lblValue2 = (JLabel) os.readObject();
 
-            System.out.println("loaded: " + "\n handOneInPlay " + b1 + "\n wasSplit      " + b2 + "\n doneHand1     "
-                    + b3 + "\n handTwoInPlay " + b4 + "\n" + lblValue1.getText() + lblValue2.getText()
-                    + isSplittable());
+            System.out.println("loaded: " + "\n handOneInPlay " + b1
+                    + "\n wasSplit      " + b2 + "\n doneHand1     " + b3
+                    + "\n handTwoInPlay " + b4 + "\n" + lblValue1.getText()
+                    + lblValue2.getText() + isSplittable());
 
             handOneInPlay = b1;
             wasSplit = b2;
@@ -1253,7 +1273,9 @@ public class Blackjack extends JPanel implements Game {
                 jbSplit.setVisible(false);
             }
             if (wasSplit) {
-                playerSplitHand.setBounds(HAND_X, HAND_Y + HAND_SPACING + SPLIT_HAND_OFFSET, CARD_WIDTH, CARD_HEIGHT);
+                playerSplitHand.setBounds(HAND_X,
+                    HAND_Y + HAND_SPACING + SPLIT_HAND_OFFSET, CARD_WIDTH,
+                    CARD_HEIGHT);
                 add(playerSplitHand);
                 jbSplit.setVisible(false);
                 arrow.setVisible(true);
