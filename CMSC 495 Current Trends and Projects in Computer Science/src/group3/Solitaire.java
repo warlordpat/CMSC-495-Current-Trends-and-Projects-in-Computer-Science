@@ -16,6 +16,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -96,6 +97,14 @@ public class Solitaire extends JPanel implements Game {
      * The Deck's MouseAdapter.
      */
     private MouseAdapter deckMa;
+    /**
+     * The Solitaire highscores.
+     */
+    private HighScores scores;
+    /**
+     * The current score.
+     */
+    private int score;
 
     /**
      * Creates a new Solitaire game.
@@ -103,6 +112,7 @@ public class Solitaire extends JPanel implements Game {
     public Solitaire() {
         setBackground(Blackjack.CARD_TABLE_GREEN);
         setCursor(new Cursor(Cursor.HAND_CURSOR));
+        scores = loadOrCreateScores("Solitaire");
         piles = new ArrayList<>();
         JFrame frame = new JFrame("Solitaire");
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -115,12 +125,14 @@ public class Solitaire extends JPanel implements Game {
             @Override
             public void windowClosing(final WindowEvent e) {
                 // write out high scores here
-                // String path = System.getProperty("user.home");
-                // path += File.separator + "CGS";
-                // File customDir = new File(path);
-                // File scoreFile = new File(customDir, "Solitaire.score");
-                // saveHighScores(scoreFile, scores);
-                // System.out.println("Frame is closing");
+                String path = System.getProperty("user.home");
+                path += File.separator + "CGS";
+                File customDir = new File(path);
+                File scoreFile = new File(customDir, "Solitaire.score");
+                saveHighScores(scoreFile, scores);
+                if (MainCGS.DEBUGGING) {
+                    System.out.println("Frame is closing");
+                }
             }
         });
         createMenu(frame);
@@ -128,8 +140,6 @@ public class Solitaire extends JPanel implements Game {
         frame.setContentPane(this);
         frame.pack();
         frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-
     }
 
     /**
@@ -172,7 +182,7 @@ public class Solitaire extends JPanel implements Game {
         JMenuItem mntmHighScores = new JMenuItem("High Scores");
         menu.add(mntmHighScores);
         mntmHighScores.addActionListener(ae -> {
-            // highScores();
+            highScores();
             // 5 points for turning over a card or placing a waste card
             // 15 points for placing a card on the foundation
         });
@@ -185,10 +195,23 @@ public class Solitaire extends JPanel implements Game {
     }
 
     /**
+     * Starts the gameplay.
+     */
+    public final void begin() {
+        if (MainCGS.DEBUGGING) {
+            System.out.println("beginning");
+        }
+        newGame();
+        SwingUtilities.getRoot(this).setVisible(true);
+        // deal();
+    }
+
+    /**
      * Creates a new game session.
      */
     public final void newGame() {
         removeAll();
+        score = 0;
         setLayout(null);
         Mouse mh = new Mouse();
         deck = new Deck();
@@ -266,7 +289,7 @@ public class Solitaire extends JPanel implements Game {
      */
     public static void main(final String[] args) {
         Solitaire solitaire = new Solitaire();
-        solitaire.newGame();
+        solitaire.begin();
     } // end method
 
     /**
@@ -279,6 +302,10 @@ public class Solitaire extends JPanel implements Game {
      * @since Sep 27, 2016
      */
     private class Mouse extends MouseInputAdapter {
+        /**
+         * Score earned for moving a card to the Foundation.
+         */
+        private static final int FOUNDATION_MOVE_SCORE = 15;
         /**
          * The source pile selected by the first click.
          */
@@ -342,46 +369,69 @@ public class Solitaire extends JPanel implements Game {
             // Solitaire.this);
 
             if (clicks % 2 == 0) {
-
                 sourcePile = ((SolitairePile) e.getSource());
                 if (sourcePile.getComponentAt(p) instanceof Card) {
                     clickedCard = (Card) sourcePile.getComponentAt(p);
                 }
-                System.out.println("first click");
-                System.out.println("Clicked on: " + sourcePile);
+                if (MainCGS.DEBUGGING) {
+                    System.out.println("first click");
+                    System.out.println("Clicked on: " + sourcePile);
+                }
                 if (clickedCard != null && clickedCard.isFaceUp()) {
-                    System.out.println("Clicked on " + clickedCard);
+                    if (MainCGS.DEBUGGING) {
+                        System.out.println("Clicked on " + clickedCard);
+                    }
                     // save all the cards available to move, ie all face up
                     // cards from here down.
                     tempList = sourcePile.getAvailableCardsAt(clickedCard);
                     clicks += 1;
                     Solitaire.this.setCursor(new Cursor(Cursor.MOVE_CURSOR));
-                    System.out.println("temp list is " + tempList);
+                    if (MainCGS.DEBUGGING) {
+                        System.out.println("temp list is " + tempList);
+                    }
                 }
             } else {
                 // clicks = 1
-                System.out.println("second click");
+                if (MainCGS.DEBUGGING) {
+                    System.out.println("second click");
+                }
                 destinationPile = (SolitairePile) e.getSource();
                 if (clickedCard != null
                         && destinationPile.isValidMove(clickedCard)
                         && tempList.size() == 1) {
-                    System.out.println("valid move");
-                    System.out.println("removing a card");
-                    System.out.println("Removing from: " + sourcePile);
+                    if (MainCGS.DEBUGGING) {
+                        System.out.println("valid move");
+                        System.out.println("removing a card");
+                        System.out.println("Removing from: " + sourcePile);
+                    }
                     sourcePile.removeSingleCard(clickedCard);
                     sourcePile.repaint();
                     destinationPile.addSingleCard(clickedCard);
+                    if (sourcePile instanceof Waste) {
+                        if (destinationPile instanceof Foundation) {
+                            score += FOUNDATION_MOVE_SCORE;
+                        } else {
+                            score += 5;
+                        }
+                    }
                 } else if (clickedCard != null
                         && destinationPile.isValidMove(clickedCard)
                         && tempList.size() > 1
                         && destinationPile instanceof Tableau) {
-                    System.out.println("valid move");
-                    System.out.println("removing mulitple cards");
-                    System.out.println("Removing from: " + sourcePile);
-                    System.out.println("Removing cards: " + tempList);
+                    if (MainCGS.DEBUGGING) {
+                        System.out.println("valid move");
+                        System.out.println("removing mulitple cards");
+                        System.out.println("Removing from: " + sourcePile);
+                        System.out.println("Removing cards: " + tempList);
+                    }
                     sourcePile.removeCards(tempList);
                     sourcePile.repaint();
                     destinationPile.addCards(tempList);
+                    if (sourcePile instanceof Tableau) {
+                        if (!((Tableau) sourcePile).isEmpty()) {
+                            // maybe a new card was turned?
+                        }
+                    }
                 }
                 clicks = 0;
                 Solitaire.this.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -402,26 +452,28 @@ public class Solitaire extends JPanel implements Game {
             // destinationPile =
             // ((SolitairePile)Solitaire.this.getComponentAt(this.pp));
             // System.out.println("Unclicked on: " + destinationPile);
-            System.out.println("double clicked on " + clickedCard);
+            if (MainCGS.DEBUGGING) {
+                System.out.println("double clicked on " + clickedCard);
+            }
             sourcePile = ((SolitairePile) e.getSource());
             if (sourcePile.getComponentAt(p) instanceof Card) {
                 clickedCard = (Card) sourcePile.getComponentAt(p);
             } else {
                 clickedCard = null;
-            }
+            } // end else
             if (clickCount == 2 && clickedCard != null) {
                 for (SolitairePile stack : Solitaire.this.piles) {
                     if (((stack instanceof Foundation))
                             && (stack.isValidMove(clickedCard))
                             && (sourcePile.getTopCard().equals(clickedCard))) {
+                        score += FOUNDATION_MOVE_SCORE;
                         stack.addSingleCard(clickedCard);
                         sourcePile.removeSingleCard(clickedCard);
                         return;
-                    }
-                }
-            }
-
-        }
+                    } // end if
+                } // end for
+            } // end if
+        } // end method
 
         /*
          * (non-Javadoc)
@@ -539,5 +591,12 @@ public class Solitaire extends JPanel implements Game {
                     + "\nto move it to.  You can also move a card to a foundation by double clicking on it. To cancel"
                     + "\na move, just click anywhere.  The cursur will change to show when you are in the middle"
                     + "\n of a move.");
+    }
+
+    /**
+     * Shows the high scores in a dialog box.
+     */
+    private void highScores() {
+        JOptionPane.showMessageDialog(this, scores);
     }
 }
