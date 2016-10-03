@@ -8,11 +8,31 @@
 
 package group3;
 
-import java.awt.*;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
-import java.awt.event.*;
+import java.util.Random;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * ThirtyOne implements a graphical game of ThirtyOne. The game includes the
@@ -26,29 +46,113 @@ import java.awt.event.*;
  */
 public class ThirtyOne extends JPanel implements Game {
     /**
-     * A green color like a card game table
+     * A green color like a card game table.
      **/
     private static final Color CARD_TABLE_GREEN = new Color(7, 99, 36);
     /**
-     * A bluish-grey color used for text
+     * A bluish-grey color used for text.
      */
     private static final Color LABEL_BLUE_GREY = new Color(40, 55, 67);
     /**
-     * The minimum screen width
+     * The minimum screen width.
      */
-    private int SCREEN_X = 600;
+    private static final int SCREEN_X = 600;
     /**
-     * The minimum screen height
+     * The minimum screen height.
      */
-    private int SCREEN_Y = 600;
+    private static final int SCREEN_Y = 600;
     /**
-     * The height of a card
+     * The height of a Card.
      */
-    private int CARD_HEIGHT = 96;
+    private static final int CARD_HEIGHT = 96;
     /**
-     * The width of a card
+     * The width of a Card.
      */
-    private int CARD_WIDTH = 72;
+    private static final int CARD_WIDTH = 72;
+    /**
+     * The X location of the center label.
+     */
+    private static final int CENTER_LABEL_X = 25;
+    /**
+     * The Y location of the center label.
+     */
+    private static final int CENTER_LABEL_Y = 25;
+    /**
+     * The size of the font.
+     */
+    private static final int FONT_SIZE = 16;
+    /**
+     * The X location of the player's Hand label.
+     */
+    private static final int PLAYER_HAND_LABEL_X = 25;
+    /**
+     * The Y location of the player's Hand label.
+     */
+    private static final int PLAYER_HAND_LABEL_Y = 450;
+    /**
+     * The number of options for the random number generator.
+     */
+    private static final int RANDOM_OPTION = 2;
+    /**
+     * The Y location of the center Cards.
+     */
+    private static final int CENTER_CARD_Y = 100;
+    /**
+     * The Y location of the player's Cards.
+     */
+    private static final int PLAYER_CARD_Y = 300;
+    /**
+     * The X location of the first Card.
+     */
+    private static final int CARD_X_1 = 150;
+    /**
+     * The X location of the second Card.
+     */
+    private static final int CARD_X_2 = 250;
+    /**
+     * The X location of the third Card.
+     */
+    private static final int CARD_X_3 = 350;
+    /**
+     * The X location of the fourth Card.
+     */
+    private static final int CARD_X_4 = 450;
+    /**
+     * The X location of the player's Hand value.
+     */
+    private static final int PLAYER_VALUE_X = 25;
+    /**
+     * The Y location of the player's Hand value.
+     */
+    private static final int PLAYER_VALUE_Y = 250;
+    /**
+     * The X location of the player's current score.
+     */
+    private static final int PLAYER_SCORE_X = 450;
+    /**
+     * The Y location of the player's current score.
+     */
+    private static final int PLAYER_SCORE_Y = 450;
+    /**
+     * The maximum number of Cards in the Hand.
+     */
+    private static final int MAX_HAND = 4;
+    /**
+     * The minimum number of Cards in the Hand.
+     */
+    private static final int MIN_HAND = 3;
+    /**
+     * The value a player is aiming to reach.
+     */
+    private static final int WIN_VALUE = 31;
+    /**
+     * The value awarded to a player if they win.
+     */
+    private static final int WIN_SCORE = 100;
+    /**
+     * The value awarded to a player if they tie.
+     */
+    private static final int TIE_SCORE = 50;
     /**
      * The serial number required for serializing the class.
      */
@@ -58,79 +162,79 @@ public class ThirtyOne extends JPanel implements Game {
      */
     private Deck deck;
     /**
-     * The AI's hand
+     * The AI's hand.
      */
     private Hand AI;
     /**
-     * The player's hand
+     * The player's hand.
      */
     private Hand player;
     /**
-     * The cards in the player's hand
+     * The cards in the player's hand.
      */
     private Card playerCard1, playerCard2, playerCard3, playerCard4;
     /**
-     * The cards in the AI's hand
+     * The cards in the AI's hand.
      */
     private Card aiCard1, aiCard2, aiCard3, aiCard4;
     /**
-     * The cards in the center
+     * The cards in the center.
      */
     private Card centerCard1, centerCard2, centerCard3;
     /**
-     * Integer to see how close the player is to 31
+     * Integer to see how close the player is to 31.
      */
     private int player31;
     /**
-     * Integer to see how close the AI is to 31
+     * Integer to see how close the AI is to 31.
      */
     private int ai31;
     /**
-     * Integer to see who goes first
+     * Integer to see who goes first.
      */
     private int iTurn;
     /**
-     * Random number generator to see who goes first
+     * Random number generator to see who goes first.
      */
     private Random rand = new Random();
     /**
-     * The ThirtyOne high scores
+     * The ThirtyOne high scores.
      */
     private HighScores scores;
     /**
-     * JLabel to signify the player's hand
+     * JLabel to signify the player's hand.
      */
     private JLabel jlPlayer;
     /**
-     * JLabel to signify the center cards
+     * JLabel to signify the center cards.
      */
     private JLabel jlCenter;
     /**
-     * JButtons for the cards in the player's hand
+     * JButtons for the cards in the player's hand.
      */
     private JButton jbPlayerCard1, jbPlayerCard2, jbPlayerCard3, jbPlayerCard4;
     /**
-     * JLabel to show the player's current score
+     * JLabel to show the player's current score.
      */
     private JLabel jlPlayerScore;
     /**
-     * Integer to show the player's current score
+     * Integer to show the player's current score.
      */
     private int playerScore;
     /**
-     * JLabel to show the total value of the player's hand
+     * JLabel to show the total value of the player's hand.
      */
     private JLabel jlPlayerHand;
     /**
-     * Integer to represent the total value of the player's hand
+     * Integer to represent the total value of the player's hand.
      */
     private int playerHand;
     /**
-     * JButtons for the cards in the center
+     * JButtons for the cards in the center.
      */
     private JButton jbCenterCard1, jbCenterCard2, jbCenterCard3;
     /**
-     * The frame holding this ThirtyOne
+     * The frame holding this ThirtyOne.
      */
     private JFrame frame;
     /**
@@ -157,7 +261,7 @@ public class ThirtyOne extends JPanel implements Game {
     }
 
     /**
-     * Constructs a new ThirtyOne game
+     * Constructs a new ThirtyOne game.
      */
     public ThirtyOne() {
         deck = new Deck();
@@ -178,7 +282,7 @@ public class ThirtyOne extends JPanel implements Game {
     } // end constructor
 
     /**
-     * Starts the game play
+     * Starts the game play.
      */
     public final void begin() {
         System.out.println("beginning");
@@ -186,11 +290,13 @@ public class ThirtyOne extends JPanel implements Game {
     }
 
     /**
-     * Creates a new game and shuffles the deck
+     * Creates a new game and shuffles the deck.
      */
     final void newGame() {
         deck = new Deck();
         deck.shuffle();
+        revalidate();
+        repaint();
     }
 
     /**
@@ -280,11 +386,14 @@ public class ThirtyOne extends JPanel implements Game {
      */
     private void directions() {
         JOptionPane.showMessageDialog(null,
-                "The objective of Thirty-One is to be the closer player to 31.\nEach player starts with 3 cards. They take turns adding 1 \ncard to their hands out of 3 from the center. The player \ncloser to 31 wins the game.");
+            "The objective of Thirty-One is to be the closer player to 31."
+                    + "\nEach player starts with 3 cards. They take turns adding 1 "
+                    + "\ncard to their hands out of 3 from the center. The player "
+                    + "\ncloser to 31 wins the game.");
     }
 
     /**
-     * Creates the buttons on the GUI and decides which player goes first
+     * Creates the buttons on the GUI and decides which player goes first.
      */
     private void setCards() {
         player.removeAll();
@@ -297,9 +406,9 @@ public class ThirtyOne extends JPanel implements Game {
         }
         setLayout(null);
         setBackground(CARD_TABLE_GREEN);
-        jlCenter.setLocation(25, 25);
+        jlCenter.setLocation(CENTER_LABEL_X, CENTER_LABEL_Y);
         jlCenter.setForeground(LABEL_BLUE_GREY);
-        jlCenter.setFont(new Font("Tahoma", Font.PLAIN, 16));
+        jlCenter.setFont(new Font("Tahoma", Font.PLAIN, FONT_SIZE));
         jlCenter.setSize(jlCenter.getPreferredSize());
         add(jlCenter);
         deck.shuffle();
@@ -329,16 +438,20 @@ public class ThirtyOne extends JPanel implements Game {
         jbPlayerCard3 = new JButton(new ImageIcon(playerCard3.getFront()));
         playerHand = player.thirtyOneTotal();
         jlPlayerHand.setText("Value: " + String.valueOf(playerHand));
-        jlPlayerHand.setLocation(25, 450);
+        jlPlayerHand.setLocation(PLAYER_HAND_LABEL_X, PLAYER_HAND_LABEL_Y);
         jlPlayerHand.setForeground(LABEL_BLUE_GREY);
-        jlPlayerHand.setFont(new Font("Tahoma", Font.PLAIN, 16));
+        jlPlayerHand.setFont(new Font("Tahoma", Font.PLAIN, FONT_SIZE));
         jlPlayerHand.setSize(jlCenter.getPreferredSize());
         add(jlPlayerHand);
         jbPlayerCard4 = null;
-        iTurn = rand.nextInt(2);
+        iTurn = rand.nextInt(RANDOM_OPTION);
+        revalidate();
+        repaint();
         if (iTurn == 0) {
-            if (values.get(centerCard1.getRank()) > values.get(centerCard2.getRank())) {
-                if (values.get(centerCard1.getRank()) > values.get(centerCard3.getRank())) {
+            if (values.get(centerCard1.getRank()) > values
+                .get(centerCard2.getRank())) {
+                if (values.get(centerCard1.getRank()) > values
+                    .get(centerCard3.getRank())) {
                     AI.addCard(centerCard1);
                     aiCard4 = centerCard1;
                     jbCenterCard1.setVisible(false);
@@ -348,7 +461,8 @@ public class ThirtyOne extends JPanel implements Game {
                     jbCenterCard3.setVisible(false);
                 }
             } else {
-                if (values.get(centerCard2.getRank()) > values.get(centerCard3.getRank())) {
+                if (values.get(centerCard2.getRank()) > values
+                    .get(centerCard3.getRank())) {
                     AI.addCard(centerCard2);
                     aiCard4 = centerCard2;
                     jbCenterCard2.setVisible(false);
@@ -358,136 +472,165 @@ public class ThirtyOne extends JPanel implements Game {
                     jbCenterCard3.setVisible(false);
                 }
             }
-            if (values.get(aiCard1.getRank()) < values.get(aiCard2.getRank()))// 1<2
-            {
-                if (values.get(aiCard1.getRank()) < values.get(aiCard3.getRank()))// 1<3
-                {
-                    if (values.get(aiCard1.getRank()) < values.get(aiCard4.getRank()))// 1<4
-                    {
+            if (values.get(aiCard1.getRank()) < values.get(aiCard2.getRank())) {
+                if (values.get(aiCard1.getRank()) < values
+                    .get(aiCard3.getRank())) {
+                    if (values.get(aiCard1.getRank()) < values
+                        .get(aiCard4.getRank())) {
                         if (!jbCenterCard1.isVisible()) {
-                            jbCenterCard1 = new JButton(new ImageIcon(aiCard1.getFront()));
+                            jbCenterCard1 = new JButton(
+                                new ImageIcon(aiCard1.getFront()));
                             jbCenterCard1.setVisible(true);
                         } else if (!jbCenterCard2.isVisible()) {
-                            jbCenterCard2 = new JButton(new ImageIcon(aiCard1.getFront()));
+                            jbCenterCard2 = new JButton(
+                                new ImageIcon(aiCard1.getFront()));
                             jbCenterCard2.setVisible(true);
                         } else {
-                            jbCenterCard3 = new JButton(new ImageIcon(aiCard1.getFront()));
+                            jbCenterCard3 = new JButton(
+                                new ImageIcon(aiCard1.getFront()));
                             jbCenterCard3.setVisible(true);
                         }
                     } else {
 
                         if (!jbCenterCard1.isVisible()) {
-                            jbCenterCard1 = new JButton(new ImageIcon(aiCard4.getFront()));
+                            jbCenterCard1 = new JButton(
+                                new ImageIcon(aiCard4.getFront()));
                             jbCenterCard1.setVisible(true);
                         } else if (!jbCenterCard2.isVisible()) {
-                            jbCenterCard2 = new JButton(new ImageIcon(aiCard4.getFront()));
+                            jbCenterCard2 = new JButton(
+                                new ImageIcon(aiCard4.getFront()));
                             jbCenterCard2.setVisible(true);
                         } else {
-                            jbCenterCard3 = new JButton(new ImageIcon(aiCard4.getFront()));
+                            jbCenterCard3 = new JButton(
+                                new ImageIcon(aiCard4.getFront()));
                             jbCenterCard3.setVisible(true);
                         }
                     }
                 } else {
-                    if (values.get(aiCard3.getRank()) < values.get(aiCard4.getRank()))// 3<4
-                    {
+                    if (values.get(aiCard3.getRank()) < values
+                        .get(aiCard4.getRank())) {
                         if (!jbCenterCard1.isVisible()) {
-                            jbCenterCard1 = new JButton(new ImageIcon(aiCard3.getFront()));
+                            jbCenterCard1 = new JButton(
+                                new ImageIcon(aiCard3.getFront()));
                             jbCenterCard1.setVisible(true);
                         } else if (!jbCenterCard2.isVisible()) {
-                            jbCenterCard2 = new JButton(new ImageIcon(aiCard3.getFront()));
+                            jbCenterCard2 = new JButton(
+                                new ImageIcon(aiCard3.getFront()));
                             jbCenterCard2.setVisible(true);
                         } else {
-                            jbCenterCard3 = new JButton(new ImageIcon(aiCard3.getFront()));
+                            jbCenterCard3 = new JButton(
+                                new ImageIcon(aiCard3.getFront()));
                             jbCenterCard3.setVisible(true);
                         }
                     } else {
                         if (!jbCenterCard1.isVisible()) {
-                            jbCenterCard1 = new JButton(new ImageIcon(aiCard4.getFront()));
+                            jbCenterCard1 = new JButton(
+                                new ImageIcon(aiCard4.getFront()));
                             jbCenterCard1.setVisible(true);
                         } else if (!jbCenterCard2.isVisible()) {
-                            jbCenterCard2 = new JButton(new ImageIcon(aiCard4.getFront()));
+                            jbCenterCard2 = new JButton(
+                                new ImageIcon(aiCard4.getFront()));
                             jbCenterCard2.setVisible(true);
                         } else {
-                            jbCenterCard3 = new JButton(new ImageIcon(aiCard4.getFront()));
+                            jbCenterCard3 = new JButton(
+                                new ImageIcon(aiCard4.getFront()));
                             jbCenterCard3.setVisible(true);
                         }
                     }
                 }
             } else {
-                if (values.get(aiCard2.getRank()) < values.get(aiCard3.getRank()))// 2<3
-                {
-                    if (values.get(aiCard2.getRank()) < values.get(aiCard4.getRank()))// 2<4
-                    {
+                if (values.get(aiCard2.getRank()) < values
+                    .get(aiCard3.getRank())) {
+                    if (values.get(aiCard2.getRank()) < values
+                        .get(aiCard4.getRank())) {
                         if (!jbCenterCard1.isVisible()) {
-                            jbCenterCard1 = new JButton(new ImageIcon(aiCard2.getFront()));
+                            jbCenterCard1 = new JButton(
+                                new ImageIcon(aiCard2.getFront()));
                             jbCenterCard1.setVisible(true);
                         } else if (!jbCenterCard2.isVisible()) {
-                            jbCenterCard2 = new JButton(new ImageIcon(aiCard2.getFront()));
+                            jbCenterCard2 = new JButton(
+                                new ImageIcon(aiCard2.getFront()));
                             jbCenterCard2.setVisible(true);
                         } else {
-                            jbCenterCard3 = new JButton(new ImageIcon(aiCard2.getFront()));
+                            jbCenterCard3 = new JButton(
+                                new ImageIcon(aiCard2.getFront()));
                             jbCenterCard3.setVisible(true);
                         }
                     } else {
                         if (!jbCenterCard1.isVisible()) {
-                            jbCenterCard1 = new JButton(new ImageIcon(aiCard4.getFront()));
+                            jbCenterCard1 = new JButton(
+                                new ImageIcon(aiCard4.getFront()));
                             jbCenterCard1.setVisible(true);
                         } else if (!jbCenterCard2.isVisible()) {
-                            jbCenterCard2 = new JButton(new ImageIcon(aiCard4.getFront()));
+                            jbCenterCard2 = new JButton(
+                                new ImageIcon(aiCard4.getFront()));
                             jbCenterCard2.setVisible(true);
                         } else {
-                            jbCenterCard3 = new JButton(new ImageIcon(aiCard4.getFront()));
+                            jbCenterCard3 = new JButton(
+                                new ImageIcon(aiCard4.getFront()));
                             jbCenterCard3.setVisible(true);
                         }
                     }
                 } else {
-                    if (values.get(aiCard3.getRank()) < values.get(aiCard4.getRank()))// 3<4
-                    {
+                    if (values.get(aiCard3.getRank()) < values
+                        .get(aiCard4.getRank())) {
                         if (!jbCenterCard1.isVisible()) {
-                            jbCenterCard1 = new JButton(new ImageIcon(aiCard3.getFront()));
+                            jbCenterCard1 = new JButton(
+                                new ImageIcon(aiCard3.getFront()));
                             jbCenterCard1.setVisible(true);
                         } else if (!jbCenterCard2.isVisible()) {
-                            jbCenterCard2 = new JButton(new ImageIcon(aiCard3.getFront()));
+                            jbCenterCard2 = new JButton(
+                                new ImageIcon(aiCard3.getFront()));
                             jbCenterCard2.setVisible(true);
                         } else {
-                            jbCenterCard3 = new JButton(new ImageIcon(aiCard3.getFront()));
+                            jbCenterCard3 = new JButton(
+                                new ImageIcon(aiCard3.getFront()));
                             jbCenterCard3.setVisible(true);
                         }
                     } else {
                         if (!jbCenterCard1.isVisible()) {
-                            jbCenterCard1 = new JButton(new ImageIcon(aiCard4.getFront()));
+                            jbCenterCard1 = new JButton(
+                                new ImageIcon(aiCard4.getFront()));
                             jbCenterCard1.setVisible(true);
                         } else if (!jbCenterCard2.isVisible()) {
-                            jbCenterCard2 = new JButton(new ImageIcon(aiCard4.getFront()));
+                            jbCenterCard2 = new JButton(
+                                new ImageIcon(aiCard4.getFront()));
                             jbCenterCard2.setVisible(true);
                         } else {
-                            jbCenterCard3 = new JButton(new ImageIcon(aiCard4.getFront()));
+                            jbCenterCard3 = new JButton(
+                                new ImageIcon(aiCard4.getFront()));
                             jbCenterCard3.setVisible(true);
                         }
                     }
                 }
             }
         }
-        jbCenterCard1.setBounds(150, 100, CARD_WIDTH, CARD_HEIGHT);
+        jbCenterCard1.setBounds(CARD_X_1, CENTER_CARD_Y, CARD_WIDTH,
+            CARD_HEIGHT);
         add(jbCenterCard1);
-        jbCenterCard2.setBounds(250, 100, CARD_WIDTH, CARD_HEIGHT);
+        jbCenterCard2.setBounds(CARD_X_2, CENTER_CARD_Y, CARD_WIDTH,
+            CARD_HEIGHT);
         add(jbCenterCard2);
-        jbCenterCard3.setBounds(350, 100, CARD_WIDTH, CARD_HEIGHT);
+        jbCenterCard3.setBounds(CARD_X_3, CENTER_CARD_Y, CARD_WIDTH,
+            CARD_HEIGHT);
         add(jbCenterCard3);
-        jlPlayer.setLocation(25, 250);
+        jlPlayer.setLocation(PLAYER_VALUE_X, PLAYER_VALUE_Y);
         jlPlayer.setForeground(LABEL_BLUE_GREY);
-        jlPlayer.setFont(new Font("Tahoma", Font.PLAIN, 16));
+        jlPlayer.setFont(new Font("Tahoma", Font.PLAIN, FONT_SIZE));
         jlPlayer.setSize(jlPlayer.getPreferredSize());
         add(jlPlayer);
-        jbPlayerCard1.setBounds(150, 300, CARD_WIDTH, CARD_HEIGHT);
+        jbPlayerCard1.setBounds(CARD_X_1, PLAYER_CARD_Y, CARD_WIDTH,
+            CARD_HEIGHT);
         add(jbPlayerCard1);
-        jbPlayerCard2.setBounds(250, 300, CARD_WIDTH, CARD_HEIGHT);
+        jbPlayerCard2.setBounds(CARD_X_2, PLAYER_CARD_Y, CARD_WIDTH,
+            CARD_HEIGHT);
         add(jbPlayerCard2);
-        jbPlayerCard3.setBounds(350, 300, CARD_WIDTH, CARD_HEIGHT);
+        jbPlayerCard3.setBounds(CARD_X_3, PLAYER_CARD_Y, CARD_WIDTH,
+            CARD_HEIGHT);
         add(jbPlayerCard3);
-        jlPlayerScore.setLocation(450, 450);
+        jlPlayerScore.setLocation(PLAYER_SCORE_X, PLAYER_SCORE_Y);
         jlPlayerScore.setForeground(LABEL_BLUE_GREY);
-        jlPlayerScore.setFont(new Font("Tahoma", Font.PLAIN, 16));
+        jlPlayerScore.setFont(new Font("Tahoma", Font.PLAIN, FONT_SIZE));
         jlPlayerScore.setSize(jlPlayerScore.getPreferredSize());
         add(jlPlayerScore);
         revalidate();
@@ -495,14 +638,17 @@ public class ThirtyOne extends JPanel implements Game {
     }
 
     /**
-     * Action listeners for each of the center buttons
+     * Action listeners for each of the center buttons.
      */
     private void cardButtons() {
         jbCenterCard1.addActionListener(ae -> {
-            if (player.handSize() < 4) {
-                player.addCard(centerCard1);
-                jbPlayerCard4 = new JButton(new ImageIcon(centerCard1.getFront()));
-                jbPlayerCard4.setBounds(450, 300, CARD_WIDTH, CARD_HEIGHT);
+            if (player.handSize() < MAX_HAND) {
+                playerCard4 = centerCard1;
+                player.addCard(playerCard4);
+                jbPlayerCard4 =
+                        new JButton(new ImageIcon(playerCard4.getFront()));
+                jbPlayerCard4.setBounds(CARD_X_4, PLAYER_CARD_Y, CARD_WIDTH,
+                    CARD_HEIGHT);
                 add(jbPlayerCard4);
                 remove(jlPlayerHand);
                 playerHand = player.thirtyOneTotal();
@@ -516,10 +662,13 @@ public class ThirtyOne extends JPanel implements Game {
             }
         });
         jbCenterCard2.addActionListener(ae -> {
-            if (player.handSize() < 4) {
-                player.addCard(centerCard2);
-                jbPlayerCard4 = new JButton(new ImageIcon(centerCard2.getFront()));
-                jbPlayerCard4.setBounds(450, 300, CARD_WIDTH, CARD_HEIGHT);
+            if (player.handSize() < MAX_HAND) {
+                playerCard4 = centerCard2;
+                player.addCard(playerCard4);
+                jbPlayerCard4 =
+                        new JButton(new ImageIcon(playerCard4.getFront()));
+                jbPlayerCard4.setBounds(CARD_X_4, PLAYER_CARD_Y, CARD_WIDTH,
+                    CARD_HEIGHT);
                 add(jbPlayerCard4);
                 remove(jlPlayerHand);
                 playerHand = player.thirtyOneTotal();
@@ -533,10 +682,13 @@ public class ThirtyOne extends JPanel implements Game {
             }
         });
         jbCenterCard3.addActionListener(ae -> {
-            if (player.handSize() < 4) {
-                player.addCard(centerCard3);
-                jbPlayerCard4 = new JButton(new ImageIcon(centerCard3.getFront()));
-                jbPlayerCard4.setBounds(450, 300, CARD_WIDTH, CARD_HEIGHT);
+            if (player.handSize() < MAX_HAND) {
+                playerCard4 = centerCard3;
+                player.addCard(playerCard4);
+                jbPlayerCard4 =
+                        new JButton(new ImageIcon(playerCard4.getFront()));
+                jbPlayerCard4.setBounds(CARD_X_4, PLAYER_CARD_Y, CARD_WIDTH,
+                    CARD_HEIGHT);
                 add(jbPlayerCard4);
                 remove(jlPlayerHand);
                 playerHand = player.thirtyOneTotal();
@@ -554,9 +706,10 @@ public class ThirtyOne extends JPanel implements Game {
     /**
      * Saves the state of the game to a file.
      */
-    public void saveGame() {
+    public final void saveGame() {
         System.out.println("Saving game");
-        try (FileOutputStream fileStream = new FileOutputStream("ThirtyOne.ser");
+        try (FileOutputStream fileStream =
+                new FileOutputStream("ThirtyOne.ser");
                 ObjectOutputStream os = new ObjectOutputStream(fileStream);) {
             os.writeObject(deck);
             os.writeObject(AI);
@@ -577,7 +730,7 @@ public class ThirtyOne extends JPanel implements Game {
     /**
      * Loads the game state from a file.
      */
-    public void loadGame() {
+    public final void loadGame() {
         System.out.println("Loading game");
         remove(deck);
         remove(AI);
@@ -602,22 +755,31 @@ public class ThirtyOne extends JPanel implements Game {
             centerCard2 = (Card) os.readObject();
             centerCard3 = (Card) os.readObject();
             jbCenterCard1 = new JButton(new ImageIcon(centerCard1.getFront()));
-            jbCenterCard1.setBounds(150, 100, CARD_WIDTH, CARD_HEIGHT);
+            jbCenterCard1.setBounds(CARD_X_1, CENTER_CARD_Y, CARD_WIDTH,
+                CARD_HEIGHT);
             add(jbCenterCard1);
             jbCenterCard2 = new JButton(new ImageIcon(centerCard2.getFront()));
-            jbCenterCard2.setBounds(250, 100, CARD_WIDTH, CARD_HEIGHT);
+            jbCenterCard2.setBounds(CARD_X_2, CENTER_CARD_Y, CARD_WIDTH,
+                CARD_HEIGHT);
             add(jbCenterCard2);
             jbCenterCard3 = new JButton(new ImageIcon(centerCard3.getFront()));
-            jbCenterCard3.setBounds(350, 100, CARD_WIDTH, CARD_HEIGHT);
+            jbCenterCard3.setBounds(CARD_X_3, CENTER_CARD_Y, CARD_WIDTH,
+                CARD_HEIGHT);
             add(jbCenterCard3);
-            jbPlayerCard1 = new JButton(new ImageIcon(player.getCard(0).getFront()));
-            jbPlayerCard1.setBounds(150, 300, CARD_WIDTH, CARD_HEIGHT);
+            jbPlayerCard1 =
+                    new JButton(new ImageIcon(player.getCard(0).getFront()));
+            jbPlayerCard1.setBounds(CARD_X_1, PLAYER_CARD_Y, CARD_WIDTH,
+                CARD_HEIGHT);
             add(jbPlayerCard1);
-            jbPlayerCard2 = new JButton(new ImageIcon(player.getCard(1).getFront()));
-            jbPlayerCard2.setBounds(250, 300, CARD_WIDTH, CARD_HEIGHT);
+            jbPlayerCard2 =
+                    new JButton(new ImageIcon(player.getCard(1).getFront()));
+            jbPlayerCard2.setBounds(CARD_X_2, PLAYER_CARD_Y, CARD_WIDTH,
+                CARD_HEIGHT);
             add(jbPlayerCard2);
-            jbPlayerCard3 = new JButton(new ImageIcon(player.getCard(2).getFront()));
-            jbPlayerCard3.setBounds(350, 300, CARD_WIDTH, CARD_HEIGHT);
+            jbPlayerCard3 =
+                    new JButton(new ImageIcon(player.getCard(2).getFront()));
+            jbPlayerCard3.setBounds(CARD_X_3, PLAYER_CARD_Y, CARD_WIDTH,
+                CARD_HEIGHT);
             add(jbPlayerCard3);
             iTurn = os.readInt();
             playerHand = os.readInt();
@@ -666,7 +828,7 @@ public class ThirtyOne extends JPanel implements Game {
 
     /**
      * Decides which player wins, sees if the player wants to play again, and
-     * starts a new game or checks to see if they made the high score
+     * starts a new game or checks to see if they made the high score.
      */
     private void results() {
         remove(jlPlayerHand);
@@ -674,54 +836,63 @@ public class ThirtyOne extends JPanel implements Game {
         jlPlayerHand.setText("Value: " + String.valueOf(playerHand));
         add(jlPlayerHand);
         System.out.println(player.thirtyOneTotal());
-        player31 = 31 - player.thirtyOneTotal();
+        player31 = WIN_VALUE - player.thirtyOneTotal();
         player31 = Math.abs(player31);
-        ai31 = 31 - AI.thirtyOneTotal();
+        ai31 = WIN_VALUE - AI.thirtyOneTotal();
         ai31 = Math.abs(ai31);
         if (player31 < ai31) {
-            playerScore += 100;
-            Object[] options = { "Yes", "No" };
+            playerScore += WIN_SCORE;
+            Object[] options = {"Yes", "No" };
             int n = JOptionPane.showOptionDialog(frame,
-                    ("You win " + player.thirtyOneTotal() + " to " + AI.thirtyOneTotal()
-                            + "!\nWould you like to play again?"),
-                    "You Win!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+                ("You win " + player.thirtyOneTotal() + " to "
+                        + AI.thirtyOneTotal()
+                        + "!\nWould you like to play again?"),
+                "You Win!", JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
             if (n == JOptionPane.YES_OPTION) {
                 reset();
             } else {
                 if (scores.isHighScore(playerScore)) {
                     String initials = getInitials(this);
-                    HighScore score = new HighScore(initials, (int) playerScore);
+                    HighScore score =
+                            new HighScore(initials, (int) playerScore);
                     scores.add(score);
                 }
             }
         } else if (player31 == ai31) {
-            playerScore += 50;
-            Object[] options = { "Yes", "No" };
+            playerScore += TIE_SCORE;
+            Object[] options = {"Yes", "No" };
             int n = JOptionPane.showOptionDialog(frame,
-                    ("You tie " + player.thirtyOneTotal() + " to " + AI.thirtyOneTotal()
-                            + "!\nWould you like to play again?"),
-                    "You tie", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+                ("You tie " + player.thirtyOneTotal() + " to "
+                        + AI.thirtyOneTotal()
+                        + "!\nWould you like to play again?"),
+                "You tie", JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
             if (n == JOptionPane.YES_OPTION) {
                 reset();
             } else {
                 if (scores.isHighScore(playerScore)) {
                     String initials = getInitials(this);
-                    HighScore score = new HighScore(initials, (int) playerScore);
+                    HighScore score =
+                            new HighScore(initials, (int) playerScore);
                     scores.add(score);
                 }
             }
         } else {
-            Object[] options = { "Yes", "No" };
+            Object[] options = {"Yes", "No" };
             int n = JOptionPane.showOptionDialog(frame,
-                    ("You lose " + player.thirtyOneTotal() + " to " + AI.thirtyOneTotal()
-                            + "!\nWould you like to play again?"),
-                    "You lose", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+                ("You lose " + player.thirtyOneTotal() + " to "
+                        + AI.thirtyOneTotal()
+                        + "!\nWould you like to play again?"),
+                "You lose", JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
             if (n == JOptionPane.YES_OPTION) {
                 reset();
             } else {
                 if (scores.isHighScore(playerScore)) {
                     String initials = getInitials(this);
-                    HighScore score = new HighScore(initials, (int) playerScore);
+                    HighScore score =
+                            new HighScore(initials, (int) playerScore);
                     scores.add(score);
                 }
             }
@@ -729,12 +900,13 @@ public class ThirtyOne extends JPanel implements Game {
     }
 
     /**
-     * Allows both players to discard a card to the center
+     * Allows both players to discard a card to the center.
      */
     private void switchCards() {
-        JOptionPane.showMessageDialog(null, "Choose a card to return to the center");
+        JOptionPane.showMessageDialog(null,
+            "Choose a card to return to the center");
         jbPlayerCard1.addActionListener(ae -> {
-            if (player.handSize() > 3) {
+            if (player.handSize() > MIN_HAND) {
                 if (!jbCenterCard1.isVisible()) {
                     jbCenterCard1 = jbPlayerCard1;
                     player.returnCard(playerCard1);
@@ -750,18 +922,22 @@ public class ThirtyOne extends JPanel implements Game {
                     jbCenterCard3.setVisible(true);
                 }
                 remove(jbPlayerCard1);
-                jbPlayerCard2.setBounds(150, 300, CARD_WIDTH, CARD_HEIGHT);
-                jbPlayerCard3.setBounds(250, 300, CARD_WIDTH, CARD_HEIGHT);
-                jbPlayerCard4.setBounds(350, 300, CARD_WIDTH, CARD_HEIGHT);
+                jbPlayerCard2.setBounds(CARD_X_1, PLAYER_CARD_Y, CARD_WIDTH,
+                    CARD_HEIGHT);
+                jbPlayerCard3.setBounds(CARD_X_2, PLAYER_CARD_Y, CARD_WIDTH,
+                    CARD_HEIGHT);
+                jbPlayerCard4.setBounds(CARD_X_3, PLAYER_CARD_Y, CARD_WIDTH,
+                    CARD_HEIGHT);
                 revalidate();
                 repaint();
                 results();
             } else {
-                JOptionPane.showMessageDialog(null, "You don't have enough cards");
+                JOptionPane.showMessageDialog(null,
+                    "You don't have enough cards");
             }
         });
         jbPlayerCard2.addActionListener(ae -> {
-            if (player.handSize() > 3) {
+            if (player.handSize() > MIN_HAND) {
                 if (!jbCenterCard1.isVisible()) {
                     jbCenterCard1 = jbPlayerCard2;
                     player.returnCard(playerCard2);
@@ -778,19 +954,23 @@ public class ThirtyOne extends JPanel implements Game {
                     jbPlayerCard2.setVisible(false);
                     jbCenterCard3.setVisible(true);
                 }
-                jbPlayerCard1.setBounds(150, 300, CARD_WIDTH, CARD_HEIGHT);
+                jbPlayerCard1.setBounds(CARD_X_1, PLAYER_CARD_Y, CARD_WIDTH,
+                    CARD_HEIGHT);
                 remove(jbPlayerCard2);
-                jbPlayerCard3.setBounds(250, 300, CARD_WIDTH, CARD_HEIGHT);
-                jbPlayerCard4.setBounds(350, 300, CARD_WIDTH, CARD_HEIGHT);
+                jbPlayerCard3.setBounds(CARD_X_2, PLAYER_CARD_Y, CARD_WIDTH,
+                    CARD_HEIGHT);
+                jbPlayerCard4.setBounds(CARD_X_3, PLAYER_CARD_Y, CARD_WIDTH,
+                    CARD_HEIGHT);
                 revalidate();
                 repaint();
                 results();
             } else {
-                JOptionPane.showMessageDialog(null, "You don't have enough cards");
+                JOptionPane.showMessageDialog(null,
+                    "You don't have enough cards");
             }
         });
         jbPlayerCard3.addActionListener(ae -> {
-            if (player.handSize() > 3) {
+            if (player.handSize() > MIN_HAND) {
                 if (!jbCenterCard1.isVisible()) {
                     jbCenterCard1 = jbPlayerCard3;
                     player.returnCard(playerCard3);
@@ -807,19 +987,23 @@ public class ThirtyOne extends JPanel implements Game {
                     jbPlayerCard3.setVisible(false);
                     jbCenterCard3.setVisible(true);
                 }
-                jbPlayerCard1.setBounds(150, 300, CARD_WIDTH, CARD_HEIGHT);
-                jbPlayerCard2.setBounds(250, 300, CARD_WIDTH, CARD_HEIGHT);
+                jbPlayerCard1.setBounds(CARD_X_1, PLAYER_CARD_Y, CARD_WIDTH,
+                    CARD_HEIGHT);
+                jbPlayerCard2.setBounds(CARD_X_2, PLAYER_CARD_Y, CARD_WIDTH,
+                    CARD_HEIGHT);
                 remove(jbPlayerCard3);
-                jbPlayerCard4.setBounds(350, 300, CARD_WIDTH, CARD_HEIGHT);
+                jbPlayerCard4.setBounds(CARD_X_3, PLAYER_CARD_Y, CARD_WIDTH,
+                    CARD_HEIGHT);
                 revalidate();
                 repaint();
                 results();
             } else {
-                JOptionPane.showMessageDialog(null, "You don't have enough cards");
+                JOptionPane.showMessageDialog(null,
+                    "You don't have enough cards");
             }
         });
         jbPlayerCard4.addActionListener(ae -> {
-            if (player.handSize() > 3) {
+            if (player.handSize() > MIN_HAND) {
                 if (!jbCenterCard1.isVisible()) {
                     jbCenterCard1 = jbPlayerCard4;
                     player.returnCard(playerCard4);
@@ -836,11 +1020,14 @@ public class ThirtyOne extends JPanel implements Game {
                     jbPlayerCard4.setVisible(false);
                     jbCenterCard3.setVisible(true);
                 }
+                remove(jbPlayerCard4);
                 revalidate();
                 repaint();
                 if (iTurn == 1) {
-                    if (values.get(centerCard1.getRank()) > values.get(centerCard2.getRank())) {
-                        if (values.get(centerCard1.getRank()) > values.get(centerCard3.getRank())) {
+                    if (values.get(centerCard1.getRank()) > values
+                        .get(centerCard2.getRank())) {
+                        if (values.get(centerCard1.getRank()) > values
+                            .get(centerCard3.getRank())) {
                             AI.addCard(centerCard1);
                             aiCard4 = centerCard1;
                             jbCenterCard1.setVisible(false);
@@ -850,7 +1037,8 @@ public class ThirtyOne extends JPanel implements Game {
                             jbCenterCard3.setVisible(false);
                         }
                     } else {
-                        if (values.get(centerCard2.getRank()) > values.get(centerCard3.getRank())) {
+                        if (values.get(centerCard2.getRank()) > values
+                            .get(centerCard3.getRank())) {
                             AI.addCard(centerCard2);
                             aiCard4 = centerCard2;
                             jbCenterCard2.setVisible(false);
@@ -860,110 +1048,134 @@ public class ThirtyOne extends JPanel implements Game {
                             jbCenterCard3.setVisible(false);
                         }
                     }
-                    if (values.get(aiCard1.getRank()) < values.get(aiCard2.getRank()))// 1<2
-                    {
-                        if (values.get(aiCard1.getRank()) < values.get(aiCard3.getRank()))// 1<3
-                        {
-                            if (values.get(aiCard1.getRank()) < values.get(aiCard4.getRank()))// 1<4
-                            {
+                    if (values.get(aiCard1.getRank()) < values
+                        .get(aiCard2.getRank())) {
+                        if (values.get(aiCard1.getRank()) < values
+                            .get(aiCard3.getRank())) {
+                            if (values.get(aiCard1.getRank()) < values
+                                .get(aiCard4.getRank())) {
                                 if (!jbCenterCard1.isVisible()) {
-                                    jbCenterCard1 = new JButton(new ImageIcon(aiCard1.getFront()));
+                                    jbCenterCard1 = new JButton(
+                                        new ImageIcon(aiCard1.getFront()));
                                     jbCenterCard1.setVisible(true);
                                 } else if (!jbCenterCard2.isVisible()) {
-                                    jbCenterCard2 = new JButton(new ImageIcon(aiCard1.getFront()));
+                                    jbCenterCard2 = new JButton(
+                                        new ImageIcon(aiCard1.getFront()));
                                     jbCenterCard2.setVisible(true);
                                 } else {
-                                    jbCenterCard3 = new JButton(new ImageIcon(aiCard1.getFront()));
+                                    jbCenterCard3 = new JButton(
+                                        new ImageIcon(aiCard1.getFront()));
                                     jbCenterCard3.setVisible(true);
                                 }
                             } else {
 
                                 if (!jbCenterCard1.isVisible()) {
-                                    jbCenterCard1 = new JButton(new ImageIcon(aiCard4.getFront()));
+                                    jbCenterCard1 = new JButton(
+                                        new ImageIcon(aiCard4.getFront()));
                                     jbCenterCard1.setVisible(true);
                                 } else if (!jbCenterCard2.isVisible()) {
-                                    jbCenterCard2 = new JButton(new ImageIcon(aiCard4.getFront()));
+                                    jbCenterCard2 = new JButton(
+                                        new ImageIcon(aiCard4.getFront()));
                                     jbCenterCard2.setVisible(true);
                                 } else {
-                                    jbCenterCard3 = new JButton(new ImageIcon(aiCard4.getFront()));
+                                    jbCenterCard3 = new JButton(
+                                        new ImageIcon(aiCard4.getFront()));
                                     jbCenterCard3.setVisible(true);
                                 }
                             }
                         } else {
-                            if (values.get(aiCard3.getRank()) < values.get(aiCard4.getRank()))// 3<4
-                            {
+                            if (values.get(aiCard3.getRank()) < values
+                                .get(aiCard4.getRank())) {
                                 if (!jbCenterCard1.isVisible()) {
-                                    jbCenterCard1 = new JButton(new ImageIcon(aiCard3.getFront()));
+                                    jbCenterCard1 = new JButton(
+                                        new ImageIcon(aiCard3.getFront()));
                                     jbCenterCard1.setVisible(true);
                                 } else if (!jbCenterCard2.isVisible()) {
-                                    jbCenterCard2 = new JButton(new ImageIcon(aiCard3.getFront()));
+                                    jbCenterCard2 = new JButton(
+                                        new ImageIcon(aiCard3.getFront()));
                                     jbCenterCard2.setVisible(true);
                                 } else {
-                                    jbCenterCard3 = new JButton(new ImageIcon(aiCard3.getFront()));
+                                    jbCenterCard3 = new JButton(
+                                        new ImageIcon(aiCard3.getFront()));
                                     jbCenterCard3.setVisible(true);
                                 }
                             } else {
                                 if (!jbCenterCard1.isVisible()) {
-                                    jbCenterCard1 = new JButton(new ImageIcon(aiCard4.getFront()));
+                                    jbCenterCard1 = new JButton(
+                                        new ImageIcon(aiCard4.getFront()));
                                     jbCenterCard1.setVisible(true);
                                 } else if (!jbCenterCard2.isVisible()) {
-                                    jbCenterCard2 = new JButton(new ImageIcon(aiCard4.getFront()));
+                                    jbCenterCard2 = new JButton(
+                                        new ImageIcon(aiCard4.getFront()));
                                     jbCenterCard2.setVisible(true);
                                 } else {
-                                    jbCenterCard3 = new JButton(new ImageIcon(aiCard4.getFront()));
+                                    jbCenterCard3 = new JButton(
+                                        new ImageIcon(aiCard4.getFront()));
                                     jbCenterCard3.setVisible(true);
                                 }
                             }
                         }
                     } else {
-                        if (values.get(aiCard2.getRank()) < values.get(aiCard3.getRank()))// 2<3
-                        {
-                            if (values.get(aiCard2.getRank()) < values.get(aiCard4.getRank()))// 2<4
-                            {
+                        if (values.get(aiCard2.getRank()) < values
+                            .get(aiCard3.getRank())) {
+                            if (values.get(aiCard2.getRank()) < values
+                                .get(aiCard4.getRank())) {
                                 if (!jbCenterCard1.isVisible()) {
-                                    jbCenterCard1 = new JButton(new ImageIcon(aiCard2.getFront()));
+                                    jbCenterCard1 = new JButton(
+                                        new ImageIcon(aiCard2.getFront()));
                                     jbCenterCard1.setVisible(true);
                                 } else if (!jbCenterCard2.isVisible()) {
-                                    jbCenterCard2 = new JButton(new ImageIcon(aiCard2.getFront()));
+                                    jbCenterCard2 = new JButton(
+                                        new ImageIcon(aiCard2.getFront()));
                                     jbCenterCard2.setVisible(true);
                                 } else {
-                                    jbCenterCard3 = new JButton(new ImageIcon(aiCard2.getFront()));
+                                    jbCenterCard3 = new JButton(
+                                        new ImageIcon(aiCard2.getFront()));
                                     jbCenterCard3.setVisible(true);
                                 }
                             } else {
                                 if (!jbCenterCard1.isVisible()) {
-                                    jbCenterCard1 = new JButton(new ImageIcon(aiCard4.getFront()));
+                                    jbCenterCard1 = new JButton(
+                                        new ImageIcon(aiCard4.getFront()));
                                     jbCenterCard1.setVisible(true);
                                 } else if (!jbCenterCard2.isVisible()) {
-                                    jbCenterCard2 = new JButton(new ImageIcon(aiCard4.getFront()));
+                                    jbCenterCard2 = new JButton(
+                                        new ImageIcon(aiCard4.getFront()));
                                     jbCenterCard2.setVisible(true);
                                 } else {
-                                    jbCenterCard3 = new JButton(new ImageIcon(aiCard4.getFront()));
+                                    jbCenterCard3 = new JButton(
+                                        new ImageIcon(aiCard4.getFront()));
                                     jbCenterCard3.setVisible(true);
                                 }
                             }
                         } else {
-                            if (values.get(aiCard3.getRank()) < values.get(aiCard4.getRank()))// 3<4
-                            {
+                            if (values.get(aiCard3.getRank()) < values
+                                .get(aiCard4.getRank())) {
                                 if (!jbCenterCard1.isVisible()) {
-                                    jbCenterCard1 = new JButton(new ImageIcon(aiCard3.getFront()));
+                                    jbCenterCard1 = new JButton(
+                                        new ImageIcon(aiCard3.getFront()));
                                     jbCenterCard1.setVisible(true);
                                 } else if (!jbCenterCard2.isVisible()) {
-                                    jbCenterCard2 = new JButton(new ImageIcon(aiCard3.getFront()));
+                                    jbCenterCard2 = new JButton(
+                                        new ImageIcon(aiCard3.getFront()));
                                     jbCenterCard2.setVisible(true);
                                 } else {
-                                    jbCenterCard3 = new JButton(new ImageIcon(aiCard3.getFront()));
+                                    jbCenterCard3 = new JButton(
+                                        new ImageIcon(aiCard3.getFront()));
                                     jbCenterCard3.setVisible(true);
                                 }
                             } else {
                                 if (!jbCenterCard1.isVisible()) {
-                                    jbCenterCard1 = new JButton(new ImageIcon(aiCard4.getFront()));
+                                    jbCenterCard1 = new JButton(
+                                        new ImageIcon(aiCard4.getFront()));
                                     jbCenterCard1.setVisible(true);
                                 } else if (!jbCenterCard2.isVisible()) {
-                                    jbCenterCard2 = new JButton(new ImageIcon(aiCard4.getFront()));
+                                    jbCenterCard2 = new JButton(
+                                        new ImageIcon(aiCard4.getFront()));
                                     jbCenterCard2.setVisible(true);
                                 } else {
-                                    jbCenterCard3 = new JButton(new ImageIcon(aiCard4.getFront()));
+                                    jbCenterCard3 = new JButton(
+                                        new ImageIcon(aiCard4.getFront()));
                                     jbCenterCard3.setVisible(true);
                                 }
                             }
@@ -972,7 +1184,8 @@ public class ThirtyOne extends JPanel implements Game {
                 }
                 results();
             } else {
-                JOptionPane.showMessageDialog(null, "You don't have enough cards");
+                JOptionPane.showMessageDialog(null,
+                    "You don't have enough cards");
             }
         });
     }
