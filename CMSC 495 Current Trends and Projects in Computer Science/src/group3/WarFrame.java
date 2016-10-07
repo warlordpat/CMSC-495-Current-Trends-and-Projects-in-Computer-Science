@@ -241,13 +241,13 @@ public class WarFrame extends JFrame {
         for (int i = 0; i < playerWar.length; i++) {
             switch (i) {
             case 0:
-                warPlayerLabel1.setIcon(new ImageIcon(playerWar[i].getFront()));
+                warPlayerLabel1.setIcon(new ImageIcon(playerWar[i].getBack()));
                 break;
             case 1:
-                warPlayerLabel2.setIcon(new ImageIcon(playerWar[i].getFront()));
+                warPlayerLabel2.setIcon(new ImageIcon(playerWar[i].getBack()));
                 break;
             case 2:
-                warPlayerLabel3.setIcon(new ImageIcon(playerWar[i].getFront()));
+                warPlayerLabel3.setIcon(new ImageIcon(playerWar[i].getBack()));
                 break;
             case 3:
                 breakPlayerLabel.setIcon(new ImageIcon(playerWar[i].getFront()));
@@ -258,7 +258,7 @@ public class WarFrame extends JFrame {
         }
 
         for (int i = 0; i < aiWar.length; i++) {
-            ImageIcon icon = new ImageIcon(aiWar[i].getFront());
+            ImageIcon icon = new ImageIcon(aiWar[i].getBack());
             switch (i) {
             case 0:
                 warAILabel1.setIcon(icon);
@@ -270,6 +270,7 @@ public class WarFrame extends JFrame {
                 warAILabel3.setIcon(icon);
                 break;
             case 3:
+                icon = new ImageIcon(aiWar[i].getFront());
                 breakAILabel.setIcon(icon);
                 break;
             default:
