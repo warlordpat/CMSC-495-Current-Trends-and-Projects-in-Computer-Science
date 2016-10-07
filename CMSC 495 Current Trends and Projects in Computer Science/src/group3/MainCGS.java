@@ -9,10 +9,12 @@
 package group3;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -194,10 +196,10 @@ public class MainCGS extends JPanel {
 
         Splash splash = new Splash();
         Thread splashThread = new Thread(splash);
-        splashThread.start();
+
         // splash.setVisible(true);
         new MainCGS();
-
+        splashThread.start();
     }
 
     /**
@@ -262,10 +264,10 @@ public class MainCGS extends JPanel {
         add(jlTitle);
         add(jlSuits);
         frame = new JFrame("Card Games");
-        frame.setVisible(true);
         frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(this);
+        frame.setLocationRelativeTo(null);
         createMenu(frame);
 
         jbWar.addActionListener(ae -> {
@@ -292,6 +294,8 @@ public class MainCGS extends JPanel {
             Solitaire solitaire = new Solitaire();
             solitaire.newGame();
         });
+
+        frame.setVisible(true);
     }
 
     /**
@@ -340,7 +344,16 @@ public class MainCGS extends JPanel {
      * Opens the User's Guide
      */
     private void userGuide() {
+        String myPath = System.getProperty("java.class.path");
 
+        if (Desktop.isDesktopSupported()) {
+            try {
+                File myFile = new File(myPath + "/User's Guide.pdf");
+                Desktop.getDesktop().open(myFile);
+            } catch (IOException | IllegalArgumentException ex) {
+                // no application registered for PDFs
+            }
+        }
     }
 }
 
@@ -382,7 +395,7 @@ class Splash extends JFrame implements Runnable {
     @Override
     public void run() {
         try {
-            Thread.sleep(4000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
