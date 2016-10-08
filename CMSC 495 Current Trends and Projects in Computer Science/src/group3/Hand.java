@@ -186,7 +186,9 @@ public class Hand extends JLabel {
      * @return true, if busted
      */
     final boolean isBusted() {
-        System.out.println("scoring hand");
+        if (MainCGS.DEBUGGING) {
+            System.out.println("scoring hand");
+        }
         return !(scoreHand() <= BLACKJACK);
     } // end method
 
@@ -245,7 +247,7 @@ public class Hand extends JLabel {
      * @param card
      *            the Card removed from the Hand
      */
-    public final void returnCard(Card card) {
+    public final void returnCard(final Card card) {
         // TODO fix this method,
         // it will not work as expected due to == on object reference
         for (int iNum = 0; iNum < cards.size(); iNum++) {
@@ -257,7 +259,9 @@ public class Hand extends JLabel {
     } // end method
 
     /**
-     * Returns the total of a hand with Aces worth 11
+     * Returns the total of a hand with Aces worth 11.
+     *
+     * @return the total of the hand
      */
     public final int thirtyOneTotal() {
         int iTotal = 0;
