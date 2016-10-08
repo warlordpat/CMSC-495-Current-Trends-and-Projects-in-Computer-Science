@@ -291,7 +291,7 @@ public class MainCGS extends JPanel {
         });
         jbSolitaire.addActionListener(ae -> {
             Solitaire solitaire = new Solitaire();
-            solitaire.newGame();
+            solitaire.begin();
         });
         frame.setVisible(true);
     }
