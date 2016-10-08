@@ -15,6 +15,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -1370,6 +1371,10 @@ public class Blackjack extends JPanel implements Game {
                 player.setVisible(false);
                 lblValue1.setVisible(false);
             }
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(this,
+                "No Save file found!\nHave you saved the game yet?",
+                "No Save File", JOptionPane.WARNING_MESSAGE);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }

@@ -13,6 +13,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -63,7 +64,8 @@ public class War implements Game {
      */
     private static final int REMAIN_FONT_SIZE = 30;
     /**
-     * If true, deals cards all but one to one player for end game group3.DEBUGGING.
+     * If true, deals cards all but one to one player for end game
+     * group3.DEBUGGING.
      */
     private static final boolean END_GAME_DEBUG = false;
     /**
@@ -173,7 +175,6 @@ public class War implements Game {
     public final void gui() {
         frame.setVisible(true);
         frame.setResizable(false);
-        frame.setLocationRelativeTo(null);
         JMenuBar menuBar = createMenuBar();
 
         frame.setJMenuBar(menuBar);
@@ -190,13 +191,15 @@ public class War implements Game {
         });
 
         JLayeredPane layeredPanePlayer = new JLayeredPane();
-        URL imageURL = this.getClass().getClassLoader().getResource("images/cardBack.png");
+        URL imageURL = this.getClass().getClassLoader()
+            .getResource("images/cardBack.png");
         ImageIcon cardBacks = new ImageIcon(imageURL);
         JLabel backLabel = new JLabel(cardBacks, JLabel.CENTER);
         backLabel.setSize(CARD_WIDTH, CARD_HEIGHT);
         layeredPanePlayer.setPreferredSize(backLabel.getPreferredSize());
         handSizePlayer = new JLabel(String.valueOf(player.handSize()));
-        handSizePlayer.setFont(new Font("Tahoma", Font.PLAIN, REMAIN_FONT_SIZE));
+        handSizePlayer
+            .setFont(new Font("Tahoma", Font.PLAIN, REMAIN_FONT_SIZE));
         handSizePlayer.setHorizontalAlignment(SwingConstants.CENTER);
         handSizePlayer.setLocation(CARD_WIDTH - REMAIN_WIDTH, 0);
         handSizePlayer.setSize(REMAIN_WIDTH, REMAIN_HEIGHT);
@@ -217,8 +220,9 @@ public class War implements Game {
         layeredPaneAI.add(handSizeAI, new Integer(1));
         layeredPaneAI.add(backLabel2, new Integer(0));
 
-        JLabel topLabel = new JLabel("      Player Cards                                          "
-                + "                                                                         Computer Cards   ");
+        JLabel topLabel = new JLabel(
+            "      Player Cards                                          "
+                    + "                                                                         Computer Cards   ");
 
         panel.add(topLabel, BorderLayout.NORTH);
         panel.add(layeredPanePlayer, BorderLayout.WEST);
@@ -230,6 +234,7 @@ public class War implements Game {
         panel.add(jbOne, BorderLayout.SOUTH);
         frame.getContentPane().add(panel);
         frame.pack();
+        frame.setLocationRelativeTo(null);
     } // end method
 
     /**
@@ -324,8 +329,8 @@ public class War implements Game {
                     player.addCard(1, new Card(Rank.ACE, same.getSuit()));
                     if (warThree) {
                         ai.addCard(new Card(Rank.ACE, Suit.CLUB));
-//                        ai.addCard(new Card(Rank.TWO, Suit.CLUB));
-//                        ai.addCard(new Card(Rank.KING, Suit.CLUB));
+                        // ai.addCard(new Card(Rank.TWO, Suit.CLUB));
+                        // ai.addCard(new Card(Rank.KING, Suit.CLUB));
                     }
                 }
             } else {
@@ -429,13 +434,15 @@ public class War implements Game {
      */
     private boolean war() {
         if (MainCGS.DEBUGGING) {
-            System.out.println("Starting hands: player: " + player.handSize() + " ai: " + ai.handSize());
+            System.out.println("Starting hands: player: " + player.handSize()
+                    + " ai: " + ai.handSize());
         }
         blankLabel1.setText("WAR!");
         blankLabel1.setHorizontalAlignment(SwingConstants.CENTER);
         boolean whoWon = warFrame.setupGUI(player, ai, 1);
         if (MainCGS.DEBUGGING) {
-            System.out.println("Ending hands: player: " + player.handSize() + " ai: " + ai.handSize());
+            System.out.println("Ending hands: player: " + player.handSize()
+                    + " ai: " + ai.handSize());
         }
         return whoWon;
     } // end method
@@ -453,10 +460,12 @@ public class War implements Game {
      */
     public final void directions() {
         JOptionPane.showMessageDialog(null,
-                "The player with the higher card wins. " + "\nIn the event of a tie you go to War.\nEach player offers "
-                        + "\nthe top 3 cards of their decks, and " + "\nthen the player with the highest "
-                        + "\n4th card wins the whole pile."
-                        + "\n\nIf a player does not have enough cards for a War, they lose.\nAces are low.");
+            "The player with the higher card wins. "
+                    + "\nIn the event of a tie you go to War.\nEach player offers "
+                    + "\nthe top 3 cards of their decks, and "
+                    + "\nthen the player with the highest "
+                    + "\n4th card wins the whole pile."
+                    + "\n\nIf a player does not have enough cards for a War, they lose.\nAces are low.");
     } // end method
 
     /**
@@ -492,16 +501,24 @@ public class War implements Game {
             String aiDisplayCard;
             if (blankLabel1.getText().startsWith("You won")) {
                 // player won
-                playerDisplayCard = player.getCards().get(player.getCards().size() - 2).toString();
-                aiDisplayCard = player.getCards().get(player.getCards().size() - 1).toString();
+                playerDisplayCard = player.getCards()
+                    .get(player.getCards().size() - 2).toString();
+                aiDisplayCard = player.getCards()
+                    .get(player.getCards().size() - 1).toString();
             } else {
-                playerDisplayCard = ai.getCards().get(ai.getCards().size() - 2).toString();
-                aiDisplayCard = ai.getCards().get(ai.getCards().size() - 1).toString();
+                playerDisplayCard =
+                        ai.getCards().get(ai.getCards().size() - 2).toString();
+                aiDisplayCard =
+                        ai.getCards().get(ai.getCards().size() - 1).toString();
             }
-            System.out.println("Game Saved" + "\nsaved: " + "\n gameOver " + gameOver + "\n playCount   " + playCount
-                    + "\n Player hand " + player + "\n AI Hand " + ai + "\n Message: " + blankLabel1.getText()
-                    + "\n Player cards: " + handSizePlayer.getText() + "\n AI Cards: " + handSizeAI.getText()
-                    + "\n Display Cards:" + "\n  player: " + playerDisplayCard + "\n  AI: " + aiDisplayCard);
+            System.out.println("Game Saved" + "\nsaved: " + "\n gameOver "
+                    + gameOver + "\n playCount   " + playCount
+                    + "\n Player hand " + player + "\n AI Hand " + ai
+                    + "\n Message: " + blankLabel1.getText()
+                    + "\n Player cards: " + handSizePlayer.getText()
+                    + "\n AI Cards: " + handSizeAI.getText()
+                    + "\n Display Cards:" + "\n  player: " + playerDisplayCard
+                    + "\n  AI: " + aiDisplayCard);
         }
     } // end method
 
@@ -517,7 +534,8 @@ public class War implements Game {
         gameBoard.remove(blankLabel1);
         gameBoard.remove(aiDiscardLabel);
 
-        JLayeredPane layeredPanePlayer = (JLayeredPane) handSizePlayer.getParent();
+        JLayeredPane layeredPanePlayer =
+                (JLayeredPane) handSizePlayer.getParent();
         layeredPanePlayer.remove(handSizePlayer);
 
         JLayeredPane layeredPaneAI = (JLayeredPane) handSizeAI.getParent();
@@ -545,17 +563,25 @@ public class War implements Game {
                 String aiDisplayCard;
                 if (blankLabel1.getText().startsWith("You won")) {
                     // player won
-                    playerDisplayCard = player.getCards().get(player.getCards().size() - 2).toString();
-                    aiDisplayCard = player.getCards().get(player.getCards().size() - 1).toString();
+                    playerDisplayCard = player.getCards()
+                        .get(player.getCards().size() - 2).toString();
+                    aiDisplayCard = player.getCards()
+                        .get(player.getCards().size() - 1).toString();
                 } else {
-                    playerDisplayCard = ai.getCards().get(ai.getCards().size() - 2).toString();
-                    aiDisplayCard = ai.getCards().get(ai.getCards().size() - 1).toString();
+                    playerDisplayCard = ai.getCards()
+                        .get(ai.getCards().size() - 2).toString();
+                    aiDisplayCard = ai.getCards().get(ai.getCards().size() - 1)
+                        .toString();
                 }
 
-                System.out.println("loaded: " + "\n gameOver " + gameOver + "\n playCount   " + playCount
-                        + "\n Player hand " + player + "\n AI Hand " + ai + "\n Message: " + blankLabel1.getText()
-                        + "\n Player cards: " + handSizePlayer.getText() + "\n AI Cards: " + handSizeAI.getText()
-                        + "\n Display Cards:" + "\n  player: " + playerDisplayCard + "\n  AI: " + aiDisplayCard);
+                System.out.println("loaded: " + "\n gameOver " + gameOver
+                        + "\n playCount   " + playCount + "\n Player hand "
+                        + player + "\n AI Hand " + ai + "\n Message: "
+                        + blankLabel1.getText() + "\n Player cards: "
+                        + handSizePlayer.getText() + "\n AI Cards: "
+                        + handSizeAI.getText() + "\n Display Cards:"
+                        + "\n  player: " + playerDisplayCard + "\n  AI: "
+                        + aiDisplayCard);
             }
             gameBoard.add(playerDiscardLabel);
             gameBoard.add(blankLabel1);
@@ -563,6 +589,10 @@ public class War implements Game {
             layeredPanePlayer.add(handSizePlayer, new Integer(1));
             layeredPaneAI.add(handSizeAI, new Integer(1));
 
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(frame,
+                "No Save file found!\nHave you saved the game yet?",
+                "No Save File", JOptionPane.WARNING_MESSAGE);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }

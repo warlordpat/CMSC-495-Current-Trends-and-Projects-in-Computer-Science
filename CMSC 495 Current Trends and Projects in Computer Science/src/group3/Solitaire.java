@@ -18,6 +18,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -539,6 +540,10 @@ public class Solitaire extends JPanel implements Game {
                 }
                 add(p);
             }
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(this,
+                "No Save file found!\nHave you saved the game yet?",
+                "No Save File", JOptionPane.WARNING_MESSAGE);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
