@@ -196,10 +196,9 @@ public class MainCGS extends JPanel {
 
         Splash splash = new Splash();
         Thread splashThread = new Thread(splash);
-
         // splash.setVisible(true);
+        splashThread.run();
         new MainCGS();
-        splashThread.start();
     }
 
     /**
@@ -294,7 +293,6 @@ public class MainCGS extends JPanel {
             Solitaire solitaire = new Solitaire();
             solitaire.newGame();
         });
-
         frame.setVisible(true);
     }
 
@@ -395,7 +393,7 @@ class Splash extends JFrame implements Runnable {
     @Override
     public void run() {
         try {
-            Thread.sleep(3000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
