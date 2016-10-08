@@ -39,12 +39,11 @@ import javax.swing.JPanel;
  * @version 1.0
  * @since Sep 5, 2016
  */
-public class HighLow extends JFrame implements Game {    
+public class HighLow extends JFrame implements Game {
     /**
-     * Background color that is light and pleasant
+     * Background color that is light and pleasant.
      **/
     private static final Color GAME_TABLE_COLOR = new Color(215, 255, 215);
-    
     /**
      * The space between the rows and columns in the grid.
      */
@@ -203,14 +202,17 @@ public class HighLow extends JFrame implements Game {
         orLabel.setFont(new Font("Courier Bold", Font.BOLD, NORMAL_FONT_SIZE));
 
         JLabel blankLabel = new JLabel(" ? ", JLabel.CENTER);
-        blankLabel.setFont(new Font("Courier Bold", Font.BOLD, NORMAL_FONT_SIZE));
+        blankLabel
+            .setFont(new Font("Courier Bold", Font.BOLD, NORMAL_FONT_SIZE));
         JLabel blankLabel1 = new JLabel(" ");
 
         JLabel scoreLabel = new JLabel("SCORE: ", JLabel.RIGHT);
-        scoreLabel.setFont(new Font("Courier Bold", Font.BOLD, SMALL_FONT_SIZE));
+        scoreLabel
+            .setFont(new Font("Courier Bold", Font.BOLD, SMALL_FONT_SIZE));
 
         JButton highButton = new JButton("Higher!");
-        highButton.setFont(new Font("Courier Bold", Font.BOLD, SMALL_FONT_SIZE));
+        highButton
+            .setFont(new Font("Courier Bold", Font.BOLD, SMALL_FONT_SIZE));
         highButton.addActionListener(al -> {
             if (checkGameOverConditions()) {
                 return;
@@ -241,7 +243,8 @@ public class HighLow extends JFrame implements Game {
             }
         });
 
-        scoreCtLabel.setFont(new Font("Courier Bold", Font.BOLD, SMALL_FONT_SIZE));
+        scoreCtLabel
+            .setFont(new Font("Courier Bold", Font.BOLD, SMALL_FONT_SIZE));
         scoreCtLabel.setText(String.valueOf(score));
 
         JPanel panel;
@@ -322,7 +325,8 @@ public class HighLow extends JFrame implements Game {
         cardPnl.revalidate();
         cardPnl.repaint();
         if (MainCGS.DEBUGGING) {
-            System.out.println("Card: " + upCard + " remaining deck: " + deck.deckSize());
+            System.out.println(
+                "Card: " + upCard + " remaining deck: " + deck.deckSize());
         }
         return previousRank;
     }
@@ -407,8 +411,9 @@ public class HighLow extends JFrame implements Game {
             score = os.readInt();
 
             if (MainCGS.DEBUGGING) {
-                System.out.println("loaded: " + "\n gameOver " + gameOver + "\n score   " + score + "\n discard pile "
-                        + discard + "\n Deck " + deck + "\n displayed card: " + upCard);
+                System.out.println("loaded: " + "\n gameOver " + gameOver
+                        + "\n score   " + score + "\n discard pile " + discard
+                        + "\n Deck " + deck + "\n displayed card: " + upCard);
             }
             cardPnl.removeAll();
             cardPnl.add(upCard);
@@ -445,8 +450,10 @@ public class HighLow extends JFrame implements Game {
             e.printStackTrace();
         }
         if (MainCGS.DEBUGGING) {
-            System.out.println("Game Saved" + "\nsaved: " + "\n gameOver " + gameOver + "\n score   " + score
-                    + "\n discard pile " + discard + "\n Deck " + deck + "\n displayed card: " + upCard);
+            System.out
+                .println("Game Saved" + "\nsaved: " + "\n gameOver " + gameOver
+                        + "\n score   " + score + "\n discard pile " + discard
+                        + "\n Deck " + deck + "\n displayed card: " + upCard);
         }
     }
 } // end class
