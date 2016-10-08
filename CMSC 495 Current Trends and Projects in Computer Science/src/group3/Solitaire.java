@@ -124,6 +124,14 @@ public class Solitaire extends JPanel implements Game {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(final WindowEvent e) {
+                if (MainCGS.DEBUGGING) {
+                    System.out.println("Checking for a high score");
+                }
+                if (scores.isHighScore(score)) {
+                    String initials = getInitials(Solitaire.this);
+                    HighScore highscore = new HighScore(initials, (int) score);
+                    scores.add(highscore);
+                }
                 // write out high scores here
                 String path = System.getProperty("user.home");
                 path += File.separator + "CGS";
