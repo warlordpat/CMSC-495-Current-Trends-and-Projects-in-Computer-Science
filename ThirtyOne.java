@@ -77,7 +77,7 @@ public class ThirtyOne extends JPanel implements Game {
     /**
      * The minimum screen height.
      */
-    private static final int SCREEN_Y = 600;
+    private static final int SCREEN_Y = 650;
     /**
      * The height of a Card.
      */
@@ -94,6 +94,14 @@ public class ThirtyOne extends JPanel implements Game {
      * The Y location of the center label.
      */
     private static final int CENTER_LABEL_Y = 65;
+    /**
+     * The X location of the knock label.
+     */
+    private static final int KNOCK_LABEL_X = 210;
+    /**
+     * The Y location of the knock label.
+     */
+    private static final int KNOCK_LABEL_Y = 250;
      /**
      * The X location of the deck label.
      */
@@ -423,7 +431,7 @@ public class ThirtyOne extends JPanel implements Game {
         add(jlPlayerScore);
 
         knockLabel = new JLabel("Someone " + " Knocked");
-        knockLabel.setLocation(CARD_X_1, PLAYER_HAND_Y);
+        knockLabel.setLocation(KNOCK_LABEL_X, KNOCK_LABEL_Y);
         knockLabel.setForeground(LABEL_WHITE);
         knockLabel.setFont(new Font("Tahoma", Font.PLAIN, FONT_SIZE));
         knockLabel.setSize(knockLabel.getPreferredSize());
@@ -825,13 +833,15 @@ public class ThirtyOne extends JPanel implements Game {
             // alert player the dealer knocked
             System.out.println("Dealer knocked");
             knockLabel.setText("Dealer" + " Knocked");
+            knockLabel.setVisible(true);
         } else {
             // player knocked
             System.out.println("Player knocked");
             knockLabel.setText("Player" + " Knocked");
+            knockLabel.setVisible(true);
             playDealerTurn();
         }
-        knockLabel.setVisible(true);
+        
     }
 
     /**
