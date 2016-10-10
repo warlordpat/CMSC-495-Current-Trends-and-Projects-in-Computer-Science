@@ -1276,29 +1276,29 @@ public class Blackjack extends JPanel implements Game {
      * Loads the game state from a file.
      */
     public final void loadGame() {
-        remove(player);
-        remove(dealer);
-        remove(lblValue1);
-        remove(lblValue2);
-        remove(remaining);
-        remove(lblCash);
-        remove(lblBet);
-        arrow.setVisible(false);
-        lblInstructions.setVisible(false);
-        if (handTwoInPlay) {
-            remove(playerSplitHand);
-            lblValue2.setVisible(false);
-            handTwoInPlay = false;
-            arrow.setLocation(ARROW_X, ARROW_Y);
-            arrow.setVisible(false);
-        }
-        if (MainCGS.DEBUGGING) {
-            System.out.println("removed player/dealer");
-        }
-        revalidate();
-        repaint();
         try (FileInputStream filestream = new FileInputStream("BlackJack.ser");
                 ObjectInputStream os = new ObjectInputStream(filestream);) {
+            remove(player);
+            remove(dealer);
+            remove(lblValue1);
+            remove(lblValue2);
+            remove(remaining);
+            remove(lblCash);
+            remove(lblBet);
+            arrow.setVisible(false);
+            lblInstructions.setVisible(false);
+            if (handTwoInPlay) {
+                remove(playerSplitHand);
+                lblValue2.setVisible(false);
+                handTwoInPlay = false;
+                arrow.setLocation(ARROW_X, ARROW_Y);
+                arrow.setVisible(false);
+            }
+            if (MainCGS.DEBUGGING) {
+                System.out.println("removed player/dealer");
+            }
+            revalidate();
+            repaint();
             deck = (Deck) os.readObject();
             dealer = (Hand) os.readObject();
             player = (Hand) os.readObject();
@@ -1346,6 +1346,7 @@ public class Blackjack extends JPanel implements Game {
                 bettingPanel.setVisible(false);
                 hit.setVisible(true);
                 stand.setVisible(true);
+                
             }
             if (isSplittable()) {
                 pnlButton.add(jbSplit);
@@ -1365,12 +1366,13 @@ public class Blackjack extends JPanel implements Game {
                 arrow.setVisible(true);
             }
             updateRemain();
-            if (!(handOneInPlay && handTwoInPlay)) {
+            if (!(handOneInPlay) && !(handTwoInPlay)) {
                 // if both are not in play, hide hands
                 dealer.setVisible(false);
                 player.setVisible(false);
                 lblValue1.setVisible(false);
             }
+
         } catch (FileNotFoundException e) {
             JOptionPane.showMessageDialog(this,
                 "No Save file found!\nHave you saved the game yet?",
