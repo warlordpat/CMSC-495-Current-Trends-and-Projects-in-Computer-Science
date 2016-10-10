@@ -1,6 +1,6 @@
 // File: ThirtyOne.java
-// Author: Alex Burch
-// Date: Sep 23, 2016
+// Author: Patrick Smith
+// Date: Oct 10, 2016
 // Course: CMSC 495
 // Assignment: Final Project, Group 3
 // Platform: Win10 x64 Java build 1.8.0_102
@@ -8,7 +8,6 @@
 
 package group3;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import java.awt.BorderLayout;
@@ -46,10 +45,23 @@ import java.awt.event.WindowEvent;
  * Thirty-One.
  *
  * @author Alex Burch
+ * @author Patrick Smith
  * @version 1.0
  * @since Sep 1, 2016
  */
 public class ThirtyOne extends JPanel implements Game {
+    /**
+     * The maximum score a hand can have.
+     */
+    private static final int MAX_SCORE = 31;
+    /**
+     * The score threshold for the dealer to knock.
+     */
+    private static final int KNOCK_THRESHOLD = 25;
+    /**
+     * The number of Cards in a Hand, and in the Window.
+     */
+    private static final int CARDS_IN_HAND = 3;
     /**
      * A green color like a card game table.
      **/
@@ -107,14 +119,6 @@ public class ThirtyOne extends JPanel implements Game {
      */
     private static final int CARD_X_1 = 150;
     /**
-     * The X location of the second Card.
-     */
-    private static final int CARD_X_2 = 250;
-    /**
-     * The X location of the third Card.
-     */
-    private static final int CARD_X_3 = 350;
-    /**
      * The X location of the player's Hand value.
      */
     private static final int PLAYER_HAND_X = 25;
@@ -137,7 +141,7 @@ public class ThirtyOne extends JPanel implements Game {
     /**
      * The value awarded to a player if they win.
      */
-    private static final int WIN_SCORE = 100;
+    private static final int WIN_SCORE = 10;
     /**
      * The value awarded to a player if they tie.
      */
@@ -159,10 +163,6 @@ public class ThirtyOne extends JPanel implements Game {
      */
     private Hand player;
     /**
-     * The cards in the center.
-     */
-    private Card centerCard1, centerCard2, centerCard3;
-    /**
      * Integer to see how close the player is to 31.
      */
     private int player31;
@@ -170,10 +170,6 @@ public class ThirtyOne extends JPanel implements Game {
      * Integer to see how close the AI is to 31.
      */
     private int ai31;
-    /**
-     * Integer to see who goes first.
-     */
-    private int iTurn;
     /**
      * The ThirtyOne high scores.
      */
@@ -186,10 +182,6 @@ public class ThirtyOne extends JPanel implements Game {
      * JLabel to signify the center cards.
      */
     private JLabel jlCenterCards;
-    /**
-     * JButtons for the cards in the player's hand.
-     */
-    private JButton jbPlayerCard1, jbPlayerCard2, jbPlayerCard3;
     /**
      * JLabel to show the player's current score.
      */
@@ -206,10 +198,6 @@ public class ThirtyOne extends JPanel implements Game {
      * Integer to represent the total value of the player's hand.
      */
     private int playerHand;
-    /**
-     * JButtons for the cards in the center.
-     */
-    private JButton jbCenterCard1, jbCenterCard2, jbCenterCard3;
     /**
      * The frame holding this ThirtyOne.
      */
@@ -230,6 +218,7 @@ public class ThirtyOne extends JPanel implements Game {
      * Shows who knocked on the GUI.
      */
     private JLabel knockLabel;
+    private boolean gameActive;
     /**
      * Map that links Card Rank to values for this Hand. Probably should be
      * overridden in a sub-class for each game that has different value
@@ -261,14 +250,10 @@ public class ThirtyOne extends JPanel implements Game {
         AI = new Hand();
         player = new Hand();
         center = new Hand();
-        player31 = 0;
-        ai31 = 0;
-        iTurn = 0;
         jlPlayerHand = new JLabel("Player's Hand");
         jlCenterCards = new JLabel("Center Cards");
         jlPlayerScore = new JLabel("Player's Score: " + playerScore);
         playerScore = 0;
-        playerHand = 0;
         scores = loadOrCreateScores("ThirtyOne");
         createGUI();
     } // end constructor
@@ -311,9 +296,15 @@ public class ThirtyOne extends JPanel implements Game {
         dealCards();
         playerHand = player.thirtyOneTotal();
         jlPlayerValue.setText("Value: " + String.valueOf(playerHand));
+        System.out
+            .println("Old preferred size " + jlPlayerScore.getPreferredSize());
         jlPlayerScore.setText("Player's Score: " + playerScore);
+        System.out
+            .println("New preferred size " + jlPlayerScore.getPreferredSize());
+        jlPlayerScore.setSize(jlPlayerScore.getPreferredSize());
         revalidate();
         repaint();
+        gameActive = true;
     }
 
     /**
@@ -328,7 +319,12 @@ public class ThirtyOne extends JPanel implements Game {
         player = new Hand();
         playerScore = 0;
         knockActive = false;
+        System.out
+            .println("Old preferred size " + jlPlayerScore.getPreferredSize());
         jlPlayerScore.setText("Player's Score: " + playerScore);
+        System.out
+            .println("New preferred size " + jlPlayerScore.getPreferredSize());
+        jlPlayerScore.setSize(jlPlayerScore.getPreferredSize());
     }
 
     /**
@@ -495,7 +491,7 @@ public class ThirtyOne extends JPanel implements Game {
      */
     private void dealCards() {
         deck.shuffle();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < CARDS_IN_HAND; i++) {
             Card temp = deck.deal();
             temp.flip();
             player.addCard(temp);
@@ -504,7 +500,7 @@ public class ThirtyOne extends JPanel implements Game {
             temp.flip();
             AI.addCard(temp);
         }
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < CARDS_IN_HAND; i++) {
             Card temp = deck.deal();
             temp.flip();
             center.addCard(temp);
@@ -524,14 +520,9 @@ public class ThirtyOne extends JPanel implements Game {
             os.writeObject(deck);
             os.writeObject(AI);
             os.writeObject(player);
-            os.writeObject(centerCard1);
-            os.writeObject(centerCard2);
-            os.writeObject(centerCard3);
-            os.writeInt(iTurn);
-            os.writeInt(playerHand);
+            os.writeObject(center);
             os.writeInt(playerScore);
-            os.writeObject(jlPlayerValue);
-            os.writeObject(jlPlayerScore);
+            os.writeBoolean(knockActive);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -541,63 +532,39 @@ public class ThirtyOne extends JPanel implements Game {
      * Loads the game state from a file.
      */
     public final void loadGame() {
-        System.out.println("Loading game");
-        remove(deck);
-        remove(AI);
-        remove(player);
-        remove(centerCard1);
-        remove(centerCard2);
-        remove(centerCard3);
-        remove(jbCenterCard1);
-        remove(jbCenterCard2);
-        remove(jbCenterCard3);
-        remove(jbPlayerCard1);
-        remove(jbPlayerCard2);
-        remove(jbPlayerCard3);
-        remove(jlPlayerValue);
-        remove(jlPlayerScore);
         try (FileInputStream fileStream = new FileInputStream("ThirtyOne.ser");
                 ObjectInputStream os = new ObjectInputStream(fileStream);) {
+            System.out.println("Loading game");
+            remove(deck);
+            remove(AI);
+            remove(player);
+            remove(center);
+            Mouse mh = new Mouse();
             deck = (Deck) os.readObject();
+            deck.setLocation(0, CENTER_CARD_Y);
+            deck.setSize(CARD_WIDTH, CARD_HEIGHT);
+            deck.addMouseListener(mh);
+            add(deck);
             AI = (Hand) os.readObject();
+
             player = (Hand) os.readObject();
-            centerCard1 = (Card) os.readObject();
-            centerCard2 = (Card) os.readObject();
-            centerCard3 = (Card) os.readObject();
-            jbCenterCard1 = new JButton(new ImageIcon(centerCard1.getFront()));
-            jbCenterCard1.setBounds(CARD_X_1, CENTER_CARD_Y, CARD_WIDTH,
-                CARD_HEIGHT);
-            add(jbCenterCard1);
-            jbCenterCard2 = new JButton(new ImageIcon(centerCard2.getFront()));
-            jbCenterCard2.setBounds(CARD_X_2, CENTER_CARD_Y, CARD_WIDTH,
-                CARD_HEIGHT);
-            add(jbCenterCard2);
-            jbCenterCard3 = new JButton(new ImageIcon(centerCard3.getFront()));
-            jbCenterCard3.setBounds(CARD_X_3, CENTER_CARD_Y, CARD_WIDTH,
-                CARD_HEIGHT);
-            add(jbCenterCard3);
-            jbPlayerCard1 =
-                    new JButton(new ImageIcon(player.getCard(0).getFront()));
-            jbPlayerCard1.setBounds(CARD_X_1, PLAYER_CARD_Y, CARD_WIDTH,
-                CARD_HEIGHT);
-            add(jbPlayerCard1);
-            jbPlayerCard2 =
-                    new JButton(new ImageIcon(player.getCard(1).getFront()));
-            jbPlayerCard2.setBounds(CARD_X_2, PLAYER_CARD_Y, CARD_WIDTH,
-                CARD_HEIGHT);
-            add(jbPlayerCard2);
-            jbPlayerCard3 =
-                    new JButton(new ImageIcon(player.getCard(2).getFront()));
-            jbPlayerCard3.setBounds(CARD_X_3, PLAYER_CARD_Y, CARD_WIDTH,
-                CARD_HEIGHT);
-            add(jbPlayerCard3);
-            iTurn = os.readInt();
-            playerHand = os.readInt();
+            player.setLocation(CARD_X_1, PLAYER_CARD_Y);
+            player.addMouseListener(mh);
+            player.addMouseMotionListener(mh);
+            add(player);
+
+            center = (Hand) os.readObject();
+            center.setLocation(CARD_X_1, CENTER_CARD_Y);
+            center.addMouseListener(mh);
+            center.addMouseMotionListener(mh);
+            add(center);
+
             playerScore = os.readInt();
-            jlPlayerValue.setText("Value: " + String.valueOf(playerHand));
-            add(jlPlayerValue);
+            knockActive = os.readBoolean();
+            knockLabel.setVisible(knockActive);
+            jlPlayerValue
+                .setText("Value: " + String.valueOf(player.thirtyOneTotal()));
             jlPlayerScore.setText("Player's Score: " + playerScore);
-            add(jlPlayerScore);
             revalidate();
             repaint();
         } catch (FileNotFoundException e) {
@@ -710,9 +677,9 @@ public class ThirtyOne extends JPanel implements Game {
 
         // select a card for discard
         Card discard = null;
-        int discardValue = 31;
+        int discardValue = MAX_SCORE;
         Card sameSuitDiscard = null;
-        int sameSuitValue = 31;
+        int sameSuitValue = MAX_SCORE;
         for (Card card : AI.getCards()) {
             int value = values.get(card.getRank());
             // discard the lowest value card that is not the maxSuit
@@ -764,7 +731,7 @@ public class ThirtyOne extends JPanel implements Game {
         AI.addCard(bestCard);
         AI.repaint();
         center.repaint();
-        if (AI.thirtyOneTotal() > 25) {
+        if (AI.thirtyOneTotal() > KNOCK_THRESHOLD) {
             knocker = "AI";
             knock();
         }
@@ -788,7 +755,7 @@ public class ThirtyOne extends JPanel implements Game {
         int answer;
         if (playerHandScore > aiHandScore) {
             // win
-            playerScore += 10;
+            playerScore += WIN_SCORE;
             answer = JOptionPane.showConfirmDialog(this,
                 ("You win " + playerHandScore + " to " + aiHandScore
                         + "!\nWould you like to play again?"),
@@ -807,6 +774,7 @@ public class ThirtyOne extends JPanel implements Game {
                 "Play Again?", JOptionPane.YES_NO_OPTION);
         }
         if (answer == JOptionPane.YES_OPTION) {
+            gameActive = false;
             remove(AI);
             newGame();
         } else {
@@ -815,6 +783,7 @@ public class ThirtyOne extends JPanel implements Game {
                 HighScore score = new HighScore(initials, (int) playerScore);
                 scores.add(score);
             }
+            gameActive = false;
         }
     }
 
@@ -822,6 +791,9 @@ public class ThirtyOne extends JPanel implements Game {
      * Ends the players turn, calls for scoring.
      */
     private void knock() {
+        if (!gameActive) {
+            return;
+        }
         knockActive = true;
         if (knocker.equals("AI")) {
             // alert player the dealer knocked
@@ -846,6 +818,10 @@ public class ThirtyOne extends JPanel implements Game {
      * @since Oct 9, 2016
      */
     private class Mouse extends MouseInputAdapter {
+        /**
+         * The sleep time used to simulate the dealer thinking.
+         */
+        private static final int AI_THINK_DELAY = 500;
         /**
          * Score earned for moving a card to the Foundation.
          */
@@ -1022,7 +998,8 @@ public class ThirtyOne extends JPanel implements Game {
                             scoreGame();
                         }
                         try {
-                            Thread.sleep(500); // simulate dealer thinking
+                            Thread.sleep(AI_THINK_DELAY); // simulate dealer
+                                                          // thinking
                             playDealerTurn();
                         } catch (InterruptedException ex) {
                             ex.printStackTrace();
@@ -1044,7 +1021,6 @@ public class ThirtyOne extends JPanel implements Game {
         public void mouseClicked(final MouseEvent e) {
             @SuppressWarnings("unused")
             int clickCount = e.getClickCount();
-
         } // end method
     }
 
