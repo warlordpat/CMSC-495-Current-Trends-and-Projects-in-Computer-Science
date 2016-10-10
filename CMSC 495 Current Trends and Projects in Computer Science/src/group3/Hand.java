@@ -13,6 +13,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -264,11 +265,20 @@ public class Hand extends JLabel {
      * @return the total of the hand
      */
     public final int thirtyOneTotal() {
-        int iTotal = 0;
-        for (Card card : cards) {
-            iTotal += thirtyOneValues.get(card.getRank());
+        // Value calculated for each suit, highest suit value returned
+        int score = 0;
+        HashMap<Suit, Integer> dict = new HashMap<>();
+        for (Suit suit : Suit.values()) {
+            score = 0;
+            for (Card card : cards) {
+                if (card.getSuit().equals(suit))
+                    score += thirtyOneValues.get(card.getRank());
+            }
+            dict.put(suit, score);
+            System.out.println(suit + " " + score);
         }
-        return iTotal;
+        
+        return Collections.max(dict.values());
     } // end method
 
     /**
