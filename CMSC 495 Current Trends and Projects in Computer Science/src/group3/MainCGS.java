@@ -175,7 +175,7 @@ public class MainCGS extends JPanel {
     /**
      * 
      */
-    public static final boolean DEBUGGING = true;
+    public static final boolean DEBUGGING = false;
 
     /**
      * Constructs a new main program object.
