@@ -45,7 +45,7 @@ public class Deck extends JLabel {
     /**
      * The Cards held in the Concentration deck.
      */
-    ArrayList<Card> concentrationCards;
+    private ArrayList<Card> concentrationCards;
     /**
      * True if the deck is empty.
      */
@@ -79,15 +79,13 @@ public class Deck extends JLabel {
 
         // load card backs from Cards class to reduce image loading error
         // surface.
-        cardBack = new Card(Rank.ACE, Suit.CLUB).getBacks().getSubimage(Card.CARD_WIDTH, 0, Card.CARD_WIDTH,
-                Card.CARD_HEIGHT);
+        cardBack = new Card(Rank.ACE, Suit.CLUB).getBacks()
+            .getSubimage(Card.CARD_WIDTH, 0, Card.CARD_WIDTH, Card.CARD_HEIGHT);
     } // end method
 
     /**
-     * Serializes the Deck.
-     *
-     * See readObject() and writeObject() in JComponent for more information
-     * about serialization in Swing.
+     * Serializes the Deck. See readObject() and writeObject() in JComponent for
+     * more information about serialization in Swing.
      *
      * @param out
      *            the <code>ObjectOutputStream</code> in which to write
@@ -100,10 +98,9 @@ public class Deck extends JLabel {
     } // end method
 
     /**
-     * Reads back in the Deck from serialization.
-     *
-     * See readObject() and writeObject() in JComponent for more information
-     * about serialization in Swing.
+     * Reads back in the Deck from serialization. See readObject() and
+     * writeObject() in JComponent for more information about serialization in
+     * Swing.
      *
      * @param in
      *            the <code>ObjectInputStream</code> from which to read
@@ -112,7 +109,8 @@ public class Deck extends JLabel {
      * @throws ClassNotFoundException
      *             if the class of a serialized object could not be found
      */
-    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         cardBack = ImageIO.read(in);
     } // end method
@@ -142,7 +140,7 @@ public class Deck extends JLabel {
     /**
      * Deals the deck for Concentration. Only requires 30 cards
      */
-    void ConcentrationShuffle() {
+    final void concentrationShuffle() {
 
         // Contains 52 cards
         List<Card> temp = cards;
@@ -151,6 +149,7 @@ public class Deck extends JLabel {
         // Contains 30 cards
         ArrayList<Card> temp30 = new ArrayList<>();
         int i = 0;
+        int CARDS = 30;
         // Draws 15 cards in order, twice
         for (int j = 20; j < 35; j++) {
 
@@ -161,16 +160,23 @@ public class Deck extends JLabel {
 
         do {
             int position = 0;
-            position = (int) (Math.random() * 30);
+            position = (int) (Math.random() * CARDS);
 
             if (temp30.get(position) != null) {
                 concentrationCards.add(temp30.get(position));
                 temp30.set(position, null);
             }
-        } while (concentrationCards.size() < 30);
+        } while (concentrationCards.size() < CARDS);
     }
 
-    Card cardFlip(int i) {
+    /**
+     * Returns a Card at a specified location.
+     *
+     * @param i
+     *            the location
+     * @return the Card
+     */
+    final Card cardFlip(final int i) {
         return cards.get(i);
     }
 
@@ -188,11 +194,13 @@ public class Deck extends JLabel {
     } // end method
 
     /**
-     * Gets a card from the deck without removing it
-     * 
+     * Gets a card from the deck without removing it.
+     *
+     * @param i
+     *            the index of the Card to get
      * @return a Card from the top of the deck
      */
-    Card concentrationDeal(int i) {
+    final Card concentrationDeal(final int i) {
         return concentrationCards.get(i);
     } // end method
 
@@ -228,7 +236,8 @@ public class Deck extends JLabel {
             g.drawImage(cardBack, 0, 0, null);
         } else {
             g.setColor(Color.WHITE);
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ALPHA));
+            g.setComposite(
+                AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ALPHA));
             g.fillRect(0, 0, Card.CARD_WIDTH, Card.CARD_HEIGHT);
         } // end else
         g.dispose();
@@ -240,7 +249,7 @@ public class Deck extends JLabel {
      * @param addCards
      *            An ArrayList of Cards
      */
-    public void addCards(ArrayList<Card> addCards) {
+    public final void addCards(final ArrayList<Card> addCards) {
         if (addCards != null && addCards.size() > 0) {
             isEmpty = false;
         }
