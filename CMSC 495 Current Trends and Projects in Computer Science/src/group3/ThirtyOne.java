@@ -69,7 +69,7 @@ public class ThirtyOne extends JPanel implements Game {
     /**
      * A bluish-grey color used for text.
      */
-    private static final Color LABEL_BLUE_GREY = new Color(40, 55, 67);
+    private static final Color LABEL_WHITE = new Color(255, 255, 255);
     /**
      * The minimum screen width.
      */
@@ -77,7 +77,7 @@ public class ThirtyOne extends JPanel implements Game {
     /**
      * The minimum screen height.
      */
-    private static final int SCREEN_Y = 600;
+    private static final int SCREEN_Y = 650;
     /**
      * The height of a Card.
      */
@@ -89,11 +89,27 @@ public class ThirtyOne extends JPanel implements Game {
     /**
      * The X location of the center label.
      */
-    private static final int CENTER_LABEL_X = 25;
+    private static final int CENTER_LABEL_X = 215;
     /**
      * The Y location of the center label.
      */
-    private static final int CENTER_LABEL_Y = 25;
+    private static final int CENTER_LABEL_Y = 65;
+    /**
+     * The X location of the knock label.
+     */
+    private static final int KNOCK_LABEL_X = 210;
+    /**
+     * The Y location of the knock label.
+     */
+    private static final int KNOCK_LABEL_Y = 250;
+     /**
+     * The X location of the deck label.
+     */
+    private static final int DECK_LABEL_X = 20;
+    /**
+     * The Y location of the deck label.
+     */
+    private static final int DECK_LABEL_Y = 60;
     /**
      * The size of the font.
      */
@@ -101,11 +117,11 @@ public class ThirtyOne extends JPanel implements Game {
     /**
      * The X location of the player's Hand label.
      */
-    private static final int PLAYER_HAND_LABEL_X = 25;
+    private static final int PLAYER_HAND_LABEL_X = 230;
     /**
      * The Y location of the player's Hand label.
      */
-    private static final int PLAYER_VALUE_LABEL_Y = 450;
+    private static final int PLAYER_VALUE_LABEL_Y = 400;
     /**
      * The Y location of the center Cards.
      */
@@ -121,11 +137,11 @@ public class ThirtyOne extends JPanel implements Game {
     /**
      * The X location of the player's Hand value.
      */
-    private static final int PLAYER_HAND_X = 25;
+    private static final int PLAYER_HAND_X = 215;
     /**
      * The Y location of the player's Hand value.
      */
-    private static final int PLAYER_HAND_Y = 250;
+    private static final int PLAYER_HAND_Y = 270;
     /**
      * The X location of the player's current score.
      */
@@ -133,7 +149,7 @@ public class ThirtyOne extends JPanel implements Game {
     /**
      * The Y location of the player's current score.
      */
-    private static final int PLAYER_SCORE_Y = 450;
+    private static final int PLAYER_SCORE_Y = 475;
     /**
      * The value a player is aiming to reach.
      */
@@ -182,6 +198,10 @@ public class ThirtyOne extends JPanel implements Game {
      * JLabel to signify the center cards.
      */
     private JLabel jlCenterCards;
+     /**
+     * JLabel to signify the deck.
+     */
+    private JLabel jlDeck;
     /**
      * JLabel to show the player's current score.
      */
@@ -252,6 +272,7 @@ public class ThirtyOne extends JPanel implements Game {
         center = new Hand();
         jlPlayerHand = new JLabel("Player's Hand");
         jlCenterCards = new JLabel("Center Cards");
+        jlDeck = new JLabel("Deck");
         jlPlayerScore = new JLabel("Player's Score: " + playerScore);
         playerScore = 0;
         scores = loadOrCreateScores("ThirtyOne");
@@ -292,6 +313,7 @@ public class ThirtyOne extends JPanel implements Game {
         center.addMouseMotionListener(mh);
         add(center);
         center.setLocation(CARD_X_1, CENTER_CARD_Y);
+        knockLabel.setText(" ");
         knockLabel.setVisible(false);
         dealCards();
         playerHand = player.thirtyOneTotal();
@@ -378,33 +400,39 @@ public class ThirtyOne extends JPanel implements Game {
         setLayout(null);
         setBackground(CARD_TABLE_GREEN);
         jlCenterCards.setLocation(CENTER_LABEL_X, CENTER_LABEL_Y);
-        jlCenterCards.setForeground(LABEL_BLUE_GREY);
+        jlCenterCards.setForeground(LABEL_WHITE);
         jlCenterCards.setFont(new Font("Tahoma", Font.PLAIN, FONT_SIZE));
         jlCenterCards.setSize(jlCenterCards.getPreferredSize());
         add(jlCenterCards);
+        
+        jlDeck.setLocation(DECK_LABEL_X, DECK_LABEL_Y);
+        jlDeck.setForeground(LABEL_WHITE);
+        jlDeck.setFont(new Font("Tahoma", Font.PLAIN, FONT_SIZE));
+        jlDeck.setSize(jlDeck.getPreferredSize());
+        add(jlDeck);
 
         jlPlayerValue = new JLabel();
         jlPlayerValue.setLocation(PLAYER_HAND_LABEL_X, PLAYER_VALUE_LABEL_Y);
-        jlPlayerValue.setForeground(LABEL_BLUE_GREY);
+        jlPlayerValue.setForeground(LABEL_WHITE);
         jlPlayerValue.setFont(new Font("Tahoma", Font.PLAIN, FONT_SIZE));
         jlPlayerValue.setSize(jlCenterCards.getPreferredSize());
         add(jlPlayerValue);
 
         jlPlayerHand.setLocation(PLAYER_HAND_X, PLAYER_HAND_Y);
-        jlPlayerHand.setForeground(LABEL_BLUE_GREY);
+        jlPlayerHand.setForeground(LABEL_WHITE);
         jlPlayerHand.setFont(new Font("Tahoma", Font.PLAIN, FONT_SIZE));
         jlPlayerHand.setSize(jlPlayerHand.getPreferredSize());
         add(jlPlayerHand);
 
         jlPlayerScore.setLocation(PLAYER_SCORE_X, PLAYER_VALUE_LABEL_Y);
-        jlPlayerScore.setForeground(LABEL_BLUE_GREY);
+        jlPlayerScore.setForeground(LABEL_WHITE);
         jlPlayerScore.setFont(new Font("Tahoma", Font.PLAIN, FONT_SIZE));
         jlPlayerScore.setSize(jlPlayerScore.getPreferredSize());
         add(jlPlayerScore);
 
         knockLabel = new JLabel("Someone " + " Knocked");
-        knockLabel.setLocation(CARD_X_1, PLAYER_HAND_Y);
-        knockLabel.setForeground(LABEL_BLUE_GREY);
+        knockLabel.setLocation(KNOCK_LABEL_X, KNOCK_LABEL_Y);
+        knockLabel.setForeground(LABEL_WHITE);
         knockLabel.setFont(new Font("Tahoma", Font.PLAIN, FONT_SIZE));
         knockLabel.setSize(knockLabel.getPreferredSize());
         add(knockLabel);
@@ -656,6 +684,12 @@ public class ThirtyOne extends JPanel implements Game {
      */
     private void playDealerTurn() {
         System.out.println("Playing dealer's hand " + AI);
+        if (knockActive && knocker.equals("AI")) {
+            // end game, score
+            System.out.println("Game over");
+            scoreGame();
+        }
+                
         int score = 0;
         int maxScore = 0;
         Suit maxSuit = null;
