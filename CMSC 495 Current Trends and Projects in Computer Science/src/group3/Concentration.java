@@ -190,7 +190,7 @@ public class Concentration extends JFrame
      */
     final void newGame() {
 
-        deck.ConcentrationShuffle();
+        deck.concentrationShuffle();
         createReferenceArray();
 
         if (MainCGS.DEBUGGING) {
@@ -199,7 +199,7 @@ public class Concentration extends JFrame
 
         if (MainCGS.DEBUGGING) {
             System.out.println(
-                "Concentration deck after shuffle: " + deck.concentrationCards);
+                "Concentration deck after shuffle: " /*+ deck.concentrationCards*/);
         }
 
     }
