@@ -565,6 +565,7 @@ public class ThirtyOne extends JPanel implements Game {
             jlPlayerValue
                 .setText("Value: " + String.valueOf(player.thirtyOneTotal()));
             jlPlayerScore.setText("Player's Score: " + playerScore);
+            jlPlayerScore.setSize(jlPlayerScore.getPreferredSize());
             revalidate();
             repaint();
         } catch (FileNotFoundException e) {
@@ -776,6 +777,10 @@ public class ThirtyOne extends JPanel implements Game {
         if (answer == JOptionPane.YES_OPTION) {
             gameActive = false;
             remove(AI);
+            knockActive = false;
+            knockLabel.setVisible(false);
+            revalidate();
+            repaint();
             newGame();
         } else {
             if (scores.isHighScore(playerScore)) {
@@ -799,13 +804,17 @@ public class ThirtyOne extends JPanel implements Game {
             // alert player the dealer knocked
             System.out.println("Dealer knocked");
             knockLabel.setText("Dealer" + " Knocked");
+            knockLabel.setVisible(true);
+            repaint();
         } else {
             // player knocked
             System.out.println("Player knocked");
             knockLabel.setText("Player" + " Knocked");
+            knockLabel.setVisible(true);
+            revalidate();
+            repaint();
             playDealerTurn();
         }
-        knockLabel.setVisible(true);
     }
 
     /**
