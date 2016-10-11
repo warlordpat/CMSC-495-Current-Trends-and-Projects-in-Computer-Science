@@ -102,7 +102,7 @@ public class ThirtyOne extends JPanel implements Game {
      * The Y location of the knock label.
      */
     private static final int KNOCK_LABEL_Y = 250;
-     /**
+    /**
      * The X location of the deck label.
      */
     private static final int DECK_LABEL_X = 20;
@@ -198,7 +198,7 @@ public class ThirtyOne extends JPanel implements Game {
      * JLabel to signify the center cards.
      */
     private JLabel jlCenterCards;
-     /**
+    /**
      * JLabel to signify the deck.
      */
     private JLabel jlDeck;
@@ -368,6 +368,7 @@ public class ThirtyOne extends JPanel implements Game {
                 File customDir = new File(path);
                 File scoreFile = new File(customDir, "ThirtyOne.score");
                 saveHighScores(scoreFile, scores);
+                System.out.println("saved scores");
                 if (MainCGS.DEBUGGING) {
                     System.out.println("Frame is closing");
                 }
@@ -385,8 +386,13 @@ public class ThirtyOne extends JPanel implements Game {
         knock.setBounds(0, PLAYER_CARD_Y, CARD_HEIGHT, CARD_HEIGHT);
         add(knock);
         knock.addActionListener(al -> {
-            knocker = "PLAYER";
-            knock();
+            if (!knockActive) {
+                knocker = "PLAYER";
+                knock();
+            } else {
+                // dealer already knocked
+                playDealerTurn();
+            }
             if (MainCGS.DEBUGGING) {
                 System.out.println("finished knock button processing");
             }
@@ -404,7 +410,7 @@ public class ThirtyOne extends JPanel implements Game {
         jlCenterCards.setFont(new Font("Tahoma", Font.PLAIN, FONT_SIZE));
         jlCenterCards.setSize(jlCenterCards.getPreferredSize());
         add(jlCenterCards);
-        
+
         jlDeck.setLocation(DECK_LABEL_X, DECK_LABEL_Y);
         jlDeck.setForeground(LABEL_WHITE);
         jlDeck.setFont(new Font("Tahoma", Font.PLAIN, FONT_SIZE));
@@ -495,23 +501,26 @@ public class ThirtyOne extends JPanel implements Game {
      */
     private void directions() {
         JOptionPane.showMessageDialog(null,
-            "The objective of Thirty-One The goal is to obtain a hand that"
-                    + " totals 31 in cards of one suit; or to have a hand at the "
-                    + "showdown whose count in one suit is higher than that of any "
-                    + "other player. An Ace counts 11 points, face cards count 10 "
-                    + "points, and all other cards count their face value. On each "
-                    + "turn, a player may take one card from the widow and replace it "
-                    + "with one card from his hand (face up). Players take turns, "
-                    + "clockwise around the table, until one player is satisfied that "
-                    + "the card values he holds will likely beat the other players. He"
-                    + " indicates this by \"knocking\" on the table. All other players"
-                    + " then get one more turn to exchange cards. Then there is a "
-                    + "showdown in which the players reveal their hands and compare "
-                    + "values. The player with the highest total value of cards of "
-                    + "the same suit wins. Any time a player holds exactly 31, he may "
-                    + "\"knock\" immediately, and he wins the pot. If a player knocks "
-                    + "before the first round of exchanges have begun, the showdown "
-                    + "occurs immediately with no exchange of cards.");
+            "The objective of Thirty-One is to obtain a hand that"
+                    + "\ntotals 31 in cards of one suit; or to have a hand at "
+                    + "\nthe showdown whose count in one suit is higher than "
+                    + "\nthat of any other player. An Ace counts 11 points, "
+                    + "\nface cards count 10 points, and all other cards count"
+                    + "\ntheir face value. On each turn, a player may take one"
+                    + "\ncard from the widow and replace it with one card from "
+                    + "\nhis hand (face up). Players take turns, clockwise "
+                    + "\naround the table, until one player is satisfied that "
+                    + "\nthe card values he holds will likely beat the other "
+                    + "\nplayers. He indicates this by \"knocking\" on the "
+                    + "\ntable. All other players then get one more turn to "
+                    + "\nexchange cards. Then there is a showdown in which the "
+                    + "\nplayers reveal their hands and compare values. The "
+                    + "\nplayer with the highest total value of cards of the "
+                    + "\nsame suit wins. Any time a player holds exactly 31, "
+                    + "\nhe may \"knock\" immediately, and he wins the pot. If"
+                    + "\na player knocks before the first round of exchanges "
+                    + "\nhave begun, the showdown occurs immediately with no "
+                    + "\nexchange of cards.");
     }
 
     /**
@@ -551,6 +560,7 @@ public class ThirtyOne extends JPanel implements Game {
             os.writeObject(center);
             os.writeInt(playerScore);
             os.writeBoolean(knockActive);
+            os.writeObject(knocker);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -589,6 +599,13 @@ public class ThirtyOne extends JPanel implements Game {
 
             playerScore = os.readInt();
             knockActive = os.readBoolean();
+            knocker = (String) os.readObject();
+
+            System.out.println("is knock active? " + knockActive);
+            System.out.println("Who knocked? " + knocker);
+            if (knocker.equals("AI")) {
+                knockLabel.setText("Dealer" + " Knocked");
+            }
             knockLabel.setVisible(knockActive);
             jlPlayerValue
                 .setText("Value: " + String.valueOf(player.thirtyOneTotal()));
@@ -689,7 +706,7 @@ public class ThirtyOne extends JPanel implements Game {
             System.out.println("Game over");
             scoreGame();
         }
-                
+
         int score = 0;
         int maxScore = 0;
         Suit maxSuit = null;
@@ -791,6 +808,11 @@ public class ThirtyOne extends JPanel implements Game {
         if (playerHandScore > aiHandScore) {
             // win
             playerScore += WIN_SCORE;
+            jlPlayerScore.setText("Player's Score: " + playerScore);
+            jlPlayerScore.setSize(jlPlayerScore.getPreferredSize());
+            revalidate();
+            repaint();
+            
             answer = JOptionPane.showConfirmDialog(this,
                 ("You win " + playerHandScore + " to " + aiHandScore
                         + "!\nWould you like to play again?"),
