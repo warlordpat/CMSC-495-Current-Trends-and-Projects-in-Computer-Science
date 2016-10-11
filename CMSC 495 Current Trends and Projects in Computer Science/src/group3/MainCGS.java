@@ -14,8 +14,11 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -342,14 +345,26 @@ public class MainCGS extends JPanel {
      * Opens the User's Guide
      */
     private void userGuide() {
-        String myPath = System.getProperty("java.class.path");
-
+        // String myPath = System.getProperty("java.class.path");
         if (Desktop.isDesktopSupported()) {
             try {
-                File myFile = new File(myPath + "/User's Guide.pdf");
-                Desktop.getDesktop().open(myFile);
+                String path = "/User's Guide.pdf";
+                // JOptionPane.showMessageDialog(null, path);
+                String tempFile = "myFile";
+                Path tempOutput = Files.createTempFile(tempFile, ".pdf");
+                tempOutput.toFile().deleteOnExit();
+                System.out.println("tempOutput: " + tempOutput);
+                // InputStream is = new FileInputStream(path);
+                InputStream is = getClass().getResourceAsStream(path);
+                // System.out.println(myPath);
+                System.out.println("is " + is);
+                // long how =
+                Files.copy(is, tempOutput, StandardCopyOption.REPLACE_EXISTING);
+                // JOptionPane.showMessageDialog(null, how);
+                Desktop.getDesktop().open(tempOutput.toFile());
             } catch (IOException | IllegalArgumentException ex) {
                 // no application registered for PDFs
+                System.out.println("NO PDF READER INSTALLED");
             }
         }
     }
